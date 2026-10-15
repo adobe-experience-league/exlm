@@ -231,6 +231,25 @@ test('converts a reused ready PR back to draft before updating it', async () => 
   assert.equal(fake.calls.find(([n]) => n === 'convertPullRequestToDraft')[1], existingPr);
 });
 
+test('does not update or comment on a reused PR when draft conversion fails', async () => {
+  const existingPr = { number: 5, node_id: 'PR_node', draft: false, html_url: 'https://github.com/o/r/pull/5' };
+  const fake = fakeSteps({ existingPr });
+  fake.steps.createGithubClient = () => ({
+    findOpenPr: async () => existingPr,
+    convertPullRequestToDraft: async () => {
+      fake.calls.push(['convertPullRequestToDraft', existingPr]);
+      throw new StageError('pr', 'GitHub GraphQL failed: nope');
+    },
+    updatePr: async (number, prArgs) => fake.calls.push(['updatePr', number, prArgs]),
+    commentOnPr: async (number, body) => fake.calls.push(['commentOnPr', number, body]),
+  });
+
+  await assert.rejects(run(fake), (err) => err.stage === 'pr' && /GraphQL/.test(err.message));
+  assert.ok(fake.names().includes('commitAndPush'));
+  assert.ok(!fake.names().includes('updatePr'));
+  assert.ok(!fake.names().includes('commentOnPr'));
+});
+
 test('blocked result fails with stage blocked and still removes the worktree', async () => {
   const fake = fakeSteps({
     result: { status: 'blocked', summary: 'Need design input', openQuestions: ['Which color?'] },

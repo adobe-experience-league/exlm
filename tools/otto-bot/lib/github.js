@@ -49,6 +49,13 @@ export function createGithubClient({
 
   async function graphql(query, variables) {
     const { data } = await request('POST', '/graphql', { query, variables });
+    if (Array.isArray(data?.errors) && data.errors.length > 0) {
+      const message = data.errors
+        .map((error) => error?.message)
+        .filter(Boolean)
+        .join('; ');
+      throw new StageError('pr', redactString(`GitHub GraphQL failed: ${message || 'unknown error'}`));
+    }
     return data;
   }
 
@@ -93,7 +100,7 @@ export function createGithubClient({
     async convertPullRequestToDraft(pr) {
       if (!pr.node_id)
         throw new StageError('pr', `Cannot convert PR #${pr.number} to draft because node_id is missing`);
-      await graphql(
+      const data = await graphql(
         `
           mutation ConvertPullRequestToDraft($pullRequestId: ID!) {
             convertPullRequestToDraft(input: { pullRequestId: $pullRequestId }) {
@@ -105,6 +112,10 @@ export function createGithubClient({
         `,
         { pullRequestId: pr.node_id },
       );
+      const isDraft = data?.data?.convertPullRequestToDraft?.pullRequest?.isDraft;
+      if (isDraft !== true) {
+        throw new StageError('pr', redactString(`GitHub did not confirm PR #${pr.number} was converted to draft`));
+      }
     },
   };
 }

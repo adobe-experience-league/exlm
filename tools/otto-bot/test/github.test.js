@@ -64,6 +64,31 @@ test('convertPullRequestToDraft uses the PR node id', async () => {
   assert.deepEqual(fetch.calls[0].body.variables, { pullRequestId: 'PR_node' });
 });
 
+test('convertPullRequestToDraft throws on GraphQL errors', async () => {
+  const fetch = fakeFetch(() => jsonResponse({ errors: [{ message: 'Bad token SECRET-XYZ' }] }));
+  const redact = (value) => String(value).replaceAll('SECRET-XYZ', '[REDACTED]');
+  const gh = createGithubClient({ owner: 'o', repo: 'r', token: 't', fetchImpl: fetch.impl, redact });
+  await assert.rejects(
+    gh.convertPullRequestToDraft({ number: 8, node_id: 'PR_node' }),
+    (err) =>
+      err.stage === 'pr' &&
+      /GitHub GraphQL failed/.test(err.message) &&
+      err.message.includes('[REDACTED]') &&
+      !err.message.includes('SECRET-XYZ'),
+  );
+});
+
+test('convertPullRequestToDraft throws when GitHub does not confirm draft status', async () => {
+  const fetch = fakeFetch(() =>
+    jsonResponse({ data: { convertPullRequestToDraft: { pullRequest: { isDraft: false } } } }),
+  );
+  const gh = createGithubClient({ owner: 'o', repo: 'r', token: 't', fetchImpl: fetch.impl });
+  await assert.rejects(
+    gh.convertPullRequestToDraft({ number: 8, node_id: 'PR_node' }),
+    (err) => err.stage === 'pr' && /did not confirm/.test(err.message),
+  );
+});
+
 test('convertPullRequestToDraft refuses PRs without a node id', async () => {
   const gh = createGithubClient({
     owner: 'o',

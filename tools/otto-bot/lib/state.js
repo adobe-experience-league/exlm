@@ -3,9 +3,11 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 
 const LOCK_DIR = 'lock';
+const TAKEOVER_DIR = 'lock.takeover';
 const LOCK_OWNER_FILE = 'owner.json';
 const CURRENT_FILE = 'current.json';
 const HISTORY_FILE = 'history.jsonl';
+const TAKEOVER_STALE_MS = 60 * 1000;
 
 function defaultIsAlive(pid) {
   try {
@@ -28,7 +30,41 @@ async function readLockOwner(lockPath) {
   }
 }
 
-export async function acquireLock(stateDir, { pid = process.pid, isAlive = defaultIsAlive } = {}) {
+async function acquireTakeoverLock(stateDir, owner) {
+  const takeoverPath = path.join(stateDir, TAKEOVER_DIR);
+  const ownerPath = path.join(takeoverPath, LOCK_OWNER_FILE);
+  try {
+    await fs.mkdir(takeoverPath);
+    await fs.writeFile(ownerPath, `${JSON.stringify(owner)}\n`, { flag: 'wx' });
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err;
+    const stat = await fs.stat(takeoverPath).catch((statErr) => {
+      if (statErr.code === 'ENOENT') return null;
+      throw statErr;
+    });
+    if (!stat || Date.now() - stat.mtimeMs <= TAKEOVER_STALE_MS) return null;
+    const stalePath = path.join(stateDir, `${TAKEOVER_DIR}.stale-${owner.token}`);
+    try {
+      await fs.rename(takeoverPath, stalePath);
+      await fs.rm(stalePath, { recursive: true, force: true });
+    } catch (takeoverErr) {
+      if (!['ENOENT', 'ENOTDIR'].includes(takeoverErr.code)) throw takeoverErr;
+      return null;
+    }
+    return acquireTakeoverLock(stateDir, owner);
+  }
+  return async () => {
+    const current = await readLockOwner(takeoverPath);
+    if (current?.token === owner.token) {
+      await fs.rm(takeoverPath, { recursive: true, force: true });
+    }
+  };
+}
+
+export async function acquireLock(
+  stateDir,
+  { pid = process.pid, isAlive = defaultIsAlive, beforeTakeover = async () => {} } = {},
+) {
   await fs.mkdir(stateDir, { recursive: true });
   const token = `${pid}-${Date.now()}-${randomUUID()}`;
   const lockPath = path.join(stateDir, LOCK_DIR);
@@ -41,14 +77,20 @@ export async function acquireLock(stateDir, { pid = process.pid, isAlive = defau
     if (err.code !== 'EEXIST') throw err;
     const holder = await readLockOwner(lockPath);
     if (holder?.pid && isAlive(holder.pid)) return null;
-    const stalePath = path.join(stateDir, `${LOCK_DIR}.stale-${token}`);
+    await beforeTakeover(holder);
+    const releaseTakeover = await acquireTakeoverLock(stateDir, owner);
+    if (!releaseTakeover) return null;
     try {
-      await fs.rename(lockPath, stalePath);
-      await fs.rm(stalePath, { recursive: true, force: true });
-    } catch (takeoverErr) {
-      if (!['ENOENT', 'ENOTDIR'].includes(takeoverErr.code)) throw takeoverErr;
+      const current = await readLockOwner(lockPath);
+      // Only the contender that still sees the originally stale token may clear it.
+      // If another contender already installed a fresh lock, returning null preserves
+      // that live holder and avoids moving a valid lock aside.
+      if (current?.token !== holder?.token) return null;
+      await fs.rm(lockPath, { recursive: true, force: true });
+    } finally {
+      await releaseTakeover();
     }
-    return acquireLock(stateDir, { pid, isAlive });
+    return acquireLock(stateDir, { pid, isAlive, beforeTakeover });
   }
   return async () => {
     const current = await readLockOwner(lockPath);

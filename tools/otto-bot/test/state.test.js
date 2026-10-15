@@ -48,6 +48,44 @@ test('acquireLock stale takeover yields exactly one holder for two contenders', 
   await Promise.all(contenders.filter(Boolean).map((release) => release()));
 });
 
+test('acquireLock stale takeover does not steal a fresh lock after a delayed stale read', async () => {
+  const dir = await tempDir();
+  const stale = await acquireLock(dir, { pid: 111, isAlive: () => true });
+  assert.equal(typeof stale, 'function');
+
+  let resumeDelayed;
+  const delayedCanResume = new Promise((resolve) => {
+    resumeDelayed = resolve;
+  });
+  let delayedRead;
+  const delayedReadStale = new Promise((resolve) => {
+    delayedRead = resolve;
+  });
+
+  const delayed = acquireLock(dir, {
+    pid: 333,
+    isAlive: (pid) => pid !== 111,
+    beforeTakeover: async (holder) => {
+      assert.equal(holder.pid, 111);
+      delayedRead();
+      await delayedCanResume;
+    },
+  });
+  await delayedReadStale;
+
+  const winner = await acquireLock(dir, { pid: 222, isAlive: (pid) => pid !== 111 });
+  assert.equal(typeof winner, 'function');
+  const owner = JSON.parse(await fs.readFile(path.join(dir, 'lock', 'owner.json'), 'utf8'));
+  assert.equal(owner.pid, 222);
+
+  resumeDelayed();
+  assert.equal(await delayed, null);
+  await stale();
+  await fs.access(path.join(dir, 'lock'));
+  await winner();
+  await assert.rejects(fs.access(path.join(dir, 'lock')), (err) => err.code === 'ENOENT');
+});
+
 test('current run can be written, read, and cleared', async () => {
   const dir = await tempDir();
   assert.equal(await readCurrentRun(dir), null);
