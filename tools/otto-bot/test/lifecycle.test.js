@@ -232,7 +232,8 @@ test('recover marks an interrupted run failed using master', async () => {
     await recover({ config, users, log: silentLog(), deps: { createJiraClient: jira.createJiraClient } }),
     false,
   );
-  await writeCurrentRun(stateDir, { key: 'EXLM-1234', runId: 'r-1', identity: 'jdoe' });
+  const secretRunId = 'r-master-jira-pat';
+  await writeCurrentRun(stateDir, { key: 'EXLM-1234', runId: secretRunId, identity: 'jdoe' });
   assert.equal(
     await recover({ config, users, log: silentLog(), deps: { createJiraClient: jira.createJiraClient } }),
     true,
@@ -244,6 +245,9 @@ test('recover marks an interrupted run failed using master', async () => {
     change: { remove: ['otto-working'], add: ['otto-failed'] },
   });
   assert.ok(jira.comments()[0].body.includes('interrupted'));
+  assert.ok(jira.comments()[0].body.includes('[REDACTED]'));
+  assert.ok(!jira.comments()[0].body.includes(secretRunId));
+  assert.ok(!jira.comments()[0].body.includes('master-jira-pat'));
   assert.equal(await readCurrentRun(stateDir), null);
   assert.equal((await readHistory(stateDir))[0].stage, 'interrupted');
 });

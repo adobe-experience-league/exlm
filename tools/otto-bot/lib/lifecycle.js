@@ -39,10 +39,12 @@ export async function recover({ config, users, log, deps: overrides = {} }) {
   const { stateDir } = dataPaths(config.dataDir);
   const current = await readCurrentRun(stateDir);
   if (!current) return false;
+  const secrets = allSecrets(users);
+  const redact = createRedactor(secrets);
   log.warn('recovering interrupted run', current);
   const jira = masterJira(config, users, deps);
   const { runDir } = runPaths(config.dataDir, current.runId);
-  await jira.addComment(current.key, buildInterruptedComment({ runId: current.runId, logDir: runDir }));
+  await jira.addComment(current.key, redact(buildInterruptedComment({ runId: current.runId, logDir: runDir })));
   await jira.updateLabels(current.key, { remove: [LABELS.working], add: [LABELS.failed] });
   await appendHistory(stateDir, {
     ...current,
