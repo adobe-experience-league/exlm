@@ -69,9 +69,7 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
   const baseRef = `origin/${config.baseBranch}`;
   const remoteUrl = `https://github.com/${config.githubOwner}/${config.githubRepo}.git`;
   const copilotHome = path.join(paths.copilotHomesDir, identity.slug);
-  await fs.mkdir(runDir, { recursive: true });
-  const askpassPath = await steps.writeAskpass(paths.binDir);
-  const gitEnv = gitAuthEnv({ askpassPath, token: identity.creds.githubPat });
+  let gitEnv;
 
   let session = 0;
   const copilot = async (prompt, timeoutMinutes) => {
@@ -103,6 +101,9 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
   let worktreeCreated = false;
   try {
     try {
+      await fs.mkdir(runDir, { recursive: true });
+      const askpassPath = await steps.writeAskpass(paths.binDir);
+      gitEnv = gitAuthEnv({ askpassPath, token: identity.creds.githubPat });
       await steps.ensureMirror({ mirrorDir: paths.mirrorDir, remoteUrl, env: gitEnv });
       await steps.createWorktree({ mirrorDir: paths.mirrorDir, workDir, branch, baseBranch: config.baseBranch });
       worktreeCreated = true;

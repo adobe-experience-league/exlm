@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { DEFAULT_CONFIG } from '../lib/config.js';
+import { StageError } from '../lib/errors.js';
 import { previewUrl, runTicket } from '../lib/runner.js';
 import { REPAIR_FILE, RESULT_FILE, TASK_FILE } from '../lib/task.js';
 import { silentLog, tempDir } from './helpers.js';
@@ -25,12 +26,22 @@ const identity = {
 };
 const goodResult = { status: 'done', summary: 'Made first tab focusable.', testUrls: ['/en/docs'], openQuestions: [] };
 
-function fakeSteps({ result = goodResult, diff, quality = [true], existingPr = null, writeResult = true } = {}) {
+function fakeSteps({
+  result = goodResult,
+  diff,
+  quality = [true],
+  existingPr = null,
+  writeResult = true,
+  writeAskpassError = null,
+} = {}) {
   const calls = [];
   const githubClientArgs = [];
   const qualityQueue = [...quality];
   const steps = {
-    writeAskpass: async (dir) => path.join(dir, 'askpass.sh'),
+    writeAskpass: async (dir) => {
+      if (writeAskpassError) throw writeAskpassError;
+      return path.join(dir, 'askpass.sh');
+    },
     ensureMirror: async (args) => calls.push(['ensureMirror', args]),
     createWorktree: async (args) => {
       calls.push(['createWorktree', args]);
@@ -181,6 +192,14 @@ test('blocked result fails with stage blocked and still removes the worktree', a
 test('missing result.json fails the copilot stage', async () => {
   const fake = fakeSteps({ writeResult: false });
   await assert.rejects(run(fake), (err) => err.stage === 'copilot' && /result\.json/.test(err.message));
+});
+
+test('askpass setup failures fail the workspace stage', async () => {
+  const fake = fakeSteps({ writeAskpassError: new Error('askpass denied') });
+  await assert.rejects(
+    run(fake),
+    (err) => err instanceof StageError && err.stage === 'workspace' && /askpass denied/.test(err.message),
+  );
 });
 
 test('empty diff and protected paths fail the guardrails stage', async () => {
