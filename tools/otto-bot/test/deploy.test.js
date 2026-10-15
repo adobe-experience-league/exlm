@@ -40,4 +40,6 @@ test('setup script is strict and pins the Copilot CLI version', async () => {
   assert.ok(script.startsWith('#!/usr/bin/env bash\nset -euo pipefail'));
   assert.match(script, /COPILOT_VERSION="\$\{1:\?/);
   assert.ok(script.includes('npm install -g "@github/copilot@'));
+  assert.ok(script.includes("config.copilotBin = '/home/otto/.npm-global/bin/copilot'"));
+  assert.ok(script.includes('env PATH=/home/otto/.npm-global/bin:$PATH'));
 });

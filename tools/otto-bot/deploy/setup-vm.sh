@@ -31,6 +31,14 @@ git -C ~/exlm-otto pull --ff-only
 if [ ! -f ~/.config/otto-bot/config.json ]; then
   cp ~/exlm-otto/tools/otto-bot/config.example.json ~/.config/otto-bot/config.json
 fi
+node --input-type=module - <<'NODE'
+import fs from 'node:fs';
+
+const configPath = '/home/otto/.config/otto-bot/config.json';
+const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+config.copilotBin = '/home/otto/.npm-global/bin/copilot';
+fs.writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`);
+NODE
 AS_OTTO
 
 install -m 0644 "$REPO_DIR/tools/otto-bot/deploy/otto-bot.service" /etc/systemd/system/otto-bot.service
@@ -39,7 +47,7 @@ systemctl daemon-reload
 
 cat <<'NEXT'
 otto-bot installed. Next steps:
-  1. sudo -u otto -H node /home/otto/exlm-otto/tools/otto-bot/bin/otto.js users add --master
-  2. sudo -u otto -H node /home/otto/exlm-otto/tools/otto-bot/bin/otto.js doctor
+  1. sudo -u otto -H env PATH=/home/otto/.npm-global/bin:$PATH node /home/otto/exlm-otto/tools/otto-bot/bin/otto.js users add --master
+  2. sudo -u otto -H env PATH=/home/otto/.npm-global/bin:$PATH node /home/otto/exlm-otto/tools/otto-bot/bin/otto.js doctor
   3. sudo systemctl enable --now otto-bot.timer
 NEXT

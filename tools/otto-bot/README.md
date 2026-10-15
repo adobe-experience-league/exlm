@@ -29,8 +29,8 @@ The Rocky Linux VM runs `otto tick` through the `deploy/otto-bot.service` onesho
 4. Add the master account and validate credentials:
 
    ```sh
-   sudo -u otto -H node /home/otto/exlm-otto/tools/otto-bot/bin/otto.js users add --master
-   sudo -u otto -H node /home/otto/exlm-otto/tools/otto-bot/bin/otto.js doctor
+   sudo -u otto -H env PATH=/home/otto/.npm-global/bin:$PATH node /home/otto/exlm-otto/tools/otto-bot/bin/otto.js users add --master
+   sudo -u otto -H env PATH=/home/otto/.npm-global/bin:$PATH node /home/otto/exlm-otto/tools/otto-bot/bin/otto.js doctor
    ```
 
 5. Enable the timer only after `otto doctor` passes:
@@ -53,3 +53,7 @@ Usage:
 ```
 
 Configuration defaults are documented in `config.example.json`. The example intentionally contains no PATs or tokens; user credentials are stored separately by `otto users add`.
+
+## Security
+
+Known risk (accepted): Copilot runs as the same `otto` Unix user that owns `users.json`, so environment scrubbing and Copilot token separation do not prevent filesystem reads of controller credentials. This is accepted for now and must be fixed with a stronger execution boundary before broader rollout.
