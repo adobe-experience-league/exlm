@@ -71,6 +71,10 @@ test('parseResult rejects malformed results', () => {
     /testUrls/,
   );
   assert.throws(
+    () => parseResult(JSON.stringify({ status: 'done', summary: 'x', testUrls: ['//example.com/x'] })),
+    /testUrls/,
+  );
+  assert.throws(
     () => parseResult(JSON.stringify({ status: 'done', summary: 'x', openQuestions: [1] })),
     /openQuestions/,
   );

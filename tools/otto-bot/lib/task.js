@@ -116,7 +116,7 @@ export function parseResult(text) {
   return {
     status: data.status,
     summary: data.summary,
-    testUrls: assertStringArray(data.testUrls, 'testUrls', (url) => url.startsWith('/')),
+    testUrls: assertStringArray(data.testUrls, 'testUrls', (url) => url.startsWith('/') && !url.startsWith('//')),
     openQuestions: assertStringArray(data.openQuestions, 'openQuestions'),
   };
 }
