@@ -1,0 +1,11 @@
+[Unit]
+Description=Run otto-bot every 5 minutes after the previous run finishes
+
+[Timer]
+OnActiveSec=1min
+OnBootSec=2min
+OnUnitInactiveSec=5min
+Unit=otto-bot.service
+
+[Install]
+WantedBy=timers.target

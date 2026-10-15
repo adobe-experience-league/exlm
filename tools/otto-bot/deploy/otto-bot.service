@@ -1,0 +1,18 @@
+[Unit]
+Description=otto-bot: Jira label to Copilot draft PR worker (one tick)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=otto
+Group=otto
+WorkingDirectory=/home/otto/exlm-otto/tools/otto-bot
+Environment=PATH=/home/otto/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
+Environment=HOME=/home/otto
+ExecStart=/usr/bin/env node bin/otto.js tick
+TimeoutStartSec=120min
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/home/otto
+PrivateTmp=yes

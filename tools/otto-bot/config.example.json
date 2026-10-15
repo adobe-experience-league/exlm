@@ -1,0 +1,24 @@
+{
+  "jiraBaseUrl": "https://jira.corp.adobe.com",
+  "jql": "project = EXLM AND labels = otto AND labels not in (otto-working, otto-done, otto-failed) ORDER BY updated ASC",
+  "githubOwner": "adobe-experience-league",
+  "githubRepo": "exlm",
+  "baseBranch": "main",
+  "model": "auto",
+  "copilotBin": "copilot",
+  "dataDir": "/home/otto/var",
+  "copilotTimeoutMinutes": 40,
+  "repairTimeoutMinutes": 10,
+  "maxRepairs": 3,
+  "runRetentionDays": 14,
+  "protectedPaths": [
+    ".github/**",
+    "scripts/lib-franklin.js",
+    "fstab.yaml",
+    "tools/otto-bot/**",
+    ".env*",
+    "**/.env*",
+    "**/.secrets",
+    "skills-lock.json"
+  ]
+}
