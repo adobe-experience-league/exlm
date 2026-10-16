@@ -114,7 +114,8 @@ test('processTicket claims as the assignee, runs, and marks done', async () => {
     ],
   );
   const [pickup, done] = jira.comments().map((c) => c.body);
-  assert.ok(pickup.includes("jdoe's credentials") && pickup.includes('20261014-140509-exlm-1234'));
+  assert.ok(pickup.startsWith('Picking this up now.'));
+  [pickup, done].forEach((body) => assert.ok(!/otto-bot|🤖|✅/.test(body)));
   assert.ok(done.includes(outcome.prUrl));
   assert.ok(done.includes('https://exlm-1234--exlm--adobe-experience-league.aem.page/'));
   assert.ok(done.includes('Copy OK?'));
@@ -134,7 +135,7 @@ test('processTicket falls back to master for unassigned tickets', async () => {
     deps: { createJiraClient: jira.createJiraClient, now: () => NOW, runTicket: async () => outcome },
   });
   assert.ok(jira.labels().every((c) => c.token === 'master-jira-pat'));
-  assert.ok(jira.comments()[0].body.includes('the ticket is unassigned'));
+  assert.ok(jira.comments()[0].body.startsWith('Picking this up now.'));
 });
 
 test('stage failures mark the ticket failed with a redacted reason', async () => {
@@ -209,7 +210,7 @@ test('a rejected claim with the assignee token is failed by master without runni
   });
   const masterLabels = jira.labels().filter((c) => c.token === 'master-jira-pat');
   assert.deepEqual(masterLabels[0].change, { remove: ['otto'], add: ['otto-failed'] });
-  assert.ok(jira.comments()[0].body.includes('could not claim'));
+  assert.ok(jira.comments()[0].body.includes("couldn't pick this up as jdoe"));
 });
 
 test('a network error during claim leaves the ticket for the next tick', async () => {

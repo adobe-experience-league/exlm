@@ -218,7 +218,7 @@ test('reuses an existing open PR and comments on it', async () => {
   assert.ok(fake.names().includes('updatePr'));
   const comment = fake.calls.find(([n]) => n === 'commentOnPr');
   assert.equal(comment[1], 5);
-  assert.ok(comment[2].includes('run-1'));
+  assert.equal(comment[2], 'Pushed new changes (`abc123`).');
 });
 
 test('converts a reused ready PR back to draft before updating it', async () => {

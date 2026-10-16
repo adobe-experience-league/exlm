@@ -1,50 +1,42 @@
 import { trimOutput } from './task.js';
 
-const RETRY_HINT = 'To retry: fix the problem, remove the {{otto-failed}} label, and add {{otto}} again.';
+const RETRY_HINT = 'To retry, remove the {{otto-failed}} label and add {{otto}} again.';
 
-const who = (identity) =>
-  identity.isMaster ? `the otto-bot master account (${identity.fallbackReason})` : `${identity.name}'s credentials`;
-
-export function buildPickupComment({ identity, runId }) {
-  return `🤖 otto-bot picked this up using ${who(identity)}.
-Run {{${runId}}}. I will comment again with a draft PR or the reason it failed.`;
+export function buildPickupComment() {
+  return `Picking this up now. I'll share a draft PR here once it's ready.`;
 }
 
-export function buildDoneComment({ outcome, preview, runId }) {
+export function buildDoneComment({ outcome, preview }) {
   const { quality, result } = outcome;
   const lines = [
-    `✅ otto-bot ${outcome.reusedPr ? 'updated the existing' : 'opened a'} draft PR: [${outcome.prUrl}|${
-      outcome.prUrl
-    }]`,
-    `Branch preview: ${preview}`,
-    quality.ok
-      ? `Quality: passing (${quality.repairs} Copilot repair attempt(s)).`
-      : `⚠️ Quality: still failing after ${quality.repairs} Copilot repair attempts. See the PR description.`,
+    `${outcome.reusedPr ? 'Updated the draft PR' : 'Draft PR is up'}: [${outcome.prUrl}|${outcome.prUrl}]`,
+    `Preview: ${preview}`,
     '',
-    `*Summary:* ${result.summary}`,
+    result.summary,
   ];
-  if (result.openQuestions.length) {
-    lines.push('', '*Open questions:*', ...result.openQuestions.map((q) => `* ${q}`));
+  if (!quality.ok) {
+    lines.push('', 'Heads up: quality checks are still failing on this one. Details are in the PR description.');
   }
-  lines.push('', `Run {{${runId}}}. The PR is a draft and needs human review.`);
+  if (result.openQuestions.length) {
+    lines.push('', 'A few open questions:', ...result.openQuestions.map((q) => `* ${q}`));
+  }
+  lines.push('', `It's still a draft, so please give it a review before it goes further.`);
   return lines.join('\n');
 }
 
-export function buildFailedComment({ stage, message, details, runId, logDir }) {
+export function buildFailedComment({ stage, message, details, runId }) {
   const detailBlock = details ? `\n{noformat}\n${trimOutput(details, 3000)}\n{noformat}` : '';
-  return `❌ otto-bot failed at stage *${stage}*: ${message}${detailBlock}
-Run {{${runId}}}. Logs are on the otto-bot VM in {{${logDir}}}.
-${RETRY_HINT}`;
+  return `I couldn't finish this one. It got stuck at the *${stage}* step: ${message}${detailBlock}
+${RETRY_HINT} (ref {{${runId}}})`;
 }
 
-export function buildInterruptedComment({ runId, logDir }) {
-  return `❌ otto-bot was interrupted (crash, timeout, or VM restart) during run {{${runId}}}.
-Logs are on the otto-bot VM in {{${logDir}}}. A branch or PR may have been partly created.
-${RETRY_HINT}`;
+export function buildInterruptedComment({ runId }) {
+  return `My work on this was interrupted before it finished, so a branch or PR may be half done.
+${RETRY_HINT} (ref {{${runId}}})`;
 }
 
 export function buildClaimRejectedComment({ identity, status }) {
-  return `❌ otto-bot could not claim this ticket as ${identity.name}: Jira returned ${status}.
-Their Jira token may be expired or missing permissions; ask them to re-run otto-bot onboarding.
+  return `I couldn't pick this up as ${identity.name}: Jira returned ${status}.
+Their Jira token may have expired or be missing permissions, so they'll need to redo their otto-bot setup.
 ${RETRY_HINT}`;
 }

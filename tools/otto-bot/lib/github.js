@@ -120,8 +120,11 @@ export function createGithubClient({
   };
 }
 
-export function buildCommitMessage({ ticket, result, redact = (value) => String(value ?? '') }) {
-  return `${ticket.key}: ${redact(ticket.summary)}\n\n${redact(result.summary)}\n\n${COAUTHOR_TRAILER}\n`;
+export const OTTO_TRAILER_KEY = 'Otto-Run';
+
+export function buildCommitMessage({ ticket, result, runId, redact = (value) => String(value ?? '') }) {
+  const ottoTrailer = runId ? `${OTTO_TRAILER_KEY}: ${runId}\n` : '';
+  return `${ticket.key}: ${redact(ticket.summary)}\n\n${redact(result.summary)}\n\n${ottoTrailer}${COAUTHOR_TRAILER}\n`;
 }
 
 export async function commitAndPush({
@@ -155,7 +158,7 @@ export function buildPrTitle({ ticket, qualityOk }) {
 
 export function buildPrBody({ ticket, jiraUrl, result, quality, identity, runId }) {
   const testLines = ['$', ...result.testUrls.map(toTestPath)].join('\n');
-  const who = identity.isMaster
+  const who = identity.fallbackReason
     ? `the otto-bot master account (${identity.fallbackReason})`
     : `${identity.name}'s credentials`;
   const warning = quality.ok

@@ -180,7 +180,7 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
       sha = await steps.commitAndPush({
         workDir,
         branch,
-        message: buildCommitMessage({ ticket, result, redact }),
+        message: buildCommitMessage({ ticket, result, runId, redact }),
         gitName: identity.creds.gitName,
         gitEmail: identity.creds.gitEmail,
         env: gitEnv,
@@ -193,7 +193,7 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
     try {
       if (existing) {
         await gh.updatePr(existing.number, { title, body });
-        await gh.commentOnPr(existing.number, `🤖 otto-bot pushed \`${sha}\` from run \`${runId}\`.`);
+        await gh.commentOnPr(existing.number, `Pushed new changes (\`${sha.slice(0, 7)}\`).`);
         return { ...outcome, sha, prUrl: existing.html_url, prNumber: existing.number, reusedPr: true };
       }
       const pr = await gh.createDraftPr({ title, body, head: branch, base: config.baseBranch });

@@ -13,11 +13,15 @@ export function resolveIdentity(users, assignee) {
   if (entry) {
     return { name: assignee, slug: identitySlug(assignee, false), isMaster: false, creds: entry, fallbackReason: null };
   }
+  const assigneeIsMaster = Boolean(assignee) && assignee === users.master.jiraUser;
+  let fallbackReason = null;
+  if (!assigneeIsMaster)
+    fallbackReason = assignee ? `assignee ${assignee} is not onboarded` : 'the ticket is unassigned';
   return {
     name: users.master.jiraUser,
     slug: identitySlug('master', true),
     isMaster: true,
     creds: users.master,
-    fallbackReason: assignee ? `assignee ${assignee} is not onboarded` : 'the ticket is unassigned',
+    fallbackReason,
   };
 }

@@ -53,7 +53,6 @@ export async function recover({ config, users, log, deps: overrides = {} }) {
   const redact = createRedactor(secrets);
   log.warn('recovering interrupted run', current);
   const jira = masterJira(config, users, deps);
-  const { runDir } = runPaths(config.dataDir, current.runId);
   const issue = await jira.getIssue(current.key);
   const labels = issue?.fields?.labels || [];
   if (!labels.includes(LABELS.working)) {
@@ -61,7 +60,7 @@ export async function recover({ config, users, log, deps: overrides = {} }) {
     await clearCurrentRun(stateDir);
     return false;
   }
-  await jira.addComment(current.key, redact(buildInterruptedComment({ runId: current.runId, logDir: runDir })));
+  await jira.addComment(current.key, redact(buildInterruptedComment({ runId: current.runId })));
   await jira.updateLabels(current.key, { remove: [LABELS.working], add: [LABELS.failed] });
   await appendHistory(stateDir, {
     ...current,
@@ -109,7 +108,7 @@ export async function processTicket({ issue, config, users, log, deps: overrides
   await fs.mkdir(runDir, { recursive: true });
   log.attachFile(path.join(runDir, 'otto.log'));
   await jira
-    .addComment(ticket.key, redact(buildPickupComment({ identity, runId })))
+    .addComment(ticket.key, redact(buildPickupComment()))
     .catch((err) => log.warn('pickup comment failed', { error: err.message }));
 
   let outcome;
@@ -123,7 +122,7 @@ export async function processTicket({ issue, config, users, log, deps: overrides
   let summary;
   if (outcome) {
     const preview = previewUrl(outcome.branch, { owner: config.githubOwner, repo: config.githubRepo });
-    await jira.addComment(ticket.key, redact(buildDoneComment({ outcome, preview, runId })));
+    await jira.addComment(ticket.key, redact(buildDoneComment({ outcome, preview })));
     await jira.updateLabels(ticket.key, { remove: [LABELS.working], add: [LABELS.done] });
     summary = { ...base, outcome: 'done', prUrl: outcome.prUrl };
   } else {
@@ -134,7 +133,6 @@ export async function processTicket({ issue, config, users, log, deps: overrides
       message: failure.message,
       details: failure.details || '',
       runId,
-      logDir: runDir,
     });
     await jira.addComment(ticket.key, redact(comment));
     await jira.updateLabels(ticket.key, { remove: [LABELS.working], add: [LABELS.failed] });

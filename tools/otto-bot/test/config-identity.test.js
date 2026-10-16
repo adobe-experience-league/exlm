@@ -105,6 +105,14 @@ test('resolveIdentity falls back to master for unknown or missing assignees', ()
   assert.equal(resolveIdentity(usersFixture(), null).fallbackReason, 'the ticket is unassigned');
 });
 
+test('resolveIdentity treats the master account as the assignee, not a fallback', () => {
+  const users = usersFixture();
+  const id = resolveIdentity(users, users.master.jiraUser);
+  assert.equal(id.isMaster, true);
+  assert.equal(id.slug, 'master');
+  assert.equal(id.fallbackReason, null);
+});
+
 test('identitySlug sanitizes names and never collides with master', () => {
   assert.equal(identitySlug('John.Doe@corp', false), 'user-john.doe_corp');
   assert.equal(identitySlug('master', false), 'user-master');

@@ -186,6 +186,11 @@ test('buildCommitMessage includes the ticket, summary, and Copilot trailer', () 
   assert.ok(msg.trimEnd().endsWith(COAUTHOR_TRAILER));
 });
 
+test('buildCommitMessage tags otto commits with an Otto-Run trailer', () => {
+  const msg = buildCommitMessage({ ticket, result, runId: '20261016-084012-exlm-1234' });
+  assert.ok(msg.trimEnd().endsWith(`Otto-Run: 20261016-084012-exlm-1234\n${COAUTHOR_TRAILER}`));
+});
+
 test('buildCommitMessage redacts ticket and result text', () => {
   const msg = buildCommitMessage({
     ticket: { key: 'EXLM-1234', summary: 'Fix SECRET-XYZ' },
