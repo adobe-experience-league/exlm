@@ -429,6 +429,7 @@ class VisualOverlay {
 
     const component = this.getComponentName();
     if (!component) {
+      // eslint-disable-next-line no-console -- Report missing component names when creating the debug overlay.
       console.error('No component name found');
       return container;
     }
