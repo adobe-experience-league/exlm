@@ -312,6 +312,7 @@
   --non-spectrum-grey: #4a4a4a;
   --non-spectrum-grey-updated: #6e6e6e;
   --non-spectrum-link: #0268e3;
+  --non-spectrum-custom-cta-blue: var(--link-color);
   --non-spectrum-navy-blue: #1473e6;
   --non-spectrum-dark-navy-blue: #0265dc;
   --non-spectrum-navy-blue-alpha: rgb(20 115 230 / 25%);
@@ -976,9 +977,9 @@ picture[align="right"] {
 }
 
 .exl-toast .exl-toast-icon {
-  cursor: pointer;
   height: 18px;
   padding: 5px;
+  pointer-events: none;
   width: 18px;
   vertical-align: middle;
 }

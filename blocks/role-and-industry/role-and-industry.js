@@ -1,6 +1,6 @@
 import { fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { sendNotice } from '../../scripts/toast/toast.js';
+import { sendNotice, sendProfileSaveError } from '../../scripts/toast/toast.js';
 import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { fetchIndustryOptions } from '../../scripts/profile/profile.js';
@@ -18,8 +18,6 @@ try {
 }
 
 const PROFILE_UPDATED = placeholders?.profileUpdated || 'Your profile changes have been saved!';
-const PROFILE_NOT_UPDATED =
-  placeholders?.profileNotUpdated || 'An error occurred during profile update. Please try again at a later time.';
 const SELECT_ROLE = placeholders?.selectRole || 'Select this role';
 const FORM_ERROR = placeholders?.formFieldGroupError || 'Please select at least one option.';
 
@@ -138,7 +136,7 @@ async function decorateContent(block) {
           sendNotice(PROFILE_UPDATED);
           profileEventEmitter.emit('profileDataUpdated');
         })
-        .catch(() => sendNotice(PROFILE_NOT_UPDATED, 'error'));
+        .catch(() => sendProfileSaveError());
     });
 
     const profileData = await defaultProfileClient.getMergedProfile();
@@ -179,7 +177,7 @@ async function decorateContent(block) {
           sendNotice(PROFILE_UPDATED);
           profileEventEmitter.emit('profileDataUpdated');
         })
-        .catch(() => sendNotice(PROFILE_NOT_UPDATED, 'error'));
+        .catch(() => sendProfileSaveError());
     };
 
     block.querySelectorAll('.role-cards-item').forEach((card) => {

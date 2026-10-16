@@ -16,6 +16,7 @@ import {
   debounce,
   generateAdobeTrackingData,
   resolveBlockLevelSkeleton,
+  revealResultList,
   normalizeContentTypeFilterValue,
 } from './components/atomic-search-utils.js';
 import { isMobile } from '../header/header-utils.js';
@@ -197,8 +198,10 @@ export default function decorate(block) {
       atomicResultPageHandler(block.querySelector('atomic-results-per-page'));
     };
 
+    // Wait for components we actually mount. Atomic 3.60+ lazy-registers CE definitions;
+    // we use atomic-folded-result-list (not atomic-result-list), so waiting on the latter hangs forever.
     Promise.all([
-      customElements.whenDefined('atomic-result-list'),
+      customElements.whenDefined('atomic-folded-result-list'),
       customElements.whenDefined('atomic-result'),
       customElements.whenDefined('atomic-result-multi-value-text'),
       customElements.whenDefined('atomic-search-box'),
@@ -207,11 +210,18 @@ export default function decorate(block) {
       customElements.whenDefined('atomic-breadbox'),
       customElements.whenDefined('atomic-pager'),
       customElements.whenDefined('atomic-no-results'),
-      customElements.whenDefined('atomic-search-box'),
       customElements.whenDefined('atomic-results-per-page'),
       customElements.whenDefined('atomic-notifications'),
     ]).then(() => {
       atomicNoResultHandler(block, placeholders);
+      // Register before commonActionHandler — facet init can fire FACET_LOADED synchronously.
+      document.addEventListener(
+        CUSTOM_EVENTS.FACET_LOADED,
+        () => {
+          resolveBlockLevelSkeleton(block);
+        },
+        { once: true },
+      );
       commonActionHandler();
       decorateIcons(block);
       let eventFiredOnPageLoad = false;
@@ -265,14 +275,6 @@ export default function decorate(block) {
         filters: placeholders.searchFiltersLabel || 'Filters',
       });
 
-      document.addEventListener(
-        CUSTOM_EVENTS.FACET_LOADED,
-        () => {
-          resolveBlockLevelSkeleton(block);
-        },
-        { once: true },
-      );
-
       const trackingHandler = (event) => {
         const isResizeAction = event?.detail?.callFrom === 'resize';
         if (isResizeAction) {
@@ -301,6 +303,7 @@ export default function decorate(block) {
         if (skeleton) {
           block.removeChild(skeleton);
         }
+        revealResultList(block);
         const baseSummaryQueryEl = block.querySelector('atomic-query-summary');
         if (baseSummaryQueryEl) {
           baseSummaryQueryEl.dataset.observed = '';
@@ -309,7 +312,11 @@ export default function decorate(block) {
       });
 
       document.addEventListener(CUSTOM_EVENTS.RESULT_FOUND, () => {
-        if (!block.querySelector('.atomic-search-load-skeleton')) {
+        // Restore the page shimmer only when returning from no-results with an empty list.
+        // Re-covering a list that is already painting stacked skeletons and caused flicker.
+        const list = block.querySelector('atomic-folded-result-list');
+        const hasResults = (list?.shadowRoot?.querySelectorAll('atomic-result').length || 0) > 0;
+        if (!block.querySelector('.atomic-search-load-skeleton') && !hasResults) {
           renderAtomicShimmer(true);
         }
         setTimeout(() => {

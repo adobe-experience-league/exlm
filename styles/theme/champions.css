@@ -75,6 +75,16 @@ body.champions :is(.grid-card-description, .grid-cards-description) h6 {
   font-weight: var(--font-weight-bold);
 }
 
+body.champions :is(.grid-cards-title, .grid-card-title).h2,
+body.champions :is(.grid-cards-title, .grid-card-title).h3,
+body.champions :is(.grid-cards-title, .grid-card-title).h4,
+body.champions :is(.grid-cards-title, .grid-card-title).h5,
+body.champions :is(.grid-cards-title, .grid-card-title).h6 {
+  &.lg-title {
+    font-size: var(--exlm-font-size-h1);
+  }
+}
+
 body.champions .grid-cards.minimal .grid-card:not(:has(.grid-card-cta)) {
   height: 160px;
   min-height: 160px;

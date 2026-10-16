@@ -1,7 +1,7 @@
 import { assetInteractionModel } from '../../../scripts/analytics/lib-analytics.js';
 import { defaultProfileClient, isSignedInUser } from '../../../scripts/auth/profile.js';
 import { createPlaceholderSpan, fetchLanguagePlaceholders, getPathDetails } from '../../../scripts/scripts.js';
-import { sendNotice } from '../../../scripts/toast/toast.js';
+import { sendNotice, sendProfileSaveError } from '../../../scripts/toast/toast.js';
 
 const placeholdersPromise = fetchLanguagePlaceholders();
 
@@ -102,6 +102,7 @@ export async function bookmark(event) {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error updating playlist bookmark:', error);
+    sendProfileSaveError();
     return false;
   }
   const placeholders = await placeholdersPromise;
