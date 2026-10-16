@@ -12,6 +12,7 @@ import { StageError } from './errors.js';
 import { cleanupRuns } from './housekeeping.js';
 import { resolveIdentity } from './identity.js';
 import { createJiraClient, JiraError, toTicket } from './jira.js';
+import { createNotifier } from './notify.js';
 import { dataPaths, runPaths } from './paths.js';
 import { createRedactor } from './redact.js';
 import { previewUrl, runTicket } from './runner.js';
@@ -30,6 +31,8 @@ export function makeRunId(key, now = new Date()) {
   const stamp = now.toISOString().replace(/[-:]/g, '').replace('T', '-').slice(0, 15);
   return `${stamp}-${key.toLowerCase()}`;
 }
+
+const notifierFor = ({ config, log, redact, deps }) => deps.notify || createNotifier({ config, log, redact });
 
 const masterJira = (config, users, deps) =>
   deps.createJiraClient({ baseUrl: config.jiraBaseUrl, token: users.master.jiraPat });
@@ -62,6 +65,11 @@ export async function recover({ config, users, log, deps: overrides = {} }) {
   }
   await jira.addComment(current.key, redact(buildInterruptedComment({ runId: current.runId })));
   await jira.updateLabels(current.key, { remove: [LABELS.working], add: [LABELS.failed] });
+  await notifierFor({ config, log, redact, deps })('failed', {
+    ticket: toTicket({ ...issue, key: current.key }),
+    identity: resolveIdentity(users, current.identity),
+    stage: 'interrupted',
+  });
   await appendHistory(stateDir, {
     ...current,
     outcome: 'failed',
@@ -83,6 +91,7 @@ export async function processTicket({ issue, config, users, log, deps: overrides
   const { runDir } = runPaths(config.dataDir, runId);
   const jira = deps.createJiraClient({ baseUrl: config.jiraBaseUrl, token: identity.creds.jiraPat });
   const base = { key: ticket.key, runId };
+  const notify = notifierFor({ config, log, redact, deps });
   log.info('claiming ticket', { ...base, identity: identity.name });
   await writeCurrentRun(stateDir, { ...base, identity: identity.name, startedAt: deps.now().toISOString() });
 
@@ -110,6 +119,7 @@ export async function processTicket({ issue, config, users, log, deps: overrides
   await jira
     .addComment(ticket.key, redact(buildPickupComment()))
     .catch((err) => log.warn('pickup comment failed', { error: err.message }));
+  await notify('picked-up', { ticket, identity });
 
   let outcome;
   let failure;
@@ -124,6 +134,7 @@ export async function processTicket({ issue, config, users, log, deps: overrides
     const preview = previewUrl(outcome.branch, { owner: config.githubOwner, repo: config.githubRepo });
     await jira.addComment(ticket.key, redact(buildDoneComment({ outcome, preview })));
     await jira.updateLabels(ticket.key, { remove: [LABELS.working], add: [LABELS.done] });
+    await notify('done', { ticket, identity, outcome });
     summary = { ...base, outcome: 'done', prUrl: outcome.prUrl };
   } else {
     const stage = failure instanceof StageError ? failure.stage : 'internal';
@@ -136,6 +147,7 @@ export async function processTicket({ issue, config, users, log, deps: overrides
     });
     await jira.addComment(ticket.key, redact(comment));
     await jira.updateLabels(ticket.key, { remove: [LABELS.working], add: [LABELS.failed] });
+    await notify('failed', { ticket, identity, stage, reason: failure.message });
     summary = { ...base, outcome: 'failed', stage };
   }
   await appendHistory(stateDir, { ...summary, finishedAt: deps.now().toISOString() });

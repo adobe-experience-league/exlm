@@ -46,6 +46,26 @@ test('users add/list/remove works before any identity exists', async () => {
   assert.equal(await main(['users', 'add'], opts), 2);
 });
 
+test('users add sends a Slack welcome when a webhook is configured', async () => {
+  const { opts, out, configDir, dataDir } = await cliEnv();
+  const sent = [];
+  const notify = async (event, data) => {
+    sent.push({ event, data });
+    return true;
+  };
+  await main(['users', 'add', '--master'], { ...opts, deps: { notify } });
+  assert.equal(sent.length, 0, 'no webhook configured yet');
+  await fs.writeFile(
+    path.join(configDir, 'config.json'),
+    JSON.stringify({ dataDir, slackWebhookUrl: 'https://hooks.slack.com/triggers/x' }),
+  );
+  await main(['users', 'add', 'jdoe'], { ...opts, deps: { notify } });
+  assert.deepEqual(sent, [{ event: 'welcome', data: { name: 'jdoe', email: 'otto@example.com' } }]);
+  assert.equal(await main(['notify-test'], { ...opts, deps: { notify } }), 0);
+  assert.equal(sent[1].data.name, 'otto-master');
+  assert.ok(out.includes('Test message sent to Slack.'));
+});
+
 test('status shows the current run and recent history', async () => {
   const { opts, out, dataDir } = await cliEnv();
   await main(['users', 'add', '--master'], opts);

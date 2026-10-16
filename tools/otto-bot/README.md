@@ -51,6 +51,17 @@ Usage:
   otto users add --master            Set the master (fallback) account
   otto users list | remove <name>    List or remove onboarded teammates
   otto status                        Show the current run and recent history
+  otto notify-test                   Send a test Slack message (needs slackWebhookUrl in config.json)
 ```
 
 Configuration defaults are documented in `config.example.json`. The example intentionally contains no PATs or tokens; user credentials are stored separately by `otto users add`.
+
+## Slack notifications
+
+otto-bot posts to a Slack channel through a Workflow Builder webhook when a ticket is picked up, a draft PR is ready, a run fails or is interrupted, and when someone is onboarded with `otto users add`. Notifications are best-effort: a Slack problem is logged as a warning and never fails a ticket.
+
+1. In Slack, create a workflow that starts **From a webhook** with these **Text** variables: `status`, `ticket`, `message`, `jira_link`, `pr_link`, and a **Slack user email** variable `owner`. Use `jira_link` and `pr_link` for the message's buttons and `owner` as a mention.
+2. Publish it and put the webhook URL in `/home/otto/.config/otto-bot/config.json` as `"slackWebhookUrl"`. Treat the URL as a secret; otto-bot redacts it from its logs.
+3. Run `otto notify-test`.
+
+`owner` is the Git author email saved for the identity otto-bot acted as, so it must match that person's Slack account. Both links are always real `https://` URLs; when there is no PR yet, `pr_link` is a GitHub search for the ticket's branch.

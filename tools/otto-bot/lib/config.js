@@ -18,6 +18,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   repairTimeoutMinutes: 10,
   maxRepairs: 3,
   runRetentionDays: 14,
+  slackWebhookUrl: '',
   protectedPaths: [
     '.github/**',
     'scripts/lib-franklin.js',

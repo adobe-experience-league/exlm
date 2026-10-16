@@ -70,6 +70,15 @@ function fakeJira({ found = null, claimError = null, issueLabels = [LABELS.worki
   };
 }
 
+function fakeNotify() {
+  const sent = [];
+  const notify = async (event, data) => {
+    sent.push({ event, data });
+    return true;
+  };
+  return { notify, sent };
+}
+
 async function setup() {
   const config = { ...DEFAULT_CONFIG, dataDir: await tempDir() };
   return { config, stateDir: path.join(config.dataDir, 'state') };
@@ -136,6 +145,52 @@ test('processTicket falls back to master for unassigned tickets', async () => {
   });
   assert.ok(jira.labels().every((c) => c.token === 'master-jira-pat'));
   assert.ok(jira.comments()[0].body.startsWith('Picking this up now.'));
+});
+
+test('processTicket notifies Slack on pickup and done, and on failure', async () => {
+  const { config } = await setup();
+  const ok = fakeNotify();
+  await processTicket({
+    issue: issue(),
+    config,
+    users,
+    log: silentLog(),
+    deps: {
+      createJiraClient: fakeJira().createJiraClient,
+      now: () => NOW,
+      runTicket: async () => outcome,
+      notify: ok.notify,
+    },
+  });
+  assert.deepEqual(
+    ok.sent.map((s) => s.event),
+    ['picked-up', 'done'],
+  );
+  assert.equal(ok.sent[0].data.identity.creds.gitEmail, 'j@example.com');
+  assert.equal(ok.sent[1].data.outcome.prUrl, outcome.prUrl);
+
+  const bad = fakeNotify();
+  await processTicket({
+    issue: issue(),
+    config,
+    users,
+    log: silentLog(),
+    deps: {
+      createJiraClient: fakeJira().createJiraClient,
+      now: () => NOW,
+      runTicket: async () => {
+        throw new StageError('push', 'git push failed');
+      },
+      notify: bad.notify,
+    },
+  });
+  assert.deepEqual(
+    bad.sent.map((s) => [s.event, s.data.stage, s.data.reason]),
+    [
+      ['picked-up', undefined, undefined],
+      ['failed', 'push', 'git push failed'],
+    ],
+  );
 });
 
 test('stage failures mark the ticket failed with a redacted reason', async () => {
@@ -244,10 +299,19 @@ test('recover marks an interrupted run failed using master', async () => {
   );
   const secretRunId = 'r-master-jira-pat';
   await writeCurrentRun(stateDir, { key: 'EXLM-1234', runId: secretRunId, identity: 'jdoe' });
+  const slack = fakeNotify();
   assert.equal(
-    await recover({ config, users, log: silentLog(), deps: { createJiraClient: jira.createJiraClient } }),
+    await recover({
+      config,
+      users,
+      log: silentLog(),
+      deps: { createJiraClient: jira.createJiraClient, notify: slack.notify },
+    }),
     true,
   );
+  assert.equal(slack.sent[0].event, 'failed');
+  assert.equal(slack.sent[0].data.stage, 'interrupted');
+  assert.equal(slack.sent[0].data.identity.creds.gitEmail, 'j@example.com');
   assert.deepEqual(jira.labels()[0], {
     token: 'master-jira-pat',
     op: 'labels',

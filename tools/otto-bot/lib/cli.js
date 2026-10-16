@@ -1,10 +1,12 @@
+import fs from 'node:fs/promises';
 import path from 'node:path';
-import { allSecrets, defaultConfigDir, loadConfig } from './config.js';
+import { DEFAULT_CONFIG, allSecrets, defaultConfigDir, loadConfig, readUsersFile } from './config.js';
 import { doctorOk, formatDoctor, runDoctor } from './doctor.js';
 import { resolveIdentity } from './identity.js';
 import { createJiraClient, toTicket } from './jira.js';
 import { makeRunId, processTicket, tick } from './lifecycle.js';
 import { createLogger } from './log.js';
+import { createNotifier } from './notify.js';
 import { dataPaths } from './paths.js';
 import { ask as promptAsk } from './prompt.js';
 import { createRedactor } from './redact.js';
@@ -19,15 +21,34 @@ const USAGE = `Usage:
   otto users add <jira-username>     Onboard a teammate (prompts for tokens)
   otto users add --master            Set the master (fallback) account
   otto users list | remove <name>    List or remove onboarded teammates
-  otto status                        Show the current run and recent history`;
+  otto status                        Show the current run and recent history
+  otto notify-test                   Send a test Slack message (needs slackWebhookUrl in config.json)`;
 
 const KEY_RE = /^[A-Z][A-Z0-9]+-\d+$/;
 
-async function usersCommand([sub, name], { usersPath, out, ask }) {
+async function readConfigFile(configDir) {
+  try {
+    return { ...DEFAULT_CONFIG, ...JSON.parse(await fs.readFile(path.join(configDir, 'config.json'), 'utf8')) };
+  } catch {
+    return null;
+  }
+}
+
+async function sendWelcome({ configDir, usersPath, name, isMaster, log, deps }) {
+  const config = await readConfigFile(configDir);
+  if (!config?.slackWebhookUrl) return;
+  const users = await readUsersFile(usersPath);
+  const entry = isMaster ? users.master : users.users?.[name];
+  const notify = deps.notify || createNotifier({ config, log, redact: createRedactor(allSecrets(users)) });
+  await notify('welcome', { name: isMaster ? entry.jiraUser : name, email: entry.gitEmail });
+}
+
+async function usersCommand([sub, name], { usersPath, configDir, out, ask, log, deps }) {
   if (sub === 'add' && name) {
     const isMaster = name === '--master';
     await addUser({ usersPath, name: isMaster ? 'master' : name, isMaster, ask });
     out(`Saved ${isMaster ? 'master account' : name} to ${usersPath}. Run "otto doctor" next.`);
+    await sendWelcome({ configDir, usersPath, name, isMaster, log, deps });
     return 0;
   }
   if (sub === 'remove' && name) {
@@ -111,14 +132,17 @@ export async function main(argv, { env = process.env, out = console.log, ask = p
       out(USAGE);
       return 0;
     }
-    if (command === 'users') return await usersCommand(rest, { usersPath, out, ask });
-    if (!['tick', 'run', 'doctor', 'status'].includes(command)) {
+    if (command === 'users') return await usersCommand(rest, { usersPath, configDir, out, ask, log, deps });
+    if (!['tick', 'run', 'doctor', 'status', 'notify-test'].includes(command)) {
       out(USAGE);
       return 2;
     }
 
     const loaded = await loadConfig(configDir);
-    log = createLogger({ redact: createRedactor(allSecrets(loaded.users)), write: deps.write });
+    log = createLogger({
+      redact: createRedactor([...allSecrets(loaded.users), loaded.config.slackWebhookUrl].filter(Boolean)),
+      write: deps.write,
+    });
     switch (command) {
       case 'tick': {
         const result = await tick({ config: loaded.config, users: loaded.users, log, deps });
@@ -131,6 +155,20 @@ export async function main(argv, { env = process.env, out = console.log, ask = p
         const results = await runDoctor({ config: loaded.config, users: loaded.users, deps });
         out(createRedactor(allSecrets(loaded.users))(formatDoctor(results)));
         return doctorOk(results) ? 0 : 1;
+      }
+      case 'notify-test': {
+        if (!loaded.config.slackWebhookUrl) {
+          out('slackWebhookUrl is not set in config.json; Slack notifications are off.');
+          return 1;
+        }
+        const redact = createRedactor(allSecrets(loaded.users));
+        const notify = deps.notify || createNotifier({ config: loaded.config, log, redact });
+        const sent = await notify('welcome', {
+          name: loaded.users.master.jiraUser,
+          email: loaded.users.master.gitEmail,
+        });
+        out(sent ? 'Test message sent to Slack.' : 'Slack message failed; see the warning above.');
+        return sent ? 0 : 1;
       }
       default:
         return await statusCommand({ config: loaded.config, out });
