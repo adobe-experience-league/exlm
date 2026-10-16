@@ -219,3 +219,30 @@ test('commitAndPush commits as the identity and force-pushes the branch', async 
     'Jane Doe <jdoe@example.com>',
   );
 });
+
+test('commitAndPush skips repo git hooks (e.g. husky pre-push)', async () => {
+  const remote = await makeRemote();
+  const root = await tempDir();
+  const mirrorDir = path.join(root, 'mirror.git');
+  const workDir = path.join(root, 'work');
+  await ensureMirror({ mirrorDir, remoteUrl: remote.bare });
+  await createWorktree({ mirrorDir, workDir, branch: 'exlm-77', baseBranch: 'main' });
+  const hooksDir = path.join(root, 'hooks');
+  await fs.mkdir(hooksDir);
+  for (const hook of ['pre-commit', 'pre-push']) {
+    // eslint-disable-next-line no-await-in-loop -- two tiny sequential writes
+    await fs.writeFile(path.join(hooksDir, hook), '#!/bin/sh\nexit 1\n', { mode: 0o755 });
+  }
+  await git(workDir, 'config', 'core.hooksPath', hooksDir);
+  await fs.writeFile(path.join(workDir, 'fix.js'), 'export default 2;\n');
+  await git(workDir, 'add', '-A');
+
+  const sha = await commitAndPush({
+    workDir,
+    branch: 'exlm-77',
+    message: buildCommitMessage({ ticket, result }),
+    gitName: 'Jane Doe',
+    gitEmail: 'jdoe@example.com',
+  });
+  assert.equal(await gitBare(remote.bare, 'rev-parse', 'refs/heads/exlm-77'), sha);
+});

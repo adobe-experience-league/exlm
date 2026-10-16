@@ -141,7 +141,7 @@ export async function commitAndPush({
 
   const identity = ['-c', `user.name=${gitName}`, '-c', `user.email=${gitEmail}`];
   await step('commit', [...identity, 'commit', '--no-verify', '-F', '-'], message);
-  await step('push', ['push', '--force', 'origin', `HEAD:refs/heads/${branch}`]);
+  await step('push', ['push', '--no-verify', '--force', 'origin', `HEAD:refs/heads/${branch}`]);
   return step('rev-parse', ['rev-parse', 'HEAD']);
 }
 
