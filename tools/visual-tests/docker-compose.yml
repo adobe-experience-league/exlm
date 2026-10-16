@@ -1,0 +1,17 @@
+services:
+  playwright:
+    build:
+      context: ../..
+      dockerfile: tools/visual-tests/Dockerfile
+    environment:
+      - DOCKER=true
+      - BASE_URL=http://localhost:3000
+    volumes:
+      # Mount the whole visual-tests folder (specs, baselines, HARs, config, helpers, reports)
+      # so edits on the host are picked up without rebuilding the image, and baselines,
+      # failure diffs and the HTML report persist after --rm deletes the container.
+      - ./:/app/tools/visual-tests
+    extra_hosts:
+      # Allow container to reach the host's aem dev server (Linux compatibility)
+      - 'host.docker.internal:host-gateway'
+    command: npx playwright test --config=tools/visual-tests/playwright.config.ts
