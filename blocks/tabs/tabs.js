@@ -2,18 +2,50 @@ import { loadBlocks } from '../../scripts/lib-franklin.js';
 import { createTag } from '../../scripts/scripts.js';
 import { moveInstrumentation } from '../../scripts/utils/ue-utils.js';
 
+function activateTab(tab, moveFocus = false) {
+  const tabList = tab.parentNode;
+  const tabContent = tabList.nextElementSibling;
+
+  tabList.querySelectorAll('[role="tab"]').forEach((otherTab) => {
+    const selected = otherTab === tab;
+    otherTab.setAttribute('aria-selected', selected);
+    otherTab.tabIndex = selected ? 0 : -1;
+  });
+
+  tabContent.querySelectorAll('[role="tabpanel"]').forEach((panel) => panel.classList.remove('active'));
+  tabContent.querySelector(`#${tab.getAttribute('aria-controls')}`).classList.add('active');
+
+  if (moveFocus) tab.focus();
+}
+
 function changeTabs(e) {
-  const { target } = e;
-  const tabMenu = target.parentNode;
-  const tabContent = tabMenu.nextElementSibling;
+  activateTab(e.currentTarget);
+}
 
-  tabMenu.querySelectorAll('[aria-selected="true"]').forEach((t) => t.setAttribute('aria-selected', false));
+function navigateTabs(e) {
+  const tabs = [...e.currentTarget.parentNode.querySelectorAll('[role="tab"]')];
+  const currentIndex = tabs.indexOf(e.currentTarget);
+  let nextIndex;
 
-  target.setAttribute('aria-selected', true);
+  switch (e.key) {
+    case 'ArrowRight':
+      nextIndex = (currentIndex + 1) % tabs.length;
+      break;
+    case 'ArrowLeft':
+      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+      break;
+    case 'Home':
+      nextIndex = 0;
+      break;
+    case 'End':
+      nextIndex = tabs.length - 1;
+      break;
+    default:
+      return;
+  }
 
-  tabContent.querySelectorAll('[role="tabpanel"]').forEach((p) => p.classList.remove('active'));
-
-  tabContent.parentNode.querySelector(`#${target.getAttribute('aria-controls')}`).classList.add('active');
+  e.preventDefault();
+  activateTab(tabs[nextIndex], true);
 }
 
 function initTabs(block) {
@@ -21,6 +53,7 @@ function initTabs(block) {
 
   tabs.forEach((tab) => {
     tab.addEventListener('click', changeTabs);
+    tab.addEventListener('keydown', navigateTabs);
   });
 }
 
@@ -70,7 +103,7 @@ export default async function decorate(block) {
       role: 'tab',
       class: 'tab-title',
       id: `tab-${initCount}-${i}`,
-      tabindex: i > 0 ? '0' : '-1',
+      tabindex: i === 0 ? '0' : '-1',
       'aria-selected': i === 0 ? 'true' : 'false',
       'aria-controls': `tab-panel-${initCount}-${i}`,
       'aria-label': name,
