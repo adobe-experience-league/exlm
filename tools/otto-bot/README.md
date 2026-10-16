@@ -12,6 +12,7 @@ Add the `otto` label to an EXLM Jira ticket and otto-bot opens a **draft** PR wr
 **Retry:** remove `otto-failed`, then add `otto` again. The same `exlm-1234` branch and PR are reused.
 
 otto-bot acts as the ticket's **assignee** if they are onboarded, otherwise as the master account.
+Copilot gets the ticket summary, description, and the latest human comments (up to 20, ~20k chars; otto's own comments are skipped). Attachments are not read, so copy anything important from a PDF or screenshot into the description or a comment.
 Every otto-bot commit carries an `Otto-Run: <run id>` trailer; list them with `git log --grep '^Otto-Run:'`.
 Design: [`docs/superpowers/specs/2026-10-14-otto-bot-design.md`](../../docs/superpowers/specs/2026-10-14-otto-bot-design.md).
 

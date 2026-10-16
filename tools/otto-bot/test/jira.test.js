@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createJiraClient, issueUrl, JiraError, toTicket } from '../lib/jira.js';
+import { createJiraClient, issueUrl, JiraError, selectComments, toTicket } from '../lib/jira.js';
 import { fakeFetch, jsonResponse } from './helpers.js';
 
 const issue = {
@@ -66,8 +66,60 @@ test('toTicket maps Jira fields', () => {
     labels: ['otto'],
     type: 'Bug',
     components: ['Blocks'],
+    comments: [],
   });
   assert.equal(toTicket({ key: 'EXLM-1', fields: {} }).assignee, null);
+});
+
+test('getIssue requests comments', async () => {
+  const fetch = fakeFetch(() => jsonResponse(issue));
+  const jira = createJiraClient({ baseUrl: 'https://jira.example.com', token: 't', fetchImpl: fetch.impl });
+  await jira.getIssue('EXLM-1234');
+  assert.ok(new URL(fetch.calls[0].url).searchParams.get('fields').split(',').includes('comment'));
+});
+
+test('toTicket keeps human comments and drops otto comments', () => {
+  const withComments = {
+    ...issue,
+    fields: {
+      ...issue.fields,
+      comment: {
+        comments: [
+          {
+            author: { displayName: 'Jane Doe', name: 'jdoe' },
+            created: '2026-10-01',
+            body: 'Use the PDF spec section 2.',
+          },
+          { author: { name: 'gsnair' }, body: "Picking this up now. I'll share a draft PR here once it's ready." },
+          { author: { name: 'gsnair' }, body: "I couldn't finish this one. It got stuck at the *push* step: boom" },
+          { author: { name: 'gsnair' }, body: 'Draft PR is up: [x|x]' },
+          { author: { name: 'otto' }, body: '🤖 otto-bot picked this up using the master account.' },
+          { author: { name: 'ruhis' }, body: '   ' },
+          { author: { name: 'ruhis' }, body: 'Also rename the helper.' },
+        ],
+      },
+    },
+  };
+  assert.deepEqual(toTicket(withComments).comments, [
+    { author: 'Jane Doe', created: '2026-10-01', body: 'Use the PDF spec section 2.' },
+    { author: 'ruhis', created: '', body: 'Also rename the helper.' },
+  ]);
+});
+
+test('selectComments enforces count, per-comment, and total limits', () => {
+  const raw = Array.from({ length: 5 }, (_, i) => ({ author: { name: `u${i}` }, body: `c${i}`.padEnd(10, 'x') }));
+  assert.deepEqual(
+    selectComments(raw, { count: 3, perComment: 100, total: 1000 }).map((c) => c.author),
+    ['u2', 'u3', 'u4'],
+  );
+  assert.deepEqual(
+    selectComments(raw, { count: 5, perComment: 100, total: 25 }).map((c) => c.author),
+    ['u3', 'u4'],
+  );
+  const [long] = selectComments([{ body: 'a'.repeat(50) }], { count: 5, perComment: 10, total: 1000 });
+  assert.ok(long.body.startsWith('a'.repeat(10)));
+  assert.ok(long.body.includes('[...truncated 40 chars]'));
+  assert.equal(long.author, 'Unknown');
 });
 
 test('issueUrl builds a browse link', () => {
