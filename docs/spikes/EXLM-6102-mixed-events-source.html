@@ -140,8 +140,9 @@
 
       <p>
         That recommendation is about product consistency and operational cost, not about blocking a short-term
-        experiment. The rest of this page explains what “mixed” would mean in practice, where it helps, and where it
-        creates uneven learner experiences.
+        experiment. The heaviest cost is filters, facets, pagination, and ranking: those only work cleanly on
+        <strong>one</strong> search catalog. Splitting Upcoming onto JSON forces us toward a custom merge/search layer
+        that largely recreates what Coveo already does — a poor trade for Events Hub and site search.
       </p>
 
       <hr />
@@ -263,6 +264,111 @@
 
       <hr />
 
+      <h2>Filters, facets, pagination, and ranking across two sources</h2>
+
+      <p>
+        This is the practical reason mixed source is a poor long-term choice — not just “more work,” but
+        <strong>rebuilding search behaviors Coveo already owns</strong> for
+        <a href="https://experienceleague.adobe.com/en/events">Events Hub</a> and
+        <a href="https://experienceleague.adobe.com/en/search">site search</a>.
+      </p>
+
+      <p>
+        Today, when someone filters by product, event type, or series, or moves to page 2 of results, or sorts by
+        relevance / date / popularity, <strong>one system</strong> answers all of that: which items match, how many
+        match per filter value, what order they appear in, and which slice is “page N.” Site search (Atomic) and Events
+        Hub both depend on that contract. The CDN JSON file has none of it — it is a flat list of Upcoming items.
+      </p>
+
+      <h3>What breaks if Upcoming and On-Demand come from different places</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>With one search source (today)</th>
+            <th>With mixed CDN + Coveo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Facets / filters</strong> (product, series, event type, and the same ideas on site search)</td>
+            <td>
+              Counts and available values come from the same query as the results. Checking “Workfront” means the list
+              and the numbers both move together.
+            </td>
+            <td>
+              Coveo can only count On-Demand (or whatever still lives in the index). Upcoming from JSON is invisible to
+              those facet counts unless we invent a second filter pass over the file and merge numbers by hand. Product
+              and series filters become unreliable or incomplete.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Pagination</strong> (“page 1 / 2 / 3,” results per page)</td>
+            <td>
+              The search engine returns a stable page of a single ranked list. Page 2 is simply the next slice of that
+              list.
+            </td>
+            <td>
+              There is no honest “page 2” across two backends. Do we take 10 from Coveo and ignore JSON? Interleave
+              them? Prefetch both catalogs into the browser and page locally? Any of those choices either lies about
+              totals, breaks deep links to page N, or forces us to load far more data than a page should.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Ranking and sort</strong> (relevance, date, popularity)</td>
+            <td>
+              One ranked list. Relevance and popularity are computed in search. Date rules for Upcoming vs On-Demand can
+              still sit on one result set.
+            </td>
+            <td>
+              You cannot meaningfully rank “best match” or “most popular” across a file and a search index without
+              copying ranking rules into our own code. Interleaving products or event types from two sources in a fair
+              order is a custom ranking problem — the same class of problem Coveo already solves.
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Keyword search</strong></td>
+            <td>One query string searches the whole events catalog (and, on site search, other content types too).</td>
+            <td>
+              Unless we also build search over JSON, keywords only hit On-Demand in Coveo. Upcoming drops out of search
+              while still appearing in unfiltered Hub views — a confusing product story.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Why “just merge in the UI” is not enough</h3>
+
+      <p>
+        It is tempting to think of mixed source as “fetch JSON, fetch Coveo, concatenate.” That only works for a short
+        static rail. The moment learners filter by product, change page, or search by keyword — which is exactly what
+        Events Hub and site search are for — concatenation is not a product design. It is the start of a
+        <strong>homemade search layer</strong>:
+      </p>
+
+      <ul>
+        <li>Combine two result sets into one ordered list</li>
+        <li>Recompute facet counts across both</li>
+        <li>Apply filters that Coveo already applied on one side and that we must re-apply on the JSON side</li>
+        <li>Invent pagination over the merged list (and keep URLs / back button behavior correct)</li>
+        <li>Decide how relevance or date order works when half the items never went through Coveo ranking</li>
+      </ul>
+
+      <p>
+        That is a large, ongoing uplift. It duplicates what Coveo (and our Atomic / Events Hub search experiences)
+        already do well. It is also fragile: every new filter, sort, or content rule has to be implemented twice — once
+        in Coveo, once in the merge layer — or the two halves of the catalog drift apart.
+      </p>
+
+      <p>
+        <strong>Bottom line:</strong> mixed source does not save us from search complexity. It pushes us to rebuild a
+        thinner, custom version of a search engine next to Coveo. That is redundant, expensive to maintain, and not an
+        optimal path for Events Hub or site search.
+      </p>
+
+      <hr />
+
       <h2>Trade-offs</h2>
 
       <h3>Where mixed source helps</h3>
@@ -287,7 +393,7 @@
           <strong>Events Hub stops being one catalog.</strong> Filters, result counts, keyword search, and page numbers
           only stay honest when both event types come from the same system. Mixing sources means the Hub has to invent
           counts and pages after the fact. Learners will see wrong totals, missing filter options, or empty results that
-          look like product bugs.
+          look like product bugs. (See the next section — this is the hard part, not a small UI tweak.)
         </li>
         <li>
           <strong>Keyword search becomes uneven.</strong> Typing in the Hub (or site search) can find On-Demand in Coveo
@@ -535,6 +641,14 @@
             <td>22 Oct 2026</td>
             <td>Nitin Rachabathuni</td>
             <td>Rewrote for wiki paste as business-facing documentation (less engineering process tone).</td>
+          </tr>
+          <tr>
+            <td>22 Oct 2026</td>
+            <td>Nitin Rachabathuni</td>
+            <td>
+              Added section on facets, pagination, and ranking across two sources — and why that implies a redundant
+              custom search layer.
+            </td>
           </tr>
         </tbody>
       </table>
