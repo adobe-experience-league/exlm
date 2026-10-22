@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Trade-offs for Mixed Events Source (EXLM-6102)</title>
+    <style>
+      /* Preview only — Confluence keeps structure (headings/tables/lists) on paste, not these styles */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        max-width: 920px;
+        margin: 24px auto;
+        padding: 0 16px 48px;
+        line-height: 1.45;
+        color: #172b4d;
+      }
+      h1 {
+        font-size: 1.75rem;
+        border-bottom: 1px solid #dfe1e6;
+        padding-bottom: 8px;
+      }
+      h2 {
+        font-size: 1.35rem;
+        margin-top: 1.75em;
+      }
+      h3 {
+        font-size: 1.1rem;
+        margin-top: 1.25em;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 12px 0 20px;
+        font-size: 0.92rem;
+      }
+      th,
+      td {
+        border: 1px solid #c1c7d0;
+        padding: 8px 10px;
+        vertical-align: top;
+        text-align: left;
+      }
+      th {
+        background: #f4f5f7;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: #f4f5f7;
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+      .callout {
+        border: 1px solid #ffbdad;
+        background: #ffebe6;
+        padding: 12px 14px;
+        margin: 16px 0;
+        border-radius: 3px;
+      }
+      .callout strong:first-child {
+        display: block;
+        margin-bottom: 6px;
+      }
+      .meta {
+        border: 1px solid #b3d4ff;
+        background: #deebff;
+        padding: 12px 14px;
+        margin: 16px 0;
+        border-radius: 3px;
+      }
+      .howto {
+        border: 1px solid #ffc400;
+        background: #fffae6;
+        padding: 12px 14px;
+        margin: 16px 0;
+        border-radius: 3px;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #dfe1e6;
+        margin: 28px 0;
+      }
+      ul {
+        padding-left: 1.35em;
+      }
+      ol {
+        padding-left: 1.35em;
+      }
+      a {
+        color: #0052cc;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HOW TO PASTE: select from the H1 below through the end of the doc (skip this yellow box), Copy, then Paste into the Confluence page editor. -->
+    <div class="howto">
+      <strong>How to put this on wiki.corp.adobe.com</strong>
+      <ol>
+        <li>Open this HTML file in Chrome/Safari.</li>
+        <li>
+          Select from the title <em>Trade-offs for Mixed Events Source</em> down to the revision history (do not include
+          this yellow box).
+        </li>
+        <li>Copy → open the Confluence page → Paste into the editor → Publish.</li>
+      </ol>
+      <p>
+        Do <strong>not</strong> paste the old <code>.txt</code> wiki markup or the <code>.md</code> file — Confluence
+        Cloud does not render those as formatted content.
+      </p>
+    </div>
+
+    <article id="wiki-body">
+      <h1>Trade-offs for Mixed Events Source</h1>
+
+      <div class="meta">
+        <p>
+          <strong>Ticket:</strong> <a href="https://jira.corp.adobe.com/browse/EXLM-6102">EXLM-6102</a> (Events V2
+          Post-MVP)
+        </p>
+        <p><strong>Author:</strong> Nitin Rachabathuni (Core Eng)</p>
+        <p><strong>Branch / baseline:</strong> <code>EXLM-6102</code> off <code>main</code> @ <code>56cafd76</code></p>
+        <p>
+          <strong>Preview (all-Coveo baseline):</strong>
+          <a href="https://exlm-6102--exlm--adobe-experience-league.aem.page/en/events?martech=off">Events Hub</a> ·
+          <a href="https://exlm-6102--exlm--adobe-experience-league.aem.page/en/search?martech=off">Site search</a>
+        </p>
+        <p>
+          <strong>Decision asked:</strong> Should ACS move forward with Upcoming from CDN/JSON and On-Demand from Coveo?
+        </p>
+      </div>
+
+      <hr />
+
+      <h2>1. What we were asked</h2>
+
+      <p>
+        PdM / Core want a clear read on the trade-offs if ACS starts treating the two event families as two different
+        backends:
+      </p>
+      <ul>
+        <li>
+          <strong>Upcoming Events</strong> → CDN JSON
+          (<code>https://cdn.experienceleague.adobe.com/thumb/upcoming-events.json</code>)
+        </li>
+        <li><strong>On-Demand Events</strong> → Coveo (same Search Hub we already use everywhere else)</li>
+      </ul>
+      <p>
+        The analysis has to cover <strong>Events Hub</strong>, <strong>regular Search</strong>, and the
+        <strong>rest of the site</strong> — not just the Events page in isolation.
+      </p>
+      <p>This page is the go / no-go write-up. It is <strong>not</strong> an implementation plan.</p>
+
+      <hr />
+
+      <h2>2. Executive recommendation</h2>
+
+      <div class="callout">
+        <strong>Recommendation</strong>
+        <p>
+          <strong>Do not</strong> move ACS (or EXLM consumers) to a mixed Upcoming=CDN / On-Demand=Coveo model as the
+          long-term architecture.
+        </p>
+        <p>
+          Keep <strong>Coveo as the single source of truth</strong> for both Upcoming (<code>Event|Upcoming Event</code
+          >) and On-Demand (<code>Event|On Demand Event</code>) on Events Hub, site search, browse, and V2 card rails.
+        </p>
+        <p>
+          Keep the CDN JSON feed only as a <strong>legacy / transitional</strong> path for blocks that still call the
+          old <code>upcoming-event</code> key — and plan to finish migrating those rails off it. Do
+          <strong>not</strong> re-expand CDN as the Upcoming source of truth.
+        </p>
+        <p>
+          <strong>Conditional exception</strong> (only if PdM insists on promo-window UX that Coveo cannot express
+          today): CDN may remain a <strong>secondary</strong> feed for a small “live now / promo window” strip, while
+          Hub + Search continue to read Upcoming from Coveo. That is a deliberate dual-write / dual-read cost, not a
+          simplification.
+        </p>
+      </div>
+
+      <p>
+        <strong>Why in one line:</strong> Events Hub already merges Upcoming + On-Demand in one Headless engine (facets,
+        counts, pagination, keyword, Tab analytics). Splitting Upcoming out of Coveo undoes that work and creates three
+        different truths across Hub, Search, and card rails.
+      </p>
+
+      <hr />
+
+      <h2>3. How things work today (code reality)</h2>
+
+      <p>
+        EXLM already has <strong>two</strong> Upcoming paths. Events V2 deliberately moved the important ones onto
+        Coveo. The mixed model ACS is asking about would reverse that on purpose.
+      </p>
+
+      <h3>3.1 Source-of-truth by surface</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Surface</th>
+            <th>Path / block</th>
+            <th>Upcoming today</th>
+            <th>On-Demand today</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Events Hub</strong></td>
+            <td><code>/{lang}/events</code> · <code>blocks/events-search</code></td>
+            <td><strong>Coveo Headless</strong></td>
+            <td><strong>Coveo Headless</strong></td>
+            <td>Tab <code>Events Hub</code>. Base aq: On-Demand <em>or</em> still-future Upcoming.</td>
+          </tr>
+          <tr>
+            <td><strong>Site search</strong></td>
+            <td><code>/{lang}/search</code> · <code>atomic-search</code></td>
+            <td><strong>Coveo Atomic</strong> (stale Upcoming excluded)</td>
+            <td><strong>Coveo Atomic</strong></td>
+            <td>Same Search Hub; Tab is <em>not</em> Events Hub.</td>
+          </tr>
+          <tr>
+            <td><strong>Browse filters</strong> (events theme + <code>isEventsV2</code>)</td>
+            <td><code>browse-filters</code></td>
+            <td><strong>Coveo Headless</strong></td>
+            <td><strong>Coveo Headless</strong></td>
+            <td>Uses <code>BASE_COVEO_ADVANCED_QUERY_EVENTS</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Upcoming Event v2</strong> rail</td>
+            <td><code>upcoming-event-v2</code></td>
+            <td><strong>Coveo REST</strong> via delegate</td>
+            <td>n/a</td>
+            <td><code>Event|Upcoming Event</code> + <code>el_event_start_time &gt;= now</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Legacy Upcoming</strong> rail</td>
+            <td><code>upcoming-event</code></td>
+            <td><strong>CDN JSON</strong></td>
+            <td>n/a</td>
+            <td>Mapping key <code>upcoming-event</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Events cards</strong></td>
+            <td><code>events-cards</code></td>
+            <td><strong>CDN JSON</strong></td>
+            <td>n/a</td>
+            <td>Same legacy key.</td>
+          </tr>
+          <tr>
+            <td><strong>Featured / curated / tabbed / recs</strong></td>
+            <td>various browse-card callers</td>
+            <td>Coveo when authored as <code>Event|Upcoming Event</code></td>
+            <td>Coveo when authored as <code>Event|On Demand Event</code></td>
+            <td>Array content types go through Coveo + normalizers.</td>
+          </tr>
+          <tr>
+            <td><strong>Topic results “event” tab</strong></td>
+            <td><code>topic-results</code></td>
+            <td>Legacy <code>event</code> (On-Demand-shaped) via Coveo</td>
+            <td>same</td>
+            <td>Not the V2 hierarchical types.</td>
+          </tr>
+          <tr>
+            <td><strong>At-a-glance</strong> deep link</td>
+            <td><code>at-a-glance</code></td>
+            <td>—</td>
+            <td>deep-links On-Demand on Events Hub</td>
+            <td>Hash filter only.</td>
+          </tr>
+          <tr>
+            <td><strong>CDN feed itself</strong></td>
+            <td>Azure blob under assets CDN</td>
+            <td>Upcoming catalog only</td>
+            <td><strong>Not present</strong></td>
+            <td>On-Demand has never lived in this JSON.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>3.2 The two backends in plain language</h3>
+
+      <ul>
+        <li>
+          <strong>CDN JSON</strong> — static file, ~11 Upcoming events today (~17 KB), CORS <code>*</code>,
+          sessionStorage cache key <code>liveEvents</code>. Schema is now <strong>version 3</strong>:
+          <code>promoStartTime</code> / <code>promoEndTime</code> / <code>eventStartTime</code>, series, location,
+          speakers, roles, skill levels, CTA, image. <strong>No</strong> keyword search, <strong>no</strong> facets,
+          <strong>no</strong> server pagination, <strong>no</strong> On-Demand.
+        </li>
+        <li>
+          <strong>Coveo</strong> — indexed <code>Event|Upcoming Event</code> and <code>Event|On Demand Event</code>.
+          Shared Search Hub <code>Experience League Learning Hub</code>. Events Hub adds Tab <code>Events Hub</code>.
+          Stale Upcoming is filtered with <code>el_event_start_time &gt;= now</code> (not <code>@date</code> — that
+          field is index/batch time for Upcoming and will wipe the catalog if misused).
+        </li>
+      </ul>
+
+      <h3>3.3 Important drift already in the repo</h3>
+
+      <p>
+        The live CDN file is <strong>v3</strong> (<code>eventStartTime</code>, promo window). The EXLM JSON adaptor
+        (<code>browse-cards-upcoming-events-adaptor.js</code>) and the legacy <code>upcoming-event</code> product filter
+        still expect <strong>legacy</strong> fields (<code>startTime</code> / <code>endTime</code> / <code>time</code>).
+      </p>
+      <p>
+        Against today’s feed, that adaptor’s “is this event live?” check never matches — so
+        <strong>legacy CDN rails are already out of sync with the published JSON</strong>. That alone is a warning
+        against making CDN the forward path for Upcoming without a deliberate schema contract and adaptor rewrite.
+      </p>
+      <p>Coveo V2 rails do not have that problem; they read <code>el_event_start_time</code> from the index.</p>
+
+      <hr />
+
+      <h2>4. Use cases we walked</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Use case</th>
+            <th>Mixed CDN+Coveo impact</th>
+            <th>All-Coveo (current V2)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Events Hub default view (both types, no keyword)</td>
+            <td>
+              Must <strong>merge</strong> CDN Upcoming + Coveo On-Demand client-side. Facet counts, result totals, and
+              pagination stop being trustworthy from a single Search response.
+            </td>
+            <td>One Headless query. Client already regroups Upcoming-then-On-Demand for Date in mixed mode.</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Hub — Upcoming only + Date sort</td>
+            <td>
+              CDN sort in the browser. Product/Series facets either empty for Upcoming or need a second, non-Coveo
+              filter pass.
+            </td>
+            <td>Coveo field sort on <code>el_event_start_time</code> ascending.</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Hub — On-Demand only + Popularity / Date</td>
+            <td>Still Coveo (fine).</td>
+            <td>Same.</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Hub — keyword across both types</td>
+            <td>
+              Keyword hits On-Demand in Coveo only unless ACS also builds search over JSON. Upcoming silently missing
+              from keyword results.
+            </td>
+            <td>One <code>q</code> across both types.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Hub — Product / Series facets</td>
+            <td>
+              Facet values from Coveo <strong>omit</strong> Upcoming that only exist on CDN → wrong counts, missing
+              checkboxes, “filter returns nothing” bugs.
+            </td>
+            <td>Facets reflect the same index as results.</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Hub — pagination</td>
+            <td>Page size over a merged list is hand-rolled; easy to desync with Coveo pager state.</td>
+            <td>Native Headless pager.</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Site search — discover Upcoming</td>
+            <td>
+              If Upcoming leaves the index (or goes stale while CDN is fresh), <code>/search</code> and Content Type
+              <code>Event|Upcoming Event</code> lie relative to the Hub. If Upcoming <strong>stays</strong> in Coveo
+              <strong>and</strong> comes from CDN on Hub, users see two catalogs.
+            </td>
+            <td>One catalog; stale Upcoming stripped via shared aq helper.</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>Browse All / product browse with Events filters</td>
+            <td>Same dual-source pain as Hub if browse is told to mix.</td>
+            <td>Headless + <code>isEventsV2</code> hierarchical types.</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>Homepage / article card rails (Upcoming)</td>
+            <td>Possible to keep CDN for a small rail — but then rail ≠ Hub ≠ Search.</td>
+            <td><code>upcoming-event-v2</code> already on Coveo.</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Promo window (“show only while promo is live”)</td>
+            <td>
+              <strong>CDN wins today</strong> — promo start/end are first-class on JSON v3. Coveo path filters on event
+              start, not promo window.
+            </td>
+            <td>Needs either a Coveo field for promo window <em>or</em> a small CDN-only promo strip.</td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td>Register CTA / location / speakers on Upcoming cards</td>
+            <td>Present on JSON v3; must be mapped 1:1 into Coveo fields for parity if Coveo stays SoT.</td>
+            <td>Already mapped for V2 cards from index fields.</td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td>Analytics (Events Hub Tab, UA originLevel2)</td>
+            <td>
+              CDN-sourced Upcoming never participates in Search API / Headless analytics the way Coveo results do. Mixed
+              lists muddy “what did we search?”
+            </td>
+            <td>Tab <code>Events Hub</code> lines up with Search Hub for ML.</td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td>Failure modes</td>
+            <td>CDN 404 → empty Upcoming half; Coveo 419 → empty On-Demand half; UI looks “half broken.”</td>
+            <td>One failure domain; token renew path already exists.</td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td>Locales</td>
+            <td>CDN feed is effectively a single catalog. Coveo requests carry locale.</td>
+            <td>Better fit for localized Hub/Search.</td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td>Deep links / share URLs</td>
+            <td>
+              Hub hash assumes Coveo facet values (<code>f-el_contenttype=Event|…</code>). CDN-only Upcoming cannot
+              round-trip through that model cleanly.
+            </td>
+            <td>Hash ↔ Headless UrlManager already wired.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h2>5. Trade-off summary</h2>
+
+      <h3>5.1 What mixed gains</h3>
+      <ul>
+        <li>Promo-window semantics that already exist on JSON v3 without waiting on a Coveo field + reindex.</li>
+        <li>
+          Potentially faster “we just published an Upcoming” visibility on CDN (blob overwrite) vs waiting for
+          crawl/index — <em>if</em> publish ops are tighter on the blob than on the index.
+        </li>
+        <li>Slightly less Coveo traffic for Upcoming-only legacy rails (small catalog anyway).</li>
+        <li>Familiarity for anyone still operating the thumb JSON pipeline.</li>
+      </ul>
+
+      <h3>5.2 What mixed costs (the real bill)</h3>
+      <ul>
+        <li>
+          <strong>Events Hub becomes a federation layer.</strong> We already paid for unified Headless (Tab, aq, facets,
+          sort contexts, client regroup for mixed Date). Mixed source reopens merge, count, and pagination debt.
+        </li>
+        <li>
+          <strong>Search and Hub diverge</strong> unless Upcoming remains fully indexed <strong>and</strong> kept in
+          lockstep with CDN — which means ACS still dual-writes, so mixed <em>read</em> does not remove publish
+          complexity.
+        </li>
+        <li>
+          <strong>Facet and keyword integrity break</strong> for Upcoming the moment it leaves the index used by Hub
+          filters.
+        </li>
+        <li>
+          <strong>Schema tax forever:</strong> CDN v3 vs Coveo raw fields vs browse-card model. We already see adaptor
+          drift on the legacy path.
+        </li>
+        <li>
+          <strong>Analytics and ML</strong> see an incomplete Events story when half the Hub list never hit Search API.
+        </li>
+        <li>
+          <strong>QA matrix doubles:</strong> every Hub case (upcoming-only / on-demand-only / mixed × sorts × facets)
+          needs a CDN+Coveo variant.
+        </li>
+        <li>
+          <strong>Ownership blur:</strong> who is right when CDN says “live” and Coveo says “stale” (or the reverse)?
+        </li>
+      </ul>
+
+      <h3>5.3 Options compared</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Option</th>
+            <th>Hub</th>
+            <th>Search</th>
+            <th>Publish</th>
+            <th>Eng cost</th>
+            <th>Verdict</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>A. All Coveo (stay the course)</strong></td>
+            <td>Unified</td>
+            <td>Unified</td>
+            <td>Index both types; retire CDN for product UI</td>
+            <td>Finish migrating legacy <code>upcoming-event</code> / <code>events-cards</code></td>
+            <td><strong>Recommended</strong></td>
+          </tr>
+          <tr>
+            <td><strong>B. Mixed read (ACS proposal)</strong></td>
+            <td>Federated merge</td>
+            <td>Divergent or dual-truth</td>
+            <td>Still need Coveo for On-Demand <em>and</em> almost certainly for Search Upcoming</td>
+            <td>High ongoing</td>
+            <td><strong>No-go</strong> as default</td>
+          </tr>
+          <tr>
+            <td><strong>C. All CDN</strong></td>
+            <td>No On-Demand search/facets unless rebuilt</td>
+            <td>Upcoming disappears from Coveo search</td>
+            <td>JSON grows into a full CMS</td>
+            <td>Rebuild Hub</td>
+            <td><strong>Out of scope / worse</strong></td>
+          </tr>
+          <tr>
+            <td><strong>D. Coveo SoT + CDN promo strip only</strong></td>
+            <td>Coveo list; optional promo rail from JSON</td>
+            <td>Coveo</td>
+            <td>Dual-write only for promo fields or accept strip ≠ Hub</td>
+            <td>Medium, contained</td>
+            <td><strong>Acceptable compromise</strong> if promo window is a hard PdM requirement</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h2>6. Surface-by-surface call</h2>
+
+      <h3>Events Hub</h3>
+      <p>
+        Mixed is the <strong>highest</strong> cost surface. Sort is already contextual (Upcoming Date →
+        <code>el_event_start_time</code>; On-Demand Date → <code>date</code>; mixed Date → relevance + client regroup;
+        Popularity only when On-Demand-only). That design assumes one result set. Pulling Upcoming from CDN forces a
+        second client merge on top of the merge we already do — and breaks facet counts.
+      </p>
+      <p><strong>Call:</strong> Hub stays all-Coveo.</p>
+
+      <h3>Regular Search (<code>/search</code>)</h3>
+      <p>
+        Atomic already treats Upcoming as a normal content type with a stale guard shared with the rest of the site.
+        Removing Upcoming from Coveo makes Search lie. Keeping Upcoming in Coveo <strong>while</strong> Hub reads CDN
+        creates two catalogs.
+      </p>
+      <p><strong>Call:</strong> Search stays all-Coveo; do not special-case Upcoming onto CDN.</p>
+
+      <h3>Other site parts</h3>
+      <ul>
+        <li>
+          Migrate <code>upcoming-event</code> and <code>events-cards</code> off the legacy JSON key onto
+          <code>Event|Upcoming Event</code> (same path as <code>upcoming-event-v2</code>).
+        </li>
+        <li>Recs / featured / tabbed: keep authored V2 types on Coveo.</li>
+        <li>Topic “event” tab: leave as-is unless a separate ticket wants V2 types there.</li>
+        <li>
+          CDN JSON: keep publishing for now if external consumers exist, but
+          <strong>EXLM product UI should not grow new dependencies on it</strong>.
+        </li>
+      </ul>
+
+      <hr />
+
+      <h2>7. Ops, freshness, ownership</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>CDN JSON</th>
+            <th>Coveo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Freshness</td>
+            <td>
+              Blob replace; <code>Last-Modified</code> on the object. Browser may hold <code>sessionStorage</code> for
+              the tab session.
+            </td>
+            <td>Index lag after publish; mitigated by existing stale-Upcoming aq.</td>
+          </tr>
+          <tr>
+            <td>Catalog size</td>
+            <td>Small (order of tens).</td>
+            <td>On-Demand is large; Upcoming small.</td>
+          </tr>
+          <tr>
+            <td>Failure</td>
+            <td>Empty Upcoming rails / half-empty Hub if mixed.</td>
+            <td>Token 419 renew; empty search.</td>
+          </tr>
+          <tr>
+            <td>Locale</td>
+            <td>Single feed.</td>
+            <td>Request locale.</td>
+          </tr>
+          <tr>
+            <td>Promo window</td>
+            <td>Native (v3).</td>
+            <td>Needs field + reindex <em>or</em> accept event-start semantics.</td>
+          </tr>
+          <tr>
+            <td>Who fixes “wrong event on Hub”?</td>
+            <td>JSON publishers + whoever owns the blob.</td>
+            <td>Index/content owners + Coveo field mapping.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        If ACS dual-writes (CDN <strong>and</strong> Coveo) under option D, publish runbooks must say which system wins
+        for Hub vs promo strip. Silent drift is how we got the v3 vs adaptor mismatch.
+      </p>
+
+      <hr />
+
+      <h2>8. Decision for PdM and Core</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Should ACS implement mixed Upcoming=CDN / On-Demand=Coveo as the forward architecture?</td>
+            <td><strong>No.</strong></td>
+          </tr>
+          <tr>
+            <td>What should ACS do instead?</td>
+            <td>
+              Keep indexing <strong>both</strong> types into Coveo. Treat CDN as legacy/external. Align JSON schema +
+              any remaining EXLM JSON consumers, or delete the consumers.
+            </td>
+          </tr>
+          <tr>
+            <td>When is CDN still justified?</td>
+            <td>Optional promo-window strip (option D), or non-EXLM consumers of the public JSON — not Hub/Search.</td>
+          </tr>
+          <tr>
+            <td>What EXLM follow-ups make sense after this spike?</td>
+            <td>
+              (1) Migrate <code>upcoming-event</code> / <code>events-cards</code> to V2 Coveo. (2) Either update the
+              JSON adaptor to v3 <em>or</em> stop calling it. (3) If promo window is required on Hub cards, add Coveo
+              fields — don’t split the Hub backend.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr />
+
+      <h2>9. Code anchors (for eng review)</h2>
+      <ul>
+        <li>CDN URL config: <code>scripts/scripts.js</code> → <code>upcomingEventsUrl</code></li>
+        <li>JSON fetch + session cache: <code>scripts/data-service/upcoming-events-data-service.js</code></li>
+        <li>
+          Legacy adaptor (pre-v3 fields): <code>scripts/browse-card/browse-cards-upcoming-events-adaptor.js</code>
+        </li>
+        <li>
+          Delegate routing (legacy key → JSON; V2 keys → Coveo):
+          <code>scripts/browse-card/browse-cards-delegate.js</code>
+        </li>
+        <li>
+          Hub aq / stale helpers:
+          <code>scripts/browse-card/browse-cards-constants.js</code> (<code>BASE_COVEO_ADVANCED_QUERY_EVENTS</code>,
+          <code>COVEO_EXCLUDE_STALE_UPCOMING_AQ</code>)
+        </li>
+        <li>Events Hub UI + mixed sort/regroup: <code>blocks/events-search/events-search.js</code></li>
+        <li>Upcoming v2 rail: <code>blocks/upcoming-event-v2/upcoming-event-v2.js</code></li>
+        <li>Atomic stale Upcoming guard: <code>blocks/atomic-search/atomic-search.js</code></li>
+      </ul>
+
+      <hr />
+
+      <h2>10. Open questions left for PdM (not blockers for the recommendation)</h2>
+      <ol>
+        <li>
+          Does any <strong>external</strong> consumer (outside EXLM) depend on <code>upcoming-events.json</code> staying
+          public and v3-shaped?
+        </li>
+        <li>
+          Is <strong>promo window</strong> (not event start) a hard requirement on Events Hub cards themselves, or only
+          on a marketing strip?
+        </li>
+        <li>
+          Are we willing to dual-write Upcoming to CDN <strong>and</strong> Coveo for a transition period while legacy
+          rails die?
+        </li>
+      </ol>
+      <p>None of these change the core recommendation: <strong>do not make mixed read the architecture.</strong></p>
+
+      <hr />
+
+      <h2>11. Revision history</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Author</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>22 Oct 2026</td>
+            <td>Nitin Rachabathuni</td>
+            <td>Initial spike findings for EXLM-6102; recommendation = stay all-Coveo; CDN legacy only.</td>
+          </tr>
+          <tr>
+            <td>22 Oct 2026</td>
+            <td>Nitin Rachabathuni</td>
+            <td>Added HTML paste format for Confluence Cloud (wiki markup / markdown do not render on paste).</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </body>
+</html>
