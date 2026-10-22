@@ -9814,7 +9814,7 @@
         ]
       },
       {
-        "component": "richtext",
+        "component": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -10021,7 +10021,7 @@
         ]
       },
       {
-        "component": "richtext",
+        "component": "text",
         "valueType": "string",
         "name": "cardDescription",
         "value": "",
