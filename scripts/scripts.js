@@ -1826,7 +1826,7 @@ export function getLastDocsSection() {
 function handleRedirects() {
   const currentUrl = new URL(window.location.href);
   if (currentUrl.pathname === '/en/home' && ['#support', '#feedback'].includes(currentUrl.hash)) {
-    currentUrl.pathname = `/en/${currentUrl.hash.slice(1)}`;
+    currentUrl.pathname = currentUrl.hash === '#feedback' ? '/en/feedback-program' : '/en/support';
     currentUrl.hash = '';
     window.location.href = currentUrl.href;
     return;
