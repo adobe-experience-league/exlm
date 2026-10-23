@@ -597,7 +597,9 @@ export default function atomicResultHandler(block, placeholders) {
   } else if (!searchLayout.classList.contains('no-results')) {
     baseElement.classList.add('list-wrap-skeleton');
     container.style.cssText = 'display: none;';
-    if (!blockSkeletonStillUp) {
+    // Idempotent: RESULT_FOUND → commonActionHandler can re-enter while results are empty.
+    // A second .skeleton-wrapper paints as another shimmer row under the page overlay (EXLM-6175).
+    if (!blockSkeletonStillUp && !container.parentElement.querySelector('.skeleton-wrapper')) {
       const skeletonWrapper = htmlToElement(`<div class="skeleton-wrapper" part="skeleton"></div>`);
       skeletonWrapper.innerHTML = renderAtomicSekeletonUI();
       container.parentElement.appendChild(skeletonWrapper);
@@ -1266,6 +1268,14 @@ export default function atomicResultHandler(block, placeholders) {
     });
     document.dispatchEvent(event);
   };
+
+  // RESULT_FOUND → commonActionHandler re-enters this function. Refresh cards, but do not
+  // stack ResizeObserver / MutationObserver / fail-safe timers (EXLM-6175).
+  if (baseElement.dataset.resultHandlerBound === 'true') {
+    updateAtomicResultUI();
+    return;
+  }
+  baseElement.dataset.resultHandlerBound = 'true';
 
   const onResize = () => {
     const isMobileView = isMobile();
