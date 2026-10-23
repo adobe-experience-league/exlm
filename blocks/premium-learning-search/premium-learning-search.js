@@ -150,8 +150,22 @@ export default async function decorate(block) {
     wrapper.style.setProperty('--atomic-search-premium-search-height', `${Math.max(block.offsetHeight, 0)}px`);
   }
 
+  function syncAtomicSkeletonMarginForPremiumSearch() {
+    // Keep page-level search shimmer below the PL row. Measuring while PL is still
+    // `display:none` left margin-top at 0 so PL shimmer and the atomic skeleton stacked
+    // as a second shimmer row (EXLM-6175).
+    const searchBlock = document.querySelector('.atomic-search.block');
+    if (!searchBlock || !searchBlock.classList.contains('atomic-search-with-premium-search')) return;
+    const delta = 30;
+    searchBlock.style.setProperty(
+      '--atomic-search-skeleton-margin-top',
+      `${Math.max(block.offsetHeight - delta, 0)}px`,
+    );
+  }
+
   function schedulePremiumSearchLayoutSync() {
     syncPremiumSearchWrapperLayout();
+    syncAtomicSkeletonMarginForPremiumSearch();
   }
 
   function observePremiumSearchLayout() {
