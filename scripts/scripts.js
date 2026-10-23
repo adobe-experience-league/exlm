@@ -1825,8 +1825,12 @@ export function getLastDocsSection() {
  */
 function handleRedirects() {
   const currentUrl = new URL(window.location.href);
-  if (currentUrl.pathname === '/en/home' && ['#support', '#feedback'].includes(currentUrl.hash)) {
-    currentUrl.pathname = currentUrl.hash === '#feedback' ? '/en/feedback-program' : '/en/support';
+  const redirectPaths = {
+    '#support': '/en/support',
+    '#feedback': '/en/feedback-program',
+  };
+  if (currentUrl.pathname === '/en/home' && Object.hasOwn(redirectPaths, currentUrl.hash)) {
+    currentUrl.pathname = redirectPaths[currentUrl.hash];
     currentUrl.hash = '';
     window.location.href = currentUrl.href;
     return;
