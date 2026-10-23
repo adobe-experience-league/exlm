@@ -1,5 +1,5 @@
 import { getMetadata } from '../lib-franklin.js';
-import { getLanguageCode, getPathDetails, getConfig } from '../scripts.js';
+import { getLanguageCode, getPathDetails, getConfig, matchesAnyTheme } from '../scripts.js';
 import { pushTopNavSearchEvent } from '../analytics/lib-analytics.js';
 
 const { communityHost } = getConfig();
@@ -146,7 +146,10 @@ export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
       ? `&f:@el_contenttype=[${filterValueEncoded}]`
       : `&f-el_contenttype=${filterValueEncoded}`;
   }
-  if (solution) {
+  // EXLM-6173: main docs hub is multi-product — do not pre-filter by solution.
+  // Use docs-landing (not scripts.js isDocPage=/docs/) so solution landings still apply product.
+  const isDocsLandingPage = matchesAnyTheme(/docs-landing/);
+  if (solution && !isDocsLandingPage) {
     const solutionEncoded = encodeURIComponent(solution);
     targetUrlWithLanguage += isLegacySearch ? `&f:el_product=[${solutionEncoded}]` : `&f-el_product=${solutionEncoded}`;
   }
