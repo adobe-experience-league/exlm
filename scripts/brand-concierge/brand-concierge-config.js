@@ -103,12 +103,7 @@ const LOCALES_BASE_PATH = `${window.hlx.codeBasePath}/scripts/brand-concierge/lo
  */
 const LOCALES = {
   en: { language: 'en-US' },
-  es: {
-    language: 'es-ES',
-    // Spanish Brand Concierge datastream (same IMS org as the default). Routes /es/ conversations
-    // to the Spanish concierge/manifest instead of the default English datastream.
-    datastreamId: '152f88b1-ef07-4afe-8a23-6c0e21c6f017',
-  },
+  es: { language: 'es-ES' },
 };
 export const SUPPORTED_LOCALES = new Set(Object.keys(LOCALES));
 
