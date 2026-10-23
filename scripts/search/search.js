@@ -1,6 +1,7 @@
 import { getMetadata } from '../lib-franklin.js';
 import { getLanguageCode, getPathDetails, getConfig } from '../scripts.js';
 import { pushTopNavSearchEvent } from '../analytics/lib-analytics.js';
+import resolveSearchProductFilter from './search-product-filter.js';
 
 const { communityHost } = getConfig();
 const isCommunityDomain = window.location.origin.includes(communityHost);
@@ -30,32 +31,33 @@ const communityProducts = [
   'Real-Time Customer Data Platform',
 ];
 
-let solution = '';
-// see: https://jira.corp.adobe.com/browse/EXLM-3813.
-// this is a temporary fix and steakholders accept the technical debt and  dependecy on community HTML as-is.
-// This will break infuture and that's also acceptable
-if (isCommunityDomain) {
-  // Get solution from breadcrumb
-  const breadcrumbItems = document.querySelectorAll(
-    '#breadcrumbs .spectrum-Breadcrumbs-item, #breadcrumbs-target .breadcrumb .breadcrumb-item',
-  );
-  if (breadcrumbItems.length >= 3) {
-    // product name is the 3rd breadcrumb (index 2)
-    solution = breadcrumbItems[2].textContent.trim();
-
-    if (solution.includes('Adobe Experience Manager')) {
-      solution = 'Experience Manager';
+/**
+ * Product facet for search redirect.
+ * Community: breadcrumb (EXLM-3813). Elsewhere: TQ-aware meta (EXLM-6173).
+ * @returns {string}
+ */
+function getSearchProductFilter() {
+  if (isCommunityDomain) {
+    // see: https://jira.corp.adobe.com/browse/EXLM-3813.
+    // temporary fix; stakeholders accept dependency on community HTML as-is.
+    const breadcrumbItems = document.querySelectorAll(
+      '#breadcrumbs .spectrum-Breadcrumbs-item, #breadcrumbs-target .breadcrumb .breadcrumb-item',
+    );
+    if (breadcrumbItems.length < 3) {
+      return '';
+    }
+    let product = breadcrumbItems[2].textContent.trim();
+    if (product.includes('Adobe Experience Manager')) {
+      product = 'Experience Manager';
     } else {
-      solution = solution.replace('Adobe ', '');
+      product = product.replace('Adobe ', '');
     }
-
-    if (!communityProducts.some((p) => p.toLowerCase() === solution.toLowerCase())) {
-      solution = '';
+    if (!communityProducts.some((p) => p.toLowerCase() === product.toLowerCase())) {
+      return '';
     }
+    return product;
   }
-} else {
-  // Get solution from metadata
-  solution = getMetadata('solution')?.split(',')[0].trim();
+  return resolveSearchProductFilter(getMetadata);
 }
 
 // Get content type from metadata
@@ -146,9 +148,10 @@ export const redirectToSearchPage = (searchUrl, searchInput, filters = '') => {
       ? `&f:@el_contenttype=[${filterValueEncoded}]`
       : `&f-el_contenttype=${filterValueEncoded}`;
   }
-  if (solution) {
-    const solutionEncoded = encodeURIComponent(solution);
-    targetUrlWithLanguage += isLegacySearch ? `&f:el_product=[${solutionEncoded}]` : `&f-el_product=${solutionEncoded}`;
+  const product = getSearchProductFilter();
+  if (product) {
+    const productEncoded = encodeURIComponent(product);
+    targetUrlWithLanguage += isLegacySearch ? `&f:el_product=[${productEncoded}]` : `&f-el_product=${productEncoded}`;
   }
 
   window.location.href = targetUrlWithLanguage;
