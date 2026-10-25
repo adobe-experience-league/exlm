@@ -1818,8 +1818,23 @@ export function getLastDocsSection() {
   return document.querySelector('main > div > div.section.last');
 }
 
-/** handles a set of 1-1 redirects */
+/**
+ * Redirects legacy English home support and feedback hashes to dedicated pages,
+ * preserving query parameters and removing the hash. Also handles /#feedback.
+ * @returns {void}
+ */
 function handleRedirects() {
+  const currentUrl = new URL(window.location.href);
+  const redirectPaths = {
+    '#support': '/en/support',
+    '#feedback': '/en/feedback-program',
+  };
+  if (currentUrl.pathname === '/en/home' && Object.hasOwn(redirectPaths, currentUrl.hash)) {
+    currentUrl.pathname = redirectPaths[currentUrl.hash];
+    currentUrl.hash = '';
+    window.location.href = currentUrl.href;
+    return;
+  }
   const redirects = ['/#feedback:/home#feedback'].map((p) => p.split(':').map((s) => new URL(s, window.location.href)));
   const redirect = redirects.find(([from]) => window.location.href === from.href);
   if (redirect) window.location.href = redirect[1].href;
