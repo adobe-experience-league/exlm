@@ -9819,7 +9819,7 @@
         "name": "description",
         "value": "",
         "label": "Description",
-        "description": "Sets the description for the grid cards."
+        "description": "Sets the description for the grid cards. Please don't add any HTML elements within the text."
       },
       {
         "component": "multiselect",
@@ -10073,7 +10073,7 @@
         "name": "cardDescription",
         "value": "",
         "label": "Description",
-        "description": "Sets the description for the card. Please limit the content to 3 lines and 4 lines in case of Wide card variant."
+        "description": "Sets the description for the card. Please limit the content to 3 lines and 4 lines in case of Wide card variant. Please don't add any HTML elements within the text."
       },
       {
         "component": "reference",
