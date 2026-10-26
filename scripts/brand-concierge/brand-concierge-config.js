@@ -339,13 +339,23 @@ export async function loadBrandConciergeConfig(lang) {
   let locale = english;
   let appliedKey = 'en';
 
-  if (key !== 'en' && SUPPORTED_LOCALES.has(key)) {
+  if (key !== 'en') {
     try {
       const localeRows = await fetchUeSheet(key);
-      locale = rowsToConfig(localeRows);
-      appliedKey = key;
+      const localized = rowsToConfig(localeRows);
+
+      // Apply localized chrome only for registered locales.
+      // Allow other languages to supply localized welcome prompts.
+      if (SUPPORTED_LOCALES.has(key)) {
+        locale = localized;
+        appliedKey = key;
+      } else {
+        locale = {
+          ...english,
+          arrays: localized.arrays,
+        };
+      }
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.warn(`[BC] UE spreadsheet '${key}' failed; using English`, err?.message || err);
     }
   }
