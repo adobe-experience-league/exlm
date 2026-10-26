@@ -1,5 +1,6 @@
 name: Visual Tests
 
+# Runs only in adobe-experience-league/exlm, not in fork repositories.
 # Runs the full visual regression suite on every PR update, split across 4 parallel
 # shards, then merges the results into one report and keeps a single results comment
 # on the PR up to date. "Visual Tests" is the job to watch; the shard jobs only fail
@@ -22,6 +23,7 @@ env:
 jobs:
   shard:
     name: Visual Tests (shard ${{ matrix.shard }}/4)
+    if: ${{ github.repository == 'adobe-experience-league/exlm' }}
     runs-on: ubuntu-latest
     # Same image used for local Docker runs, so rendering matches the committed baselines.
     container:
@@ -105,7 +107,7 @@ jobs:
   report:
     name: Visual Tests
     needs: shard
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && github.repository == 'adobe-experience-league/exlm' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
