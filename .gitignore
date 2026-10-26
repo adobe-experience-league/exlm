@@ -47,3 +47,10 @@ skills/
 .windsurf/
 .zencoder/
 plans/
+tools/visual-tests/port.txt
+playwright-report/
+test-results/
+tools/visual-tests/playwright-report/
+tools/visual-tests/test-results/
+tools/visual-tests/blob-report/
+.env.local

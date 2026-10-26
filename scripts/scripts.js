@@ -765,6 +765,10 @@ async function loadEager(doc) {
   } catch (e) {
     // do nothing
   }
+  if (document.body.classList.contains('sidekick-library')) {
+    loadScript(`${window.hlx.codeBasePath}/tools/visual-tests/visual-test.js`);
+    loadScript(`${window.hlx.codeBasePath}/tools/visual-overlay/index.js`, { type: 'module' });
+  }
 }
 
 /**
@@ -1824,6 +1828,8 @@ export function getLastDocsSection() {
  * @returns {void}
  */
 function handleRedirects() {
+  // window.location.href is not a valid URL base (e.g. 'about:srcdoc' inside preview iframes)
+  if (!/^https?:$/.test(window.location.protocol)) return;
   const currentUrl = new URL(window.location.href);
   const redirectPaths = {
     '#support': '/en/support',

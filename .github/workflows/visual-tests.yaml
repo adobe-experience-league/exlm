@@ -1,0 +1,325 @@
+name: Visual Tests
+
+# Runs only in adobe-experience-league/exlm, not in fork repositories.
+# Runs the full visual regression suite on every PR update, split across 4 parallel
+# shards, then merges the results into one report and keeps a single results comment
+# on the PR up to date. "Visual Tests" is the job to watch; the shard jobs only fail
+# on infrastructure errors. Rerun with GitHub's "Re-run all jobs".
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: visual-tests-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  COMMENT_MARKER: '<!-- exlm-visual-tests -->'
+  # Fork PRs receive a read-only token, so they run the tests without commenting.
+  CAN_COMMENT: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+
+jobs:
+  shard:
+    name: Visual Tests (shard ${{ matrix.shard }}/4)
+    if: ${{ github.repository == 'adobe-experience-league/exlm' }}
+    runs-on: ubuntu-latest
+    # Same image used for local Docker runs, so rendering matches the committed baselines.
+    container:
+      image: mcr.microsoft.com/playwright:v1.53.1-jammy
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Mark results comment as running
+        if: env.CAN_COMMENT == 'true' && matrix.shard == 1
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = process.env.COMMENT_MARKER;
+            const issue_number = context.payload.pull_request.number;
+            const sha = context.payload.pull_request.head.sha;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              marker,
+              '### Visual Tests',
+              '',
+              `:hourglass_flowing_sand: **Running** against \`${sha.slice(0, 7)}\`. Results will appear here when the run completes.`,
+              '',
+              `[View run](${runUrl})`,
+            ].join('\n');
+            const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number });
+            const existing = comments.find((c) => c.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ ...context.repo, issue_number, body });
+            }
+
+      # Shared npm download cache for both the project dependencies and the AEM CLI.
+      - name: Cache npm downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: visual-tests-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: visual-tests-npm-
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Install AEM CLI
+        run: npm install -g @adobe/aem-cli --prefer-offline --no-audit --no-fund
+
+      # Failures are reported by the "Visual Tests" job, so a shard only fails on errors
+      # outside the tests themselves (setup, dev server, upload).
+      - name: Run visual tests
+        id: tests
+        run: npx playwright test --config=tools/visual-tests/playwright.config.ts --shard=${{ matrix.shard }}/4
+        continue-on-error: true
+
+      - name: Upload blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: tools/visual-tests/blob-report/
+          retention-days: 1
+
+      # Expected / actual / diff PNGs for every failed screenshot.
+      - name: Upload failure artifacts
+        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diffs-${{ matrix.shard }}
+          path: tools/visual-tests/test-results/
+          retention-days: 1
+
+  report:
+    name: Visual Tests
+    needs: shard
+    if: ${{ !cancelled() && github.repository == 'adobe-experience-league/exlm' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Download shard reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blob-report-*
+          path: all-blob-reports
+          merge-multiple: true
+
+      - name: Merge reports
+        id: merge
+        run: |
+          npx playwright merge-reports --config=tools/visual-tests/merge.config.ts ./all-blob-reports
+          node -e "const s=require('./tools/visual-tests/test-results/results.json').stats; console.log('failed=' + (s.unexpected ?? 0))" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Playwright report
+        id: upload-report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: tools/visual-tests/playwright-report/
+          retention-days: 7
+
+      - name: Collect diff images
+        if: ${{ steps.merge.outputs.failed != '0' }}
+        uses: actions/download-artifact@v4
+        with:
+          pattern: visual-diffs-*
+          path: visual-diffs
+          merge-multiple: true
+
+      - name: Upload diff images
+        id: upload-diffs
+        if: ${{ !cancelled() && steps.merge.outputs.failed != '0' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diffs
+          path: visual-diffs/
+          if-no-files-found: ignore
+          retention-days: 3
+
+      - name: Publish results comment
+        if: ${{ !cancelled() && env.CAN_COMMENT == 'true' }}
+        uses: actions/github-script@v7
+        env:
+          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
+          DIFFS_URL: ${{ steps.upload-diffs.outputs.artifact-url }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            const marker = process.env.COMMENT_MARKER;
+            const issue_number = context.payload.pull_request.number;
+            const sha = context.payload.pull_request.head.sha;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const reportUrl = process.env.REPORT_URL;
+            const diffsUrl = process.env.DIFFS_URL;
+
+            // Turns a Playwright failure message into a one-line, table-safe summary.
+            const summarizeError = (message) => {
+              const lines = (message ?? '')
+                .replace(/\u001b\[[0-9;]*m/g, '')
+                .split('\n')
+                .map((line) => line.trim())
+                .filter(Boolean);
+              const pixels = lines.find((line) => /pixels? \(ratio [\d.]+ of all image pixels\) (are|is) different/.test(line));
+              const size = lines.find((line) => /^Expected an image .* received /.test(line));
+              const missing = lines.find((line) => /snapshot doesn't exist/i.test(line));
+              const summary =
+                (pixels && pixels.replace(/ of all image pixels\)/, ')')) ||
+                size ||
+                (missing && 'Baseline is missing') ||
+                lines.find((line) => !/^(Error:|Call log:|at )/.test(line)) ||
+                lines[0] ||
+                'Unknown error';
+              return summary.replace(/\|/g, '\\|').slice(0, 140);
+            };
+
+            const collect = (suites, acc = []) => {
+              for (const suite of suites ?? []) {
+                for (const spec of suite.specs ?? []) {
+                  for (const test of spec.tests ?? []) {
+                    const last = test.results?.[test.results.length - 1];
+                    acc.push({ title: spec.title, status: test.status, error: last?.error?.message });
+                  }
+                }
+                collect(suite.suites, acc);
+              }
+              return acc;
+            };
+            const parseTitle = (title) => {
+              const match = title.match(/^(.+?) visual test at (.+?) viewport/);
+              return match ? { block: match[1], viewport: match[2] } : { block: title, viewport: '' };
+            };
+            const formatDuration = (ms) => {
+              const total = Math.round(ms / 1000);
+              const minutes = Math.floor(total / 60);
+              return minutes ? `${minutes}m ${total % 60}s` : `${total}s`;
+            };
+            const groupByBlock = (tests) => {
+              const groups = new Map();
+              for (const { title } of tests) {
+                const { block, viewport } = parseTitle(title);
+                if (!groups.has(block)) groups.set(block, []);
+                if (viewport) groups.get(block).push(viewport);
+              }
+              return [...groups].map(([block, viewports]) => `| \`${block}\` | ${viewports.join(', ') || '—'} |`);
+            };
+
+            const links = [`[View run](${runUrl})`];
+            if (reportUrl) links.unshift(`[Download HTML report](${reportUrl})`);
+            const lines = [marker, '### Visual Tests', ''];
+
+            let results;
+            try {
+              results = JSON.parse(fs.readFileSync('tools/visual-tests/test-results/results.json', 'utf8'));
+            } catch {
+              results = null;
+            }
+
+            if (!results) {
+              lines.push(
+                ':warning: **Results unavailable.** The suite did not produce a results file; check the run logs.',
+                '',
+              );
+            } else {
+              const { stats } = results;
+              const passed = stats.expected ?? 0;
+              const failed = stats.unexpected ?? 0;
+              const flaky = stats.flaky ?? 0;
+              const skipped = stats.skipped ?? 0;
+              const total = passed + failed + flaky + skipped;
+              const tests = collect(results.suites);
+
+              lines.push(
+                failed
+                  ? `:x: **${failed} of ${total} visual tests failed.**`
+                  : `:white_check_mark: **All ${total} visual tests passed.**`,
+                '',
+                '| Passed | Failed | Flaky | Skipped | Duration |',
+                '| :---: | :---: | :---: | :---: | :---: |',
+                `| ${passed} | ${failed} | ${flaky} | ${skipped} | ${formatDuration(stats.duration ?? 0)} |`,
+                '',
+              );
+
+              const failedTests = tests.filter((t) => t.status === 'unexpected');
+              if (failedTests.length) {
+                const artifactLinks = [
+                  diffsUrl && `[Diff images](${diffsUrl})`,
+                  reportUrl && `[Report](${reportUrl})`,
+                ].filter(Boolean);
+                const rows = failedTests
+                  .map((test) => ({ ...parseTitle(test.title), error: summarizeError(test.error) }))
+                  .sort((a, b) => a.block.localeCompare(b.block))
+                  .map(
+                    ({ block, viewport, error }) =>
+                      `| \`${block}\` | ${viewport || '—'} | ${error} | ${artifactLinks.join(' · ') || '—'} |`,
+                  );
+                lines.push('#### Failures', '', '| Block | Viewport | Difference | Details |', '| --- | --- | --- | --- |', ...rows, '');
+                lines.push(
+                  '**Diff images** contains the expected, actual and diff PNG for each failure (in a folder named after the test). ' +
+                    'Open the **Report** with `npx playwright show-report <unzipped folder>` for a side-by-side slider.',
+                  '',
+                  'If a change is intentional, update the baselines with `npm run test:visual:update` and commit the new snapshots.',
+                  '',
+                );
+              }
+
+              const flakyTests = tests.filter((t) => t.status === 'flaky');
+              if (flakyTests.length) {
+                lines.push(
+                  '<details><summary>Flaky tests (passed on retry)</summary>',
+                  '',
+                  '| Block | Viewports |',
+                  '| --- | --- |',
+                  ...groupByBlock(flakyTests),
+                  '',
+                  '</details>',
+                  '',
+                );
+              }
+            }
+
+            lines.push(`${links.join(' · ')}`, '', `<sub>Commit \`${sha.slice(0, 7)}\` · Run #${context.runNumber}</sub>`);
+            const body = lines.join('\n');
+
+            const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number });
+            const existing = comments.find((c) => c.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ ...context.repo, issue_number, body });
+            }
+
+      - name: Fail if visual tests failed
+        if: ${{ !cancelled() && (needs.shard.result != 'success' || steps.merge.outcome != 'success' || steps.merge.outputs.failed != '0') }}
+        run: |
+          echo "::error::Visual tests failed (shards: ${{ needs.shard.result }}, merge: ${{ steps.merge.outcome }}, failed tests: ${{ steps.merge.outputs.failed || 'unknown' }})."
+          exit 1

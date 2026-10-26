@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="Description" content="AEM visual checker" />
+    <meta name="robots" content="noindex" />
+    <base href="/" />
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        background-color: #ededed;
+        height: 100%;
+      }
+
+      helix-sidekick {
+        display: none;
+      }
+    </style>
+    <title>AEM Visual Checker</title>
+  </head>
+
+  <body>
+    <script type="module" src="https://www.aem.live/tools/sidekick/library/index.js"></script>
+    <script>
+      const library = document.createElement('sidekick-library');
+      (async () => {
+        const CONFIGS = await import('/tools/visual-tests/config.js');
+        let VIEWPORTS;
+        if (CONFIGS.VIEWPORTS) {
+          VIEWPORTS = CONFIGS.VIEWPORTS;
+        } else {
+          VIEWPORTS = [
+            {
+              width: '100%',
+              height: '900px',
+              label: 'Large',
+              icon: 'device-desktop',
+              default: true,
+            },
+            {
+              width: '1024px',
+              height: '768px',
+              label: 'Desktop',
+              icon: 'device-desktop',
+            },
+            {
+              width: '768px',
+              height: '1024px',
+              label: 'Tablet',
+              icon: 'device-tablet',
+            },
+            {
+              width: '320px',
+              height: '568px',
+              label: 'Mobile',
+              icon: 'device-phone',
+            },
+          ];
+        }
+
+        library.config = {
+          base: '/tools/sidekick/library.json',
+          plugins: {
+            blocks: {
+              viewPorts: VIEWPORTS,
+            },
+          },
+        };
+        document.body.prepend(library);
+      })();
+    </script>
+  </body>
+</html>
