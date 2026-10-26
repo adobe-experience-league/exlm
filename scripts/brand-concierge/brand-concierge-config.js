@@ -1,8 +1,7 @@
 /**
- * Reads a resolved CSS custom property from ExL's root styles, keeping BC's
- * theme in sync with styles.css without manual duplication.
- * @param {string} name - CSS custom property name, e.g. '--non-spectrum-navy-blue'.
- * @param {string} fallback - Value to use if the property is empty or unset.
+ * Reads a resolved CSS custom property from ExL's root styles.
+ * @param {string} name
+ * @param {string} fallback
  * @returns {string}
  */
 const rootStyles = getComputedStyle(document.documentElement);
@@ -12,8 +11,7 @@ function exlVar(name, fallback) {
 }
 
 /**
- * Derives a namespace key from the URL path so each ExL product surface
- * keeps its own conversation history in local storage.
+ * Creates a product-specific namespace for conversation history.
  * @returns {string}
  */
 function getProductNamespace() {
@@ -22,14 +20,7 @@ function getProductNamespace() {
   return key ? `exl-bc-${key}` : 'exl-bc';
 }
 
-/**
- * Non-localizable Brand Concierge config. Localized strings (`ui`/`text`/`arrays`) and
- * `metadata.language` come per-locale from ./localization/<lang>.json and are merged in by
- * loadBrandConciergeConfig(); this base holds only values that can't live in a JSON sheet
- * (runtime-resolved CSS theme, session/behavior flags, namespace).
- */
 const brandConciergeConfig = {
-  // destructured out in brand-concierge.js before forwarding to bootstrap().
   stickySession: true,
 
   behavior: {
@@ -48,37 +39,26 @@ const brandConciergeConfig = {
     namespace: getProductNamespace(),
   },
 
-  // CSS variable overrides forwarded to BC. Only set values that diverge from
-  // BC defaults or need tuning for the compact dialog context.
-  // spacing and sizing for pill/suggestion buttons are intentionally set only
-  // in brand-concierge.css (with !important) to keep one authoritative source.
   theme: {
     '--font-family': exlVar(
       '--body-font-family',
       '"Adobe Clean", adobe-clean, "Source Sans Pro", -apple-system, system-ui, "Segoe UI", roboto, ubuntu, "Trebuchet MS", "Lucida Grande", sans-serif',
     ),
-
     '--color-primary': exlVar('--non-spectrum-navy-blue', '#1473e6'),
     '--color-primary-hover': exlVar('--non-spectrum-dark-navy-blue', '#0265dc'),
     '--color-primary-alpha': exlVar('--non-spectrum-navy-blue-alpha', 'rgba(20, 115, 230, 0.25)'),
-
     '--color-button-primary': exlVar('--non-spectrum-navy-blue', '#1473e6'),
     '--color-button-primary-hover': exlVar('--non-spectrum-dark-navy-blue', '#0265dc'),
     '--color-button-primary-border': exlVar('--non-spectrum-navy-blue', '#1473e6'),
-
     '--color-message-user': exlVar('--bc-user-bubble', '#e8e3f8'),
-
     '--main-container-background': '#ffffff',
     '--chat-container-background': '#ffffff',
-
     '--welcome-input-order': '4',
     '--welcome-cards-order': '2',
     '--welcome-padding': '12px 0',
     '--card-width': '300px',
-
     '--prompt-suggestions-button-width': '100%',
     '--prompt-suggestions-button-width-max': '100%',
-
     '--input-height': '52px',
     '--input-max-height': '96px',
     '--input-padding': '0 4px 0 10px',
@@ -87,102 +67,220 @@ const brandConciergeConfig = {
     '--input-button-width': '36px',
     '--input-button-height': '36px',
     '--submit-button-icon-size': '16px',
-
     '--container-padding-desktop': '8px',
     '--container-padding-mobile': '8px',
   },
 };
 
-const LOCALES_BASE_PATH = `${window.hlx.codeBasePath}/scripts/brand-concierge/localization`;
+const SHEET_BASE_PATH = window.hlx.codeBasePath;
 
-/**
- * Single registry of everything per-locale that isn't translated copy: the BCP-47 language tag
- * forwarded to the BC client/backend, and any Edge datastream override. Adding a locale only
- * needs a new entry here (plus its <lang>.json) — keeping language and datastream in one place
- * avoids the two structures silently drifting out of sync with each other.
- */
 const LOCALES = {
-  en: { language: 'en-US' },
+  en: {
+    language: 'en-US',
+  },
   es: {
     language: 'es-ES',
-    // Spanish Brand Concierge datastream (same IMS org as the default). Routes /es/ conversations
-    // to the Spanish concierge/manifest instead of the default English datastream.
-    datastreamId: '152f88b1-ef07-4afe-8a23-6c0e21c6f017',
   },
 };
+
 export const SUPPORTED_LOCALES = new Set(Object.keys(LOCALES));
 
-/** lang -> Promise resolving that locale's { language, ui, text, arrays } sheet (deduped). */
-const localeSheetCache = {};
+const ueSheetCache = new Map();
 
-function fetchLocaleSheet(lang) {
-  if (!localeSheetCache[lang]) {
-    localeSheetCache[lang] = fetch(`${LOCALES_BASE_PATH}/${lang}.json`)
+/**
+ * Fetches published UE key-value rows for the specified language.
+ *
+ * Expected row format:
+ * [
+ *   { key: 'ui.drawerTitle', value: 'Ask AI' },
+ *   { key: 'text.input.placeholder', value: 'Ask a question…' },
+ *   { key: 'arrays.welcome.examples.0', value: 'Example question' }
+ * ]
+ * @param {string} lang
+ * @returns {Promise<Array<{key: string, value: string}>>}
+ */
+
+async function fetchUeSheet(lang) {
+  if (!ueSheetCache.has(lang)) {
+    const request = fetch(`${SHEET_BASE_PATH}/${lang}/brand-concierge.json`)
       .then((res) => {
-        if (!res.ok) throw new Error(`Brand Concierge locale '${lang}' -> ${res.status}`);
+        if (!res.ok) {
+          throw new Error(`Brand Concierge UE sheet '${lang}' -> ${res.status}`);
+        }
+
         return res.json();
       })
+      .then((response) => {
+        // EDS spreadsheet responses contain rows inside `data`.
+        const rows = Array.isArray(response) ? response : response?.data;
+
+        if (!Array.isArray(rows)) {
+          throw new Error(`Brand Concierge UE sheet '${lang}' must contain a data array`);
+        }
+
+        // Normalize the spreadsheet's column to the shape
+        // expected by rowsToConfig().
+        return rows.map((row) => ({
+          key: row.key,
+          value: row.value ?? row['Default prompts'],
+        }));
+      })
       .catch((err) => {
-        // Don't cache failures — a transient network blip shouldn't permanently break this locale.
-        delete localeSheetCache[lang];
+        ueSheetCache.delete(lang);
         throw err;
       });
-  }
-  return localeSheetCache[lang];
-}
 
-function objectValues(value) {
-  return value && typeof value === 'object' && !Array.isArray(value) ? Object.values(value) : value;
+    ueSheetCache.set(lang, request);
+  }
+
+  return ueSheetCache.get(lang);
 }
 
 /**
- * Array keys whose entries must be wrapped as `{ text }` to match the shape
- * fetchDefaultPromptsOverride() builds (and BC's bootstrap() expects), so the welcome cards
- * render the same whether prompts come from the sheet override or this config fallback.
+ * Sets a value at a nested object path.
+ * @param {object} target
+ * @param {string[]} path
+ * @param {*} value
  */
-const ARRAYS_NEEDING_TEXT_WRAPPER = new Set(['welcome.examples']);
+function setNestedValue(target, path, value) {
+  let current = target;
 
-function normalizeLocaleArrays(arrays) {
-  return Object.fromEntries(
-    Object.entries(arrays || {}).map(([key, value]) => {
-      const list = objectValues(value);
-      const needsWrapper = ARRAYS_NEEDING_TEXT_WRAPPER.has(key) && Array.isArray(list);
-      return [key, needsWrapper ? list.map((text) => ({ text })) : list];
-    }),
-  );
+  path.forEach((segment, index) => {
+    if (index === path.length - 1) {
+      current[segment] = value;
+      return;
+    }
+
+    if (!current[segment] || typeof current[segment] !== 'object' || Array.isArray(current[segment])) {
+      current[segment] = {};
+    }
+
+    current = current[segment];
+  });
 }
 
-/** Recursive merge: `over` wins; nested plain objects merge per-field, arrays/scalars replace. */
-function deepMerge(base, over) {
-  if (!over) return base;
-  const out = { ...base };
-  Object.entries(over).forEach(([key, value]) => {
-    const baseVal = base?.[key];
+/**
+ * Converts UE key-value rows into the Brand Concierge configuration shape.
+ *
+ * ui keys become nested objects.
+ * text keys retain their dotted suffixes.
+ * arrays use numbered keys and become [{ text: '...' }] entries.
+ *
+ * @param {Array<{key: string, value: string}>} rows
+ * @returns {{ui: object, text: object, arrays: object}}
+ */
+export function rowsToConfig(rows) {
+  const config = {
+    ui: {},
+    text: {},
+    arrays: {},
+  };
+
+  rows.forEach((row) => {
+    const key = String(row?.key ?? '').trim();
+    const value = row?.value;
+
+    if (!key || value == null) return;
+
+    const normalizedValue = String(value);
+
+    if (key.startsWith('ui.')) {
+      setNestedValue(config.ui, key.slice(3).split('.'), normalizedValue);
+      return;
+    }
+
+    if (key.startsWith('text.')) {
+      config.text[key.slice(5)] = normalizedValue;
+      return;
+    }
+
+    if (key.startsWith('arrays.')) {
+      const arrayKey = key.slice(7);
+      const lastDot = arrayKey.lastIndexOf('.');
+
+      if (lastDot === -1) return;
+
+      const name = arrayKey.slice(0, lastDot);
+      const indexString = arrayKey.slice(lastDot + 1);
+
+      if (!/^\d+$/.test(indexString)) return;
+
+      const index = Number(indexString);
+
+      config.arrays[name] ??= [];
+      config.arrays[name][index] = { text: normalizedValue };
+    }
+  });
+
+  return config;
+}
+
+/**
+ * Recursively merges plain objects. Locale values override English values.
+ * @param {object} base
+ * @param {object} override
+ * @returns {object}
+ */
+function deepMerge(base, override) {
+  const result = { ...base };
+
+  Object.entries(override || {}).forEach(([key, value]) => {
+    const baseValue = result[key];
+
     const bothPlainObjects =
       value &&
       typeof value === 'object' &&
       !Array.isArray(value) &&
-      baseVal &&
-      typeof baseVal === 'object' &&
-      !Array.isArray(baseVal);
-    out[key] = bothPlainObjects ? deepMerge(baseVal, value) : value;
+      baseValue &&
+      typeof baseValue === 'object' &&
+      !Array.isArray(baseValue);
+
+    result[key] = bothPlainObjects ? deepMerge(baseValue, value) : value;
   });
-  return out;
+
+  return result;
 }
 
 /**
- * @param {string | null} pageLangKey - The requested locale key, but only when that locale's own
- * content actually applied (see loadBrandConciergeConfig()); `null` otherwise (unsupported locale,
- * or a supported one whose sheet fetch failed), so metadata.language falls through to
- * `brandConciergeConfig.metadata.language` (`document.documentElement.lang`) rather than
- * mislabeling English fallback content as a locale it isn't.
+ * Merges arrays by index so missing translated prompts fall back to English.
+ * @param {object} englishArrays
+ * @param {object} localeArrays
+ * @returns {object}
  */
-function buildBrandConciergeConfig(en, locale, pageLangKey) {
+function mergeLocaleArrays(englishArrays = {}, localeArrays = {}) {
+  const result = {};
+
+  const keys = new Set([...Object.keys(englishArrays), ...Object.keys(localeArrays)]);
+
+  keys.forEach((key) => {
+    const english = englishArrays[key] || [];
+    const localized = localeArrays[key] || [];
+    const length = Math.max(english.length, localized.length);
+
+    result[key] = Array.from({ length }, (_, index) => localized[index] ?? english[index]).filter(
+      (entry) => entry !== undefined,
+    );
+  });
+
+  return result;
+}
+
+/**
+ * Merges English and locale UE content into the active configuration.
+ * @param {object} english
+ * @param {object} locale
+ * @param {string|null} pageLangKey
+ * @returns {object}
+ */
+function buildBrandConciergeConfig(english, locale, pageLangKey) {
   return {
     ...brandConciergeConfig,
-    ui: deepMerge(en.ui, locale.ui),
-    text: { ...en.text, ...locale.text },
-    arrays: normalizeLocaleArrays({ ...en.arrays, ...locale.arrays }),
+    ui: deepMerge(english.ui, locale.ui),
+    text: {
+      ...english.text,
+      ...locale.text,
+    },
+    arrays: mergeLocaleArrays(english.arrays, locale.arrays),
     metadata: {
       ...brandConciergeConfig.metadata,
       language: LOCALES[pageLangKey]?.language || brandConciergeConfig.metadata.language,
@@ -191,51 +289,47 @@ function buildBrandConciergeConfig(en, locale, pageLangKey) {
 }
 
 /**
- * Loads the BC config for a path language, layering the locale's localization sheet over the
- * English base. English is always fetched as the fallback base, so a partial locale sheet
- * degrades per-field rather than dropping keys. Falls back to English for unknown/failed locales.
- * Returns `null` if the English base sheet itself can't be loaded, so the caller can skip mounting
- * gracefully rather than render a widget with no copy (single-point-of-failure guard).
- * @param {string} [lang] - Path language from getPathDetails().lang (e.g. 'en', 'es').
- * @returns {Promise<(typeof brandConciergeConfig & { ui: object }) | null>}
+ * Loads published UE labels and prompts for the requested language.
+ * English is the fallback for missing locale keys.
+ * @param {string} [lang]
+ * @returns {Promise<object|null>}
  */
 export async function loadBrandConciergeConfig(lang) {
-  const key = (lang || 'en').toLowerCase();
-  const [englishResult, localeResult] = await Promise.allSettled([
-    fetchLocaleSheet('en'),
-    key !== 'en' && SUPPORTED_LOCALES.has(key) ? fetchLocaleSheet(key) : Promise.resolve(null),
-  ]);
-  if (englishResult.status !== 'fulfilled') {
+  const key = (lang || 'en').toLowerCase().split('-')[0];
+
+  let english;
+
+  try {
+    const englishRows = await fetchUeSheet('en');
+    english = rowsToConfig(englishRows);
+  } catch (err) {
     // eslint-disable-next-line no-console
-    console.warn(
-      '[BC] English localization sheet failed to load; skipping mount',
-      englishResult.reason?.message || englishResult.reason,
-    );
+    console.warn('[BC] English UE spreadsheet failed to load; skipping mount', err?.message || err);
+
     return null;
   }
-  const en = englishResult.value;
-  let locale = en;
+
+  let locale = english;
   let appliedKey = 'en';
-  if (localeResult.status === 'fulfilled' && localeResult.value) {
-    locale = localeResult.value;
-    appliedKey = key;
-  } else if (localeResult.status === 'rejected') {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `[BC] Locale sheet '${key}' failed; using English`,
-      localeResult.reason?.message || localeResult.reason,
-    );
+
+  if (key !== 'en' && SUPPORTED_LOCALES.has(key)) {
+    try {
+      const localeRows = await fetchUeSheet(key);
+      locale = rowsToConfig(localeRows);
+      appliedKey = key;
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn(`[BC] UE spreadsheet '${key}' failed; using English`, err?.message || err);
+    }
   }
-  // Only trust `key` for metadata.language when that locale's own content actually applied.
-  // Otherwise (unsupported locale, or a supported one whose sheet fetch failed) pass null so
-  // buildBrandConciergeConfig falls through to the page's own document language instead of
-  // mislabeling English fallback content as a locale it isn't.
-  return buildBrandConciergeConfig(en, locale, appliedKey === key ? key : null);
+
+  return buildBrandConciergeConfig(english, locale, appliedKey === key ? key : null);
 }
 
 /**
- * @param {string} [lang] - Path language, e.g. 'en', 'es'.
- * @param {string} fallback - Default datastream id used when the locale has no override.
+ * Returns the locale-specific datastream or the default fallback.
+ * @param {string} lang
+ * @param {string} fallback
  * @returns {string}
  */
 export function getBrandConciergeDatastreamId(lang, fallback) {
