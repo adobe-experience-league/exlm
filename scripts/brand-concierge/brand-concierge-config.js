@@ -203,6 +203,12 @@ export function rowsToConfig(rows) {
 
     const normalizedValue = String(value);
 
+    // Ignore blank scalar values so locale fallbacks remain intact.
+    // Preserve whitespace in nonblank values.
+    if ((key.startsWith('ui.') || key.startsWith('text.')) && !normalizedValue.trim()) {
+      return;
+    }
+
     if (key.startsWith('ui.')) {
       setNestedValue(config.ui, key.slice(3).split('.'), normalizedValue);
       return;
