@@ -75,12 +75,8 @@ const brandConciergeConfig = {
 const SHEET_BASE_PATH = window.hlx.codeBasePath;
 
 const LOCALES = {
-  en: {
-    language: 'en-US',
-  },
-  es: {
-    language: 'es-ES',
-  },
+  en: { language: 'en-US' },
+  es: { language: 'es-ES' },
 };
 
 export const SUPPORTED_LOCALES = new Set(Object.keys(LOCALES));
