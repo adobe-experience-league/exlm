@@ -186,9 +186,18 @@ export function rowsToConfig(rows) {
     arrays: {},
   };
 
+  let promptIndex = 0;
+
   rows.forEach((row) => {
-    const key = String(row?.key ?? '').trim();
-    const value = row?.value;
+    let key = String(row?.key ?? '').trim();
+    let value = row?.value;
+
+    // Support legacy spreadsheets containing only "Default prompts".
+    if (!key && row?.['Default prompts'] != null) {
+      value = row['Default prompts'];
+      key = `arrays.welcome.examples.${promptIndex}`;
+      promptIndex += 1;
+    }
 
     if (!key || value == null) return;
 
