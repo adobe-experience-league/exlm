@@ -114,12 +114,26 @@ async function fetchUeSheet(lang) {
           throw new Error(`Brand Concierge UE sheet '${lang}' must contain a data array`);
         }
 
-        // Normalize the spreadsheet's column to the shape
-        // expected by rowsToConfig().
-        return rows.map((row) => ({
-          key: row.key,
-          value: row.value ?? row['Default prompts'],
-        }));
+        // Older prompt-only sheets have no key column; map their prompts to welcome examples.
+        let promptIndex = 0;
+        return rows.map((row) => {
+          const key = typeof row?.key === 'string' ? row.key.trim() : '';
+          const prompt = row?.['Default prompts'];
+
+          if (!key && prompt != null && String(prompt).trim()) {
+            const promptRow = {
+              key: `arrays.welcome.examples.${promptIndex}`,
+              value: prompt,
+            };
+            promptIndex += 1;
+            return promptRow;
+          }
+
+          return {
+            key: row?.key,
+            value: row?.value ?? prompt,
+          };
+        });
       })
       .catch((err) => {
         ueSheetCache.delete(lang);
@@ -160,7 +174,7 @@ function setNestedValue(target, path, value) {
  *
  * ui keys become nested objects.
  * text keys retain their dotted suffixes.
- * arrays use numbered keys and become [{ text: '...' }] entries.
+ * welcome examples become [{ text: '...' }] entries; other arrays remain strings.
  *
  * @param {Array<{key: string, value: string}>} rows
  * @returns {{ui: object, text: object, arrays: object}}
@@ -191,6 +205,8 @@ export function rowsToConfig(rows) {
     }
 
     if (key.startsWith('arrays.')) {
+      if (!normalizedValue.trim()) return;
+
       const arrayKey = key.slice(7);
       const lastDot = arrayKey.lastIndexOf('.');
 
@@ -204,7 +220,7 @@ export function rowsToConfig(rows) {
       const index = Number(indexString);
 
       config.arrays[name] ??= [];
-      config.arrays[name][index] = { text: normalizedValue };
+      config.arrays[name][index] = name === 'welcome.examples' ? { text: normalizedValue } : normalizedValue;
     }
   });
 
