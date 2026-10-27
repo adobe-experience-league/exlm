@@ -765,6 +765,10 @@ async function loadEager(doc) {
   } catch (e) {
     // do nothing
   }
+  if (document.body.classList.contains('sidekick-library')) {
+    loadScript(`${window.hlx.codeBasePath}/tools/visual-tests/visual-test.js`);
+    loadScript(`${window.hlx.codeBasePath}/tools/visual-overlay/index.js`, { type: 'module' });
+  }
 }
 
 /**
@@ -919,8 +923,8 @@ export function getConfig() {
     targetCriteriaIds,
     premiumLearningAuthAPI,
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
-    khorosProfileUrl: `${cdnOrigin}/api/action/khoros/profile-menu-list?platform=gainsight`,
-    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/khoros/profile-details?platform=gainsight`,
+    khorosProfileUrl: `${cdnOrigin}/api/action/gainsight/profile-menu-list`,
+    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/gainsight/profile-details`,
     // Profile and JWT Token Ethos APIs are reverse proxied through the ExL CDN domains.
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
@@ -1824,6 +1828,8 @@ export function getLastDocsSection() {
  * @returns {void}
  */
 function handleRedirects() {
+  // window.location.href is not a valid URL base (e.g. 'about:srcdoc' inside preview iframes)
+  if (!/^https?:$/.test(window.location.protocol)) return;
   const currentUrl = new URL(window.location.href);
   const redirectPaths = {
     '#support': '/en/support',

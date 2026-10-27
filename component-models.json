@@ -9814,7 +9814,7 @@
         ]
       },
       {
-        "component": "richtext",
+        "component": "text",
         "valueType": "string",
         "name": "description",
         "value": "",
@@ -9828,7 +9828,7 @@
         "label": "Style",
         "description": "Sets the style variant and the shared CTA style applied to all card buttons in this block.",
         "valueType": "string",
-        "maxSize": 8,
+        "maxSize": 12,
         "options": [
           {
             "name": "Card Variant",
@@ -9975,6 +9975,53 @@
                 "value": "lg-card-title"
               }
             ]
+          },
+          {
+            "name": "Section Description Size",
+            "children": [
+              {
+                "name": "14px",
+                "value": "section-desc-14"
+              },
+              {
+                "name": "16px",
+                "value": "section-desc-16"
+              },
+              {
+                "name": "18px",
+                "value": "section-desc-18"
+              }
+            ]
+          },
+          {
+            "name": "Card Description Size",
+            "children": [
+              {
+                "name": "14px",
+                "value": "card-desc-14"
+              },
+              {
+                "name": "16px",
+                "value": "card-desc-16"
+              },
+              {
+                "name": "18px",
+                "value": "card-desc-18"
+              }
+            ]
+          },
+          {
+            "name": "Description Font Weight",
+            "children": [
+              {
+                "name": "Section Description: Bold",
+                "value": "section-desc-bold"
+              },
+              {
+                "name": "Card Description: Bold",
+                "value": "card-desc-bold"
+              }
+            ]
           }
         ]
       }
@@ -10021,7 +10068,7 @@
         ]
       },
       {
-        "component": "richtext",
+        "component": "text",
         "valueType": "string",
         "name": "cardDescription",
         "value": "",
