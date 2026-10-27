@@ -32,6 +32,7 @@ import LanguageBlock from '../language/language.js';
 import ProfileMenu from './profile-menu.js';
 import { isDomainAllowed } from '../../scripts/utils/exlm-config-utils.js';
 import { pushBcWidgetImpressionEvent } from '../../scripts/analytics/lib-analytics.js';
+import { edgeHeaderOptions, mountHeader, finishEdgeHeader } from './edge-header.js';
 
 /**
  *  @typedef {Object} CommunityOptions
@@ -55,6 +56,8 @@ import { pushBcWidgetImpressionEvent } from '../../scripts/analytics/lib-analyti
  * @property {import('../language/language.js').Language[]} languages - array of languages to dispay in language selector
  * @property {(lang: string) => void} onLanguageChange - called when language is changed
  * @property {Object} [placeholders] - language placeholders object
+ * @property {string} [edgeHeaderFragment] - public fragment supplied by the edge
+ * @property {boolean} [edgeHeaderFallback] - static navigation remains until enhancement succeeds
  */
 
 const HEADER_CSS = `/blocks/header/exl-header.css`;
@@ -762,12 +765,14 @@ class ExlHeader extends HTMLElement {
   }
 
   async loadStyles() {
-    return Promise.allSettled([this.loadCSS(`${window.hlx.codeBasePath}${HEADER_CSS}`)]);
+    const styles = [this.loadCSS(`${window.hlx.codeBasePath}${HEADER_CSS}`)];
+    return this.decoratorOptions.edgeHeaderFallback ? Promise.all(styles) : Promise.allSettled(styles);
   }
 
   async decorate() {
     const fragmentPath = '/en/global-fragments/header';
-    const headerFragment = await fetchHeaderFragment(fragmentPath, this.decoratorOptions.lang);
+    const headerFragment =
+      this.decoratorOptions.edgeHeaderFragment || (await fetchHeaderFragment(fragmentPath, this.decoratorOptions.lang));
     if (headerFragment) {
       loadSearchElement();
 
@@ -808,6 +813,7 @@ class ExlHeader extends HTMLElement {
         } catch (err) {
           // eslint-disable-next-line no-console
           console.error(`Error decorating header block: ${className}`, err);
+          if (className === 'nav' && this.decoratorOptions.edgeHeaderFallback) throw err;
         }
       };
 
@@ -831,13 +837,15 @@ class ExlHeader extends HTMLElement {
         // used when the header is embeded on coimmunity/legacy pages to listen for when the header is completely decorated.
         this.dispatchEvent(new Event('header-decorated'));
       });
+      return true;
     }
+    return false;
   }
 
   async connectedCallback() {
     this.style.display = 'none';
-    await Promise.allSettled([this.loadStyles(), this.decorate()]);
-    this.style.display = '';
+    const results = await Promise.allSettled([this.loadStyles(), this.decorate()]);
+    finishEdgeHeader(this, results);
     // used when the header is embeded on coimmunity/legacy pages.
     this.dispatchEvent(new Event('header-loaded'));
     this.isLoaded = true;
@@ -857,7 +865,8 @@ export default async function decorate(headerBlock, options = {}) {
   if (!customElements.get('exl-header')) {
     customElements.define('exl-header', ExlHeader);
   }
-  const exlHeader = new ExlHeader(options);
-  headerBlock.replaceChildren(exlHeader);
+  const lang = options.lang || getPathDetails().lang || 'en';
+  const exlHeader = new ExlHeader(edgeHeaderOptions(headerBlock, options, 'header', lang));
+  mountHeader(headerBlock, exlHeader);
   return undefined;
 }

@@ -5,6 +5,8 @@
   "description": "Adobe Experience League",
   "type": "module",
   "scripts": {
+    "simulate:edge-header": "node tools/edgeworkers/simulate.mjs",
+    "package:edge-header": "node tools/edgeworkers/package.mjs",
     "lint:js": "eslint .",
     "lint:css": "stylelint **.css -f verbose",
     "lint:css:fix": "stylelint **.css -f verbose --fix",
@@ -43,6 +45,8 @@
   },
   "homepage": "https://main--exlm--adobe-experience-league.hlx.live/",
   "devDependencies": {
+    "akamai-edgegrid": "5.0.0",
+    "parse5": "8.0.0",
     "@babel/core": "7.21.0",
     "@babel/eslint-parser": "7.19.1",
     "eslint": "8.35.0",

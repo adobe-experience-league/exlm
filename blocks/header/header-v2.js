@@ -28,6 +28,7 @@ import { decorateIcons, getMetadata } from '../../scripts/lib-franklin.js';
 import LanguageBlock from '../language/language.js';
 import ProfileMenu from './profile-menu.js';
 import { pushBcWidgetImpressionEvent } from '../../scripts/analytics/lib-analytics.js';
+import { edgeHeaderOptions, mountHeader, finishEdgeHeader } from './edge-header.js';
 
 /**
  *  @typedef {Object} CommunityOptions
@@ -51,6 +52,8 @@ import { pushBcWidgetImpressionEvent } from '../../scripts/analytics/lib-analyti
  * @property {import('../language/language.js').Language[]} languages - array of languages to dispay in language selector
  * @property {(lang: string) => void} onLanguageChange - called when language is changed
  * @property {Object} [placeholders] - language placeholders object
+ * @property {string} [edgeHeaderFragment] - public fragment supplied by the edge
+ * @property {boolean} [edgeHeaderFallback] - static navigation remains until enhancement succeeds
  * @property {Promise} [navReadyDeps] - resolves once search/language decorators have run;
  *   set by decorate() and awaited by navDecorator before building the mobile drawer only
  *   (the desktop nav doesn't need it and renders before this resolves)
@@ -1026,12 +1029,14 @@ class ExlHeader extends HTMLElement {
   }
 
   async loadStyles() {
-    return Promise.allSettled([this.loadCSS(`${window.hlx.codeBasePath}${HEADER_CSS}`)]);
+    const styles = [this.loadCSS(`${window.hlx.codeBasePath}${HEADER_CSS}`)];
+    return this.decoratorOptions.edgeHeaderFallback ? Promise.all(styles) : Promise.allSettled(styles);
   }
 
   async decorate() {
     const fragmentPath = '/en/global-fragments/header-v2';
-    const headerFragment = await fetchHeaderFragment(fragmentPath, this.decoratorOptions.lang);
+    const headerFragment =
+      this.decoratorOptions.edgeHeaderFragment || (await fetchHeaderFragment(fragmentPath, this.decoratorOptions.lang));
     if (headerFragment) {
       loadSearchElement();
 
@@ -1067,7 +1072,12 @@ class ExlHeader extends HTMLElement {
       const decorateHeaderBlock = async (className, decorator, options) => {
         try {
           const block = nav.querySelector(`:scope > .${className}`);
-          if (!block) return;
+          if (!block) {
+            if (className === 'nav' && this.decoratorOptions.edgeHeaderFallback) {
+              throw new Error('Header fragment has no navigation block');
+            }
+            return;
+          }
           block.style.visibility = 'hidden';
           await decorator(block, options);
           block.style.visibility = 'visible';
@@ -1075,6 +1085,7 @@ class ExlHeader extends HTMLElement {
         } catch (err) {
           // eslint-disable-next-line no-console
           console.error(`Error decorating header block: ${className}`, err);
+          if (className === 'nav' && this.decoratorOptions.edgeHeaderFallback) throw err;
         }
       };
 
@@ -1103,13 +1114,15 @@ class ExlHeader extends HTMLElement {
         // used when the header is embeded on coimmunity/legacy pages to listen for when the header is completely decorated.
         this.dispatchEvent(new Event('header-decorated'));
       });
+      return true;
     }
+    return false;
   }
 
   async connectedCallback() {
     this.style.display = 'none';
-    await Promise.allSettled([this.loadStyles(), this.decorate()]);
-    this.style.display = '';
+    const results = await Promise.allSettled([this.loadStyles(), this.decorate()]);
+    finishEdgeHeader(this, results);
     // used when the header is embeded on coimmunity/legacy pages.
     this.dispatchEvent(new Event('header-loaded'));
     this.isLoaded = true;
@@ -1126,6 +1139,7 @@ export default async function decorate(headerBlock, options = {}) {
   if (!customElements.get('exl-header')) {
     customElements.define('exl-header', ExlHeader);
   }
-  const exlHeader = new ExlHeader(options);
-  headerBlock.replaceChildren(exlHeader);
+  const lang = options.lang || getPathDetails().lang || 'en';
+  const exlHeader = new ExlHeader(edgeHeaderOptions(headerBlock, options, 'header-v2', lang));
+  mountHeader(headerBlock, exlHeader);
 }

@@ -6,3 +6,4 @@ package.json
 package-lock.json
 test/*
 tools/visual-tests/*
+tools/edgeworkers/*

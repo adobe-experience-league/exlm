@@ -1,0 +1,66 @@
+name: Edge header spike
+
+on:
+  pull_request:
+    paths:
+      - 'tools/edgeworkers/**'
+      - 'blocks/header/**'
+      - 'package*.json'
+      - '.github/workflows/edge-header.yaml'
+  workflow_dispatch:
+    inputs:
+      deploy_staging:
+        description: Upload and activate on Akamai staging
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx eslint tools/edgeworkers/header/*.js tools/edgeworkers/*.mjs blocks/header/edge-header.js blocks/header/header.js blocks/header/header-v2.js
+      - run: npx prettier --check tools/edgeworkers blocks/header/edge-header.js .github/workflows/edge-header.yaml
+      - run: npm run package:edge-header -- "0.${{ github.run_number }}.${{ github.run_attempt }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: edge-header-bundle
+          path: tools/edgeworkers/dist/header.tgz
+          retention-days: 7
+
+  staging:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_staging
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: akamai-staging
+    concurrency:
+      group: edge-header-staging
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: edge-header-bundle
+          path: tools/edgeworkers/dist
+      - name: Upload bundle and await staging activation
+        run: node tools/edgeworkers/deploy.mjs
+        env:
+          AKAMAI_CLIENT_TOKEN: ${{ secrets.AKAMAI_CLIENT_TOKEN }}
+          AKAMAI_CLIENT_SECRET: ${{ secrets.AKAMAI_CLIENT_SECRET }}
+          AKAMAI_ACCESS_TOKEN: ${{ secrets.AKAMAI_ACCESS_TOKEN }}
+          AKAMAI_HOST: ${{ secrets.AKAMAI_HOST }}
+          AKAMAI_EDGEWORKER_ID: ${{ vars.AKAMAI_EDGEWORKER_ID }}

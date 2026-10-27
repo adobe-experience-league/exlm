@@ -54,3 +54,4 @@ tools/visual-tests/playwright-report/
 tools/visual-tests/test-results/
 tools/visual-tests/blob-report/
 .env.local
+tools/edgeworkers/dist/
