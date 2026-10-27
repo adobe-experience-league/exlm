@@ -299,6 +299,7 @@ async function fetchBrandConciergeJson(lang) {
             const promptRow = {
               key: `arrays.welcome.examples.${promptIndex}`,
               value: prompt,
+              isLegacyPromptRow: true,
             };
             promptIndex += 1;
             return promptRow;
@@ -513,13 +514,18 @@ export async function loadBrandConciergeConfig(lang) {
     const englishRows = await fetchBrandConciergeJson('en');
     const englishSheet = rowsToConfig(englishRows);
     const defaults = getDefaultContentConfig();
+    const englishArrays = mergeLocaleArrays(defaults.arrays, englishSheet.arrays);
+    if (englishRows.some((row) => row.isLegacyPromptRow) && englishSheet.arrays['welcome.examples']?.length) {
+      englishArrays['welcome.examples'] = englishSheet.arrays['welcome.examples'];
+    }
+
     english = {
       ui: deepMerge(defaults.ui, englishSheet.ui),
       text: {
         ...defaults.text,
         ...englishSheet.text,
       },
-      arrays: mergeLocaleArrays(defaults.arrays, englishSheet.arrays),
+      arrays: englishArrays,
     };
   } catch (err) {
     // eslint-disable-next-line no-console
