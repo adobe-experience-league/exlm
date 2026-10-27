@@ -1320,7 +1320,7 @@ export async function initBrandConcierge() {
     log('[BC] loading Web Client', bcWebClientUrl);
     await loadScript(bcWebClientUrl);
 
-    log('Web Client loaded — calling bootstrap');
+    log('[BC] Web Client loaded — calling bootstrap');
     bootstrapWebClient();
     log('[BC] bootstrapWebClient called');
     const bcMount = getBrandConciergeMount();
