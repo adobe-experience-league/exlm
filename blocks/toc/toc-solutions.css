@@ -129,6 +129,10 @@
   --exlm-toc-active-color: var(--exlm-toc-solution-1);
 }
 
+.toc.JourneyOptimizer {
+  --exlm-toc-active-color: var(--exlm-toc-solution-8);
+}
+
 .toc.JourneyOrchestration {
   --exlm-toc-active-color: var(--exlm-toc-solution-8);
 }
@@ -167,6 +171,10 @@
 
 .toc.ReportMapping {
   --exlm-toc-active-color: var(--exlm-toc-solution-3);
+}
+
+.toc.RealTimeCustomerDataPlatformCollaboration {
+  --exlm-toc-active-color: var(--exlm-toc-solution-2);
 }
 
 .toc.target {
