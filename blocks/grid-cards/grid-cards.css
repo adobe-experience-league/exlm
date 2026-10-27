@@ -85,7 +85,7 @@
 .grid-cards-description > div > * {
   font-size: var(--grid-cards-desc-size, var(--spectrum-body-size-xl));
   line-height: 150%;
-  font-weight: var(--grid-cards-desc-weight, 400);
+  font-weight: var(--grid-cards-desc-weight, var(--font-weight-normal));
   color: var(--non-spectrum-dark-gray);
   margin: 0;
 }
