@@ -96,7 +96,7 @@ const ueSheetCache = new Map();
  * @returns {Promise<Array<{key: string, value: string}>>}
  */
 
-async function fetchUeSheet(lang) {
+async function fetchBrandConciergeJson(lang) {
   if (!ueSheetCache.has(lang)) {
     const request = fetch(`${SHEET_BASE_PATH}/${lang}/brand-concierge.json`)
       .then((res) => {
@@ -327,7 +327,7 @@ export async function loadBrandConciergeConfig(lang) {
   let english;
 
   try {
-    const englishRows = await fetchUeSheet('en');
+    const englishRows = await fetchBrandConciergeJson('en');
     english = rowsToConfig(englishRows);
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -341,7 +341,7 @@ export async function loadBrandConciergeConfig(lang) {
 
   if (key !== 'en') {
     try {
-      const localeRows = await fetchUeSheet(key);
+      const localeRows = await fetchBrandConciergeJson(key);
       const localized = rowsToConfig(localeRows);
 
       // Apply localized chrome only for registered locales.
