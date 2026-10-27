@@ -1,11 +1,32 @@
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 
+const LANGUAGE_LABELS = new Map([
+  ['js', 'JS'],
+  ['javascript', 'JS'],
+  ['css', 'CSS'],
+  ['html', 'HTML'],
+  ['java', 'Java'],
+]);
+
 function getDataLineValue(arr) {
   let dataLineValue = '';
   arr.forEach((className) => {
     dataLineValue += `${className.slice(2)}, `;
   });
   return dataLineValue.slice(0, -2);
+}
+
+function addLanguageBadge(block, pre) {
+  const languageClass = [...block.classList].find(
+    (className) => className.startsWith('language-') && className.length > 'language-'.length,
+  );
+  if (!languageClass) return;
+
+  const language = languageClass.slice('language-'.length).toLowerCase();
+  const badge = document.createElement('span');
+  badge.className = 'code-language-badge';
+  badge.textContent = LANGUAGE_LABELS.get(language) || language.toUpperCase();
+  pre.before(badge);
 }
 
 /**
@@ -121,6 +142,8 @@ export default async function decorate(block) {
       pre.setAttribute(key, value);
     }
   });
+
+  addLanguageBadge(block, pre);
 
   if (block.classList.contains('expandable')) {
     addCollapsibleCodeFeature(block, pre, defaultLines, placeholders);
