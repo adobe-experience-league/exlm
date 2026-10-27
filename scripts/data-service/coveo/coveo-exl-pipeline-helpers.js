@@ -234,6 +234,9 @@ export function getExlPipelineDataSourceParams(param, fields = fieldsToInclude) 
         document.querySelector('html').lang ||
         'en',
       searchHub: `Experience League Learning Hub`,
+      // Optional Tab (originLevel2). Courses Hub passes `Courses` so pipeline/ranking rules can
+      // key off Tab without matching every client on the shared Search Hub (EXLM-6193).
+      ...(param.tab ? { tab: param.tab } : {}),
       numberOfResults: param.noOfResults,
       excerptLength: 200,
       sortCriteria: param.sortCriteria,

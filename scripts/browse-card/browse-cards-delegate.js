@@ -394,10 +394,19 @@ const BrowseCardsDelegate = (() => {
         });
     });
 
-  const fetchCoveoFacetFields = (fields) =>
+  /**
+   * Fetches facet value lists via Search API `/values/batch`.
+   * @param {string[]} fields - Coveo fields to batch (e.g. `el_product`, `el_level`).
+   * @param {{ tab?: string }} [options] - Optional Search API `tab` (originLevel2). Courses Hub
+   *   passes `Courses` so the facet batch is tagged the same as content queries (EXLM-6193).
+   */
+  const fetchCoveoFacetFields = (fields, options = {}) =>
     new Promise((resolve, reject) => {
       const facets = {};
-      const dataSource = getExlPipelineDataSourceParams({ fields, fetchFacets: true }, []);
+      const dataSource = getExlPipelineDataSourceParams(
+        { fields, fetchFacets: true, ...(options.tab ? { tab: options.tab } : {}) },
+        [],
+      );
       const coveoService = new CoveoDataService(dataSource);
       coveoService
         .fetchDataFromSource()

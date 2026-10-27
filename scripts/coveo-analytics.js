@@ -167,8 +167,9 @@ export async function sendCoveoClickEvent(source, model) {
     documentUrl: viewLink,
     language: window.languageCode.substring(0, 2).toLowerCase(), // Two letter code only
     // originLevel1: '', pulled from token. We should only set it if we have to override it
-    // originLevel2: '', "tab" value of search request, if we ever use it
-    searchQueryUid,
+    // originLevel2 mirrors Search API `tab` when the caller stamped it (Courses Hub EXLM-6193).
+    ...(model.originLevel2 ? { originLevel2: model.originLevel2 } : {}),
+    searchQueryUid: searchQueryUid || model.searchUid,
     sourceName: source,
     userAgent: window.navigator.userAgent,
     customData,
