@@ -306,6 +306,11 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 atomic-facet::part(show-shimmer) {
                   display: block;
                 }
+                /* Hide Atomic's raw value list until EXLM applies show-more + order.
+                   Without this, Product (number-of-values=500) flashes fully expanded. */
+                atomic-facet:not([data-exlm-facet-ready])::part(values) {
+                  visibility: hidden;
+                }
                 atomic-facet::part(facet-show-more-wrapper) {
                   display: flex;
                   margin: 16px 8px 8px;
