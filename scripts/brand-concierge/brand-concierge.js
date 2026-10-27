@@ -71,9 +71,8 @@ const warn = (...args) => console.warn('[BC]', ...args);
 const error = (...args) => console.error('[BC]', ...args);
 
 /**
- * Locale-resolved config (English base + any locale overlay), loaded async from per-locale
- * JSON in initBrandConcierge(). Null until loaded; consumers run only after the load resolves,
- * and the observer callbacks guard against a null value defensively.
+ * Locale-resolved config (English base + any locale overlay), loaded from published UE JSON.
+ * Null until loaded; consumers run only after the load resolves.
  */
 let activeConfig = null;
 /** Path language backing `activeConfig`; 'en' means no locale overlay is active. */
@@ -99,6 +98,22 @@ let initPromise = null;
 let initResolve = null;
 let initReject = null;
 let initStarted = false;
+
+function loadBrandConciergeStylesheet() {
+  const href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
+  cssLinkEl?.remove();
+  cssLinkEl = document.createElement('link');
+  cssLinkEl.rel = 'stylesheet';
+  cssLinkEl.href = href;
+
+  return new Promise((resolve, reject) => {
+    cssLinkEl.addEventListener('load', resolve, { once: true });
+    cssLinkEl.addEventListener('error', () => reject(new Error(`Failed to load Brand Concierge stylesheet: ${href}`)), {
+      once: true,
+    });
+    document.head.append(cssLinkEl);
+  });
+}
 
 /** Real BC conversationId, captured from response:started/response:completed events. */
 let bcConversationId = null;
@@ -1286,32 +1301,36 @@ export async function initBrandConcierge() {
   if (initStarted) return initPromise;
   initStarted = true;
 
-  const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
-  activeLang = getPathDetails().lang;
-  activeConfig = await loadBrandConciergeConfig(activeLang);
-  // If even the English base sheet can't load, skip mounting rather than render an empty widget.
-  if (!activeConfig) {
-    initResolve?.();
-    initResolve = null;
-    initReject = null;
-    initStarted = false;
-    return initPromise;
-  }
-
-  log('Brand Concierge configuration loaded', {
-    language: activeLang,
-    welcomePrompts: activeConfig.arrays?.['welcome.examples']?.length || 0,
-  });
-
-  // Route to the locale's Brand Concierge datastream (e.g. the Spanish concierge on /es/),
-  // falling back to the default datastream for locales without an override. Kept separate from
-  // activeConfig so this routing id never leaks into the styling payload sent to the BC client.
-  const datastreamId = getBrandConciergeDatastreamId(activeConfig.metadata.language, bcDatastreamId);
-  createMountPoint();
-  applyBcEntryChrome(resolveBcEntryExperience());
-  injectAlloyStub();
-
   try {
+    await loadBrandConciergeStylesheet();
+
+    const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
+    activeLang = getPathDetails().lang;
+    activeConfig = await loadBrandConciergeConfig(activeLang);
+    // If the English base sheet can't load, skip mounting rather than render an empty widget.
+    if (!activeConfig) {
+      cssLinkEl?.remove();
+      cssLinkEl = null;
+      initResolve?.();
+      initResolve = null;
+      initReject = null;
+      initStarted = false;
+      return initPromise;
+    }
+
+    log('Brand Concierge configuration loaded', {
+      language: activeLang,
+      welcomePrompts: activeConfig.arrays?.['welcome.examples']?.length || 0,
+    });
+
+    // Route to the locale's Brand Concierge datastream (e.g. the Spanish concierge on /es/),
+    // falling back to the default datastream for locales without an override. Kept separate from
+    // activeConfig so this routing id never leaks into the styling payload sent to the BC client.
+    const datastreamId = getBrandConciergeDatastreamId(activeConfig.metadata.language, bcDatastreamId);
+    createMountPoint();
+    applyBcEntryChrome(resolveBcEntryExperience());
+    injectAlloyStub();
+
     log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, datastreamId, locale: activeLang });
     await loadScript(bcAlloySdkUrl);
     await configureWebSdk(datastreamId, bcOrgId, bcEdgeDomain);
@@ -1329,11 +1348,7 @@ export async function initBrandConcierge() {
     patchBcSparkleIcons(bcMount);
     watchPanelDisclaimer(bcMount);
 
-    // Appended after bootstrap() so this <link> follows BC's injected <style> in document
-    // order, giving our overrides cascade priority at equal specificity.
-    cssLinkEl = document.createElement('link');
-    cssLinkEl.rel = 'stylesheet';
-    cssLinkEl.href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
+    // Move the loaded stylesheet after BC's injected style to preserve override priority.
     const experience = resolveBcEntryExperience();
     applyBcEntryChrome(experience);
     document.head.append(cssLinkEl);
