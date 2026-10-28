@@ -244,11 +244,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
               .clear-label {
                 font-size: 12px;
                 color: #767676;
-                
+                pointer-events: none;
               }
               .clear-label.clear-btn-enabled, .clear-label.clear-btn-enabled label {
                 color: var(--non-spectrum-navy-blue);
                 cursor: pointer;
+                pointer-events: auto;
               }
             </style>
             <div class="facet-header">
