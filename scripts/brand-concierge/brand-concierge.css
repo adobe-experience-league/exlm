@@ -439,7 +439,7 @@
   background-color: var(--link-hover-color);
 }
 
-.bc-trigger {
+button.bc-trigger {
   position: fixed;
   bottom: 24px;
   right: 24px;
