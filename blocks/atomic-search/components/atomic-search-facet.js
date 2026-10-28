@@ -729,10 +729,14 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         clearTimeout(resultTimerId);
         resultTimerId = 0;
       }
+      clearBaselineFingerprint = facetSelectionFingerprint();
+      // Nothing selected → Clear All is a no-op. Do not lock/shimmer or filters stay grey.
+      if (!clearBaselineFingerprint) {
+        return;
+      }
       // Clear All rebuilds every facet list — lock before Atomic's next paint.
       lockAllFacetValueHeights();
       showAllFacetShimmers();
-      clearBaselineFingerprint = facetSelectionFingerprint();
       facetClearInProgress = true;
       if (facetClearSafetyTimerId) {
         clearTimeout(facetClearSafetyTimerId);
@@ -752,6 +756,10 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
           if (facetClearInProgress) {
             endFacetClearInProgress();
           }
+          // If RESULT_UPDATED never arrived, drop any stuck shimmer/height lock.
+          document.querySelectorAll('atomic-facet').forEach((atomicFacet) => {
+            settleFacetUI(atomicFacet);
+          });
           facetClearSafetyTimerId = 0;
         }, 2000);
       };
