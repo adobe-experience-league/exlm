@@ -36,6 +36,14 @@ const BrowseCardsTargetDataAdapter = (() => {
     const duration = data?.['course-duration'] || data?.el_course_duration || '';
     const moduleCount = data?.['course-module-count'] || data?.el_course_module_count || '';
 
+    // Extract event-specific fields (for on-demand events)
+    const eventData =
+      isOnDemandEvent && data?.['event-start-time']
+        ? {
+            date: data['event-start-time'],
+          }
+        : undefined;
+
     return {
       ...data,
       contentType, // Normalized to lowercase
@@ -57,6 +65,8 @@ const BrowseCardsTargetDataAdapter = (() => {
       el_level: level,
       el_course_duration: duration,
       el_course_module_count: moduleCount,
+      // Event-specific fields
+      event: eventData,
     };
   };
 
