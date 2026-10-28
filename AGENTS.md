@@ -105,6 +105,75 @@ Progressive loading follows the same **eager / lazy / delayed** model as standar
 - Run **`npm run quality`** before opening a PR; CI runs the same via [.github/workflows/quality-action.yaml](.github/workflows/quality-action.yaml).
 - For previews, use `curl` against the local dev server or published preview URLs; see [Keeping it 100](https://www.aem.live/developer/keeping-it-100) for performance expectations.
 
+### Block visual regression tests
+
+The [visual-test suite](tools/visual-tests/README.md) uses Playwright to render Sidekick Library block variations and compare screenshots with committed PNG baselines. Use the repository's Docker commands for local generation, testing, and snapshot updates, not bare host Playwright runs: the [Dockerfile](tools/visual-tests/Dockerfile) and [CI workflow](.github/workflows/visual-tests.yaml) use the same Playwright `v1.53.1-jammy` image to keep browser and font rendering consistent.
+
+Key files:
+
+- [config.js](tools/visual-tests/config.js): viewports, library paths, excluded blocks, Coveo mocking, and per-block readiness/hide settings.
+- [generate-visual-tests.js](tools/visual-tests/generate-visual-tests.js): discovers library variations and generates specs. **Do not hand-edit generated specs.**
+- [spec-helpers.js](tools/visual-tests/spec-helpers.js): shared rendering, network stubbing, readiness checks, and screenshot comparison.
+- [playwright.config.ts](tools/visual-tests/playwright.config.ts): Chromium project, snapshot paths, reports, and pinned `en-US` locale / `UTC` timezone.
+- [blocks/](tools/visual-tests/blocks/): generated specs, committed baselines, and Coveo HAR fixtures.
+
+#### Adding a block or variation
+
+1. Make sure the block implementation and representative authored variations are available in the **served Sidekick Library**, not just in `blocks/`. Open `http://localhost:3000/tools/sidekick/library.html?plugin=blocks` and verify that the block appears and each variation renders. The library uses `/tools/sidekick/library.json` and examples under `/tools/sidekick/blocks/` (see `SIDEKICK_CONFIG`); these can come from the mounted content source rather than checked-in files. If absent, arrange the content registration/preview before generating tests.
+2. Check `EXCLUDED_BLOCKS` in [config.js](tools/visual-tests/config.js). The generator currently skips `atomic-search` and `browse-courses`; do not remove an exclusion without addressing why that block cannot be snapshotted reliably. There is no separate include list: library discovery determines which blocks get specs.
+3. With Docker running and dependencies available, start the host dev server and build the test image:
+
+   ```sh
+   # Keep this running in a separate terminal.
+   npm start
+
+   # Run from the repository root in another terminal.
+   curl -f http://localhost:3000/tools/sidekick/library.json
+   npm run test:visual:build
+   ```
+
+   `npm start` starts both `aem up` on port 3000 and the visual-test API used by the library's Run Test button. For CLI-only runs, an existing `npm run up` server on port 3000 is sufficient. Docker must be able to reach it through `host.docker.internal`. Rebuild the image when image-baked dependencies or tooling change; the visual-tests directory itself is bind-mounted.
+
+4. Generate the selected block's spec, then create its baselines. Replace `accordion` throughout with the library block slug:
+
+   ```sh
+   npm run test:visual:generate:block -- accordion
+   npm run test:visual:update -- tools/visual-tests/blocks/accordion/accordion.spec.js
+   npm run test:visual:block -- tools/visual-tests/blocks/accordion/accordion.spec.js
+   npm run test:visual:report
+   ```
+
+   For a Coveo-backed block, configure and record its fixture as described below **before** creating baselines. The generator creates one test per library variation and configured viewport: Mobile (320x568), Tablet (768x1024), Desktop (1024x768), and Large (1440x900). Regenerate after adding, removing, or reordering library variations; variation indexes are part of screenshot names.
+
+5. Inspect the generated spec and every new/changed baseline. Baselines live under `tools/visual-tests/blocks/<block>/<block>.spec.js-snapshots/`, named `<block>-<variationIndex>-<ViewportLabel>.png`. Include the generated spec, intentional baseline changes, any required HAR fixture, and related configuration changes in the PR. Remove obsolete snapshots only after verifying that their variation was intentionally removed or renamed.
+
+#### Updating snapshots and diagnosing failures
+
+- For existing tests, **run the scoped comparison first** with `npm run test:visual:block -- tools/visual-tests/blocks/accordion/accordion.spec.js`. Inspect expected/actual/diff images before updating. Fix regressions rather than accepting them as new baselines.
+- Use the scoped `test:visual:update` command above only for verified intentional visual changes. Rerun the comparison **without** `--update-snapshots` afterward. Do not blanket-update unrelated blocks or relax comparison tolerances to make failures pass.
+- To regenerate all specs, use `npm run test:visual:generate`; to validate the full suite, use `npm run test:visual`. Unscoped `npm run test:visual:update` updates the entire suite and should be reserved for an explicitly intended suite-wide baseline refresh.
+- Local HTML reports are in [playwright-report/](tools/visual-tests/playwright-report/); structured results and failure images are in [test-results/](tools/visual-tests/test-results/). Inspect these locally; do not commit generated reports or transient results.
+
+#### Keeping a block deterministic
+
+The shared helper stubs sign-in and third-party traffic, freezes time and animations, and waits for decoration, loading indicators, fonts, images, network idle, and stable layout. These are isolated visual checks, not live integration or signed-in functional tests.
+
+- If loading is not detected, add a block entry to `BLOCK_SNAPSHOT_READY_SELECTORS` in [config.js](tools/visual-tests/config.js), for example `'<block>': { hidden: '.my-loading-indicator' }`. The `hidden` selector must disappear or become invisible before capture; it is not a selector for content that should appear.
+- `BLOCK_SNAPSHOT_HIDE_SELECTORS` maps a block slug to an array of selectors made invisible during capture. Use only for genuinely nondeterministic nonessential elements, not to hide regressions. `BLOCK_SNAPSHOT_EXTRA_WAIT` maps a slug to milliseconds and is a last resort; prefer observable readiness.
+- For blocks fetching Coveo data, add the slug to `COVEO_MOCKED_BLOCKS`, generate its spec, then record a fixture using the running dev server:
+
+  ```sh
+  # Example for a Coveo-backed block; replace curated-cards with the target slug.
+  docker compose -f tools/visual-tests/docker-compose.yml run --rm playwright \
+    node tools/visual-tests/record-coveo-har.js curated-cards
+  ```
+
+  The recorder visits the generated variation URLs and writes `tools/visual-tests/blocks/<block>/<block>.har`. Inspect fixtures for credentials or sensitive data before committing; header redaction is not a substitute for review. Refresh the fixture when its canned responses need to change, then review and update that block's baselines. Mocked blocks use the HAR recording time; other blocks use `SNAPSHOT_FIXED_TIME`.
+
+#### CI expectations
+
+[Visual Tests](.github/workflows/visual-tests.yaml) runs automatically on PR updates, including drafts, in the main repository. Four shards feed a merged **Visual Tests** check; watch that final check, not just individual shard outcomes. Same-repository PRs receive an updated results comment; fork PRs run tests without posting it. Use the report and diff artifacts to investigate failures and **Re-run all jobs** to rerun CI. CI runs committed specs/baselines; it does not generate or approve new baselines for you.
+
 ### Self-review before commit
 
 Before running `git add` / `git commit`, **run the `code-review` skill on your staged changes**. This applies to everyone — AI agents and humans driving an AI assistant.

@@ -285,7 +285,7 @@ jobs:
             echo "::error::Set the COPILOT_REVIEW_PAT repository secret to a fine-grained PAT with Copilot Requests permission."
             exit 1
           fi
-          copilot --prompt "$(cat prompt.txt)" --silent \
+          copilot --model claude-opus-5.5 --prompt "$(cat prompt.txt)" --silent \
             --available-tools='' \
             --deny-tool shell --deny-tool write --deny-tool url \
             --disable-builtin-mcps --no-custom-instructions --no-auto-update \
