@@ -163,17 +163,15 @@ function clearBrandConciergeTranscriptStorage(options = {}) {
  * with the localized send label. No-op for English so BC's own copy is preserved.
  */
 function localizeSubmitTooltip(mount) {
-  // Gate on whether a locale overlay actually applied, not the raw path lang — an unsupported
-  // locale (e.g. 'fr') falls back to English content but activeLang stays 'fr', which would
-  // otherwise overwrite BC's own default tooltip with our English override unnecessarily.
-  // Lowercased to match SUPPORTED_LOCALES' keys and loadBrandConciergeConfig()'s own comparison.
   const lang = (activeLang || '').toLowerCase();
-  if (lang === 'en' || !SUPPORTED_LOCALES.has(lang)) return;
-  const label = activeConfig?.text?.['input.send.aria'];
-  if (!label) return;
+  // Keep the SDK's default copy in English and unsupported locales.
+  const label = lang !== 'en' && SUPPORTED_LOCALES.has(lang) ? activeConfig?.text?.['input.send.aria'] : null;
+
   mount.querySelectorAll('.submit-button[aria-describedby]').forEach((btn) => {
     const tip = document.getElementById(btn.getAttribute('aria-describedby'));
-    if (tip && tip.textContent !== label) tip.textContent = label;
+    if (!tip) return;
+    tip.classList.add('bc-submit-button-tooltip');
+    if (label && tip.textContent !== label) tip.textContent = label;
   });
 }
 
@@ -472,6 +470,7 @@ function createBottomAskBar() {
 
   const bar = document.createElement('div');
   bar.id = BOTTOM_ASK_BAR_ID;
+  bar.className = 'bc-bottom-ask-bar';
   bar.dataset.expanded = initiallyExpanded ? 'true' : 'false';
   bar.setAttribute('role', 'region');
   bar.setAttribute('aria-label', bottomBar.label);
@@ -1147,12 +1146,17 @@ function installKeyboardScrollHandler(dialog, mount) {
 }
 
 function createMountPoint() {
-  if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
+  const existingDialog = document.getElementById(DIALOG_ID);
+  if (existingDialog) {
+    existingDialog.classList.add('bc-dialog');
+    return existingDialog;
+  }
 
   const { ui } = activeConfig;
 
   const trigger = document.createElement('button');
   trigger.id = TRIGGER_ID;
+  trigger.className = 'bc-trigger';
   trigger.setAttribute('aria-label', ui.triggerAriaLabel);
   trigger.setAttribute('aria-expanded', 'false');
   trigger.setAttribute('aria-controls', DIALOG_ID);
@@ -1199,6 +1203,7 @@ function createMountPoint() {
   });
 
   const { element: dialog } = drawerHandle;
+  dialog.classList.add('bc-dialog');
   installKeyboardScrollHandler(dialog, mount);
 
   trigger.addEventListener('click', () => {

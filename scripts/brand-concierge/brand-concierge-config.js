@@ -73,166 +73,167 @@ const brandConciergeConfig = {
 };
 
 const BC_CONTENT_KEY_MAP = {
-  'bc-ui-trigger-aria-label': { path: 'ui.triggerAriaLabel', fallback: 'Open AI assistant' },
-  'bc-ui-trigger-ask': { path: 'ui.triggerAsk', fallback: 'Ask a question…' },
-  'bc-ui-drawer-aria-label': { path: 'ui.drawerAriaLabel', fallback: 'AI assistant' },
-  'bc-ui-drawer-title': { path: 'ui.drawerTitle', fallback: 'Ask AI' },
-  'bc-ui-clear-label': { path: 'ui.clearLabel', fallback: 'Clear' },
-  'bc-ui-clear-aria-label': { path: 'ui.clearAriaLabel', fallback: 'Clear conversation' },
-  'bc-ui-bottom-bar-label': { path: 'ui.bottomBar.label', fallback: 'Ask AI' },
-  'bc-ui-bottom-bar-expand-aria': {
-    path: 'ui.bottomBar.expandAria',
+  'ui.triggerAriaLabel': { placeholder: 'bc-ui-trigger-aria-label', fallback: 'Open AI assistant' },
+  'ui.triggerAsk': { placeholder: 'bc-ui-trigger-ask', fallback: 'Ask a question…' },
+  'ui.drawerAriaLabel': { placeholder: 'bc-ui-drawer-aria-label', fallback: 'AI assistant' },
+  'ui.drawerTitle': { placeholder: 'bc-ui-drawer-title', fallback: 'Ask AI' },
+  'ui.clearLabel': { placeholder: 'bc-ui-clear-label', fallback: 'Clear' },
+  'ui.clearAriaLabel': { placeholder: 'bc-ui-clear-aria-label', fallback: 'Clear conversation' },
+  'ui.bottomBar.label': { placeholder: 'bc-ui-bottom-bar-label', fallback: 'Ask AI' },
+  'ui.bottomBar.expandAria': {
+    placeholder: 'bc-ui-bottom-bar-expand-aria',
     fallback: 'Expand Ask AI ask bar',
   },
-  'bc-ui-bottom-bar-open-aria': { path: 'ui.bottomBar.openAria', fallback: 'Open Ask AI' },
-  'bc-ui-bottom-bar-input-placeholder': {
-    path: 'ui.bottomBar.inputPlaceholder',
+  'ui.bottomBar.openAria': { placeholder: 'bc-ui-bottom-bar-open-aria', fallback: 'Open Ask AI' },
+  'ui.bottomBar.inputPlaceholder': {
+    placeholder: 'bc-ui-bottom-bar-input-placeholder',
     fallback: 'Ask a question…',
   },
-  'bc-ui-bottom-bar-input-aria': { path: 'ui.bottomBar.inputAria', fallback: 'Ask a question' },
-  'bc-ui-bottom-bar-send-aria': { path: 'ui.bottomBar.sendAria', fallback: 'Send' },
-  'bc-ui-bottom-bar-hide-aria': { path: 'ui.bottomBar.hideAria', fallback: 'Hide ask bar' },
-  'bc-ui-bottom-bar-hide-label': { path: 'ui.bottomBar.hideLabel', fallback: 'Hide' },
-  'bc-ui-disclaimer-prefix': {
-    path: 'ui.disclaimer.prefix',
+  'ui.bottomBar.inputAria': { placeholder: 'bc-ui-bottom-bar-input-aria', fallback: 'Ask a question' },
+  'ui.bottomBar.sendAria': { placeholder: 'bc-ui-bottom-bar-send-aria', fallback: 'Send' },
+  'ui.bottomBar.hideAria': { placeholder: 'bc-ui-bottom-bar-hide-aria', fallback: 'Hide ask bar' },
+  'ui.bottomBar.hideLabel': { placeholder: 'bc-ui-bottom-bar-hide-label', fallback: 'Hide' },
+  'ui.disclaimer.prefix': {
+    placeholder: 'bc-ui-disclaimer-prefix',
     fallback: "Use of this AI chatbot is subject to Adobe's ",
   },
-  'bc-ui-disclaimer-privacy-label': {
-    path: 'ui.disclaimer.privacyLabel',
+  'ui.disclaimer.privacyLabel': {
+    placeholder: 'bc-ui-disclaimer-privacy-label',
     fallback: 'Privacy Policy',
   },
-  'bc-ui-disclaimer-middle': {
-    path: 'ui.disclaimer.middle',
+  'ui.disclaimer.middle': {
+    placeholder: 'bc-ui-disclaimer-middle',
     fallback:
       ". Don't share sensitive data. AI responses are not your Content, may be inaccurate, and any offers provided are non-binding. ",
   },
-  'bc-ui-disclaimer-terms-label': {
-    path: 'ui.disclaimer.termsLabel',
+  'ui.disclaimer.termsLabel': {
+    placeholder: 'bc-ui-disclaimer-terms-label',
     fallback: 'Generative AI Terms',
   },
-  'bc-ui-disclaimer-suffix': { path: 'ui.disclaimer.suffix', fallback: '.' },
-  'bc-text-welcome-heading': {
-    path: 'text.welcome.heading',
+  'ui.disclaimer.suffix': { placeholder: 'bc-ui-disclaimer-suffix', fallback: '.' },
+  'text.welcome.heading': {
+    placeholder: 'bc-text-welcome-heading',
     fallback: 'Not sure where to start?<br>Ask me anything about Adobe products.',
   },
-  'bc-text-welcome-subheading': {
-    path: 'text.welcome.subheading',
+  'text.welcome.subheading': {
+    placeholder: 'bc-text-welcome-subheading',
     fallback: 'Type your question or pick a suggestion below.',
   },
-  'bc-text-input-placeholder': { path: 'text.input.placeholder', fallback: 'Ask a question…' },
-  'bc-text-input-message-input-aria': {
-    path: 'text.input.messageInput.aria',
+  'text.input.placeholder': { placeholder: 'bc-text-input-placeholder', fallback: 'Ask a question…' },
+  'text.input.messageInput.aria': {
+    placeholder: 'bc-text-input-message-input-aria',
     fallback: 'Message input',
   },
-  'bc-text-input-send-aria': { path: 'text.input.send.aria', fallback: 'Send message' },
-  'bc-text-input-mic-aria': { path: 'text.input.mic.aria', fallback: 'Voice input' },
-  'bc-text-card-aria-select': { path: 'text.card.aria.select', fallback: 'Select example message' },
-  'bc-text-carousel-prev-aria': { path: 'text.carousel.prev.aria', fallback: 'Previous cards' },
-  'bc-text-carousel-next-aria': { path: 'text.carousel.next.aria', fallback: 'Next cards' },
-  'bc-text-scroll-bottom-aria': { path: 'text.scroll.bottom.aria', fallback: 'Scroll to bottom' },
-  'bc-text-error-network': {
-    path: 'text.error.network',
+  'text.input.send.aria': { placeholder: 'bc-text-input-send-aria', fallback: 'Send message' },
+  'text.input.mic.aria': { placeholder: 'bc-text-input-mic-aria', fallback: 'Voice input' },
+  'text.card.aria.select': { placeholder: 'bc-text-card-aria-select', fallback: 'Select example message' },
+  'text.carousel.prev.aria': { placeholder: 'bc-text-carousel-prev-aria', fallback: 'Previous cards' },
+  'text.carousel.next.aria': { placeholder: 'bc-text-carousel-next-aria', fallback: 'Next cards' },
+  'text.scroll.bottom.aria': { placeholder: 'bc-text-scroll-bottom-aria', fallback: 'Scroll to bottom' },
+  'text.error.network': {
+    placeholder: 'bc-text-error-network',
     fallback: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
   },
-  'bc-text-error-general': {
-    path: 'text.error.general',
+  'text.error.general': {
+    placeholder: 'bc-text-error-general',
     fallback: "I'm sorry, something went wrong. Please try again in a moment.",
   },
-  'bc-text-loading-message': {
-    path: 'text.loading.message',
+  'text.loading.message': {
+    placeholder: 'bc-text-loading-message',
     fallback: "Generating from Adobe's trusted resources",
   },
-  'bc-text-feedback-dialog-title-positive': {
-    path: 'text.feedback.dialog.title.positive',
+  'text.feedback.dialog.title.positive': {
+    placeholder: 'bc-text-feedback-dialog-title-positive',
     fallback: 'Your feedback is appreciated',
   },
-  'bc-text-feedback-dialog-title-negative': {
-    path: 'text.feedback.dialog.title.negative',
+  'text.feedback.dialog.title.negative': {
+    placeholder: 'bc-text-feedback-dialog-title-negative',
     fallback: 'Your feedback is appreciated',
   },
-  'bc-text-feedback-dialog-question-positive': {
-    path: 'text.feedback.dialog.question.positive',
+  'text.feedback.dialog.question.positive': {
+    placeholder: 'bc-text-feedback-dialog-question-positive',
     fallback: 'What went well? Select all that apply.',
   },
-  'bc-text-feedback-dialog-question-negative': {
-    path: 'text.feedback.dialog.question.negative',
+  'text.feedback.dialog.question.negative': {
+    placeholder: 'bc-text-feedback-dialog-question-negative',
     fallback: 'What went wrong? Select all that apply.',
   },
-  'bc-text-feedback-dialog-notes': { path: 'text.feedback.dialog.notes', fallback: 'Notes' },
-  'bc-text-feedback-dialog-submit': { path: 'text.feedback.dialog.submit', fallback: 'Submit' },
-  'bc-text-feedback-dialog-cancel': { path: 'text.feedback.dialog.cancel', fallback: 'Cancel' },
-  'bc-text-feedback-dialog-notes-placeholder': {
-    path: 'text.feedback.dialog.notes.placeholder',
+  'text.feedback.dialog.notes': { placeholder: 'bc-text-feedback-dialog-notes', fallback: 'Notes' },
+  'text.feedback.dialog.submit': { placeholder: 'bc-text-feedback-dialog-submit', fallback: 'Submit' },
+  'text.feedback.dialog.cancel': { placeholder: 'bc-text-feedback-dialog-cancel', fallback: 'Cancel' },
+  'text.feedback.dialog.notes.placeholder': {
+    placeholder: 'bc-text-feedback-dialog-notes-placeholder',
     fallback: 'Additional notes (optional)',
   },
-  'bc-text-feedback-toast-success': {
-    path: 'text.feedback.toast.success',
+  'text.feedback.toast.success': {
+    placeholder: 'bc-text-feedback-toast-success',
     fallback: 'Thank you for the feedback.',
   },
-  'bc-text-feedback-thumbs-up-aria': {
-    path: 'text.feedback.thumbsUp.aria',
+  'text.feedback.thumbsUp.aria': {
+    placeholder: 'bc-text-feedback-thumbs-up-aria',
     fallback: 'Thumbs up',
   },
-  'bc-text-feedback-thumbs-down-aria': {
-    path: 'text.feedback.thumbsDown.aria',
+  'text.feedback.thumbsDown.aria': {
+    placeholder: 'bc-text-feedback-thumbs-down-aria',
     fallback: 'Thumbs down',
   },
-  'bc-welcome-examples-0': {
-    path: 'arrays.welcome.examples.0',
+  'arrays.welcome.examples.0': {
+    placeholder: 'bc-welcome-examples-0',
     fallback: 'Where can I go to learn about AI on Experience League?',
   },
-  'bc-welcome-examples-1': {
-    path: 'arrays.welcome.examples.1',
+  'arrays.welcome.examples.1': {
+    placeholder: 'bc-welcome-examples-1',
     fallback: 'Getting started with Experience Manager',
   },
-  'bc-welcome-examples-2': {
-    path: 'arrays.welcome.examples.2',
+  'arrays.welcome.examples.2': {
+    placeholder: 'bc-welcome-examples-2',
     fallback: 'How do I set up my Workfront instance for my team?',
   },
-  'bc-welcome-examples-3': {
-    path: 'arrays.welcome.examples.3',
+  'arrays.welcome.examples.3': {
+    placeholder: 'bc-welcome-examples-3',
     fallback: 'How do I get started with a journey in Adobe Journey Optimizer?',
   },
-  'bc-welcome-examples-4': {
-    path: 'arrays.welcome.examples.4',
+  'arrays.welcome.examples.4': {
+    placeholder: 'bc-welcome-examples-4',
     fallback: 'What is CX Enterprise Coworker?',
   },
-  'bc-feedback-positive-options-0': {
-    path: 'arrays.feedback.positive.options.0',
+  'arrays.feedback.positive.options.0': {
+    placeholder: 'bc-feedback-positive-options-0',
     fallback: 'Helpful and relevant',
   },
-  'bc-feedback-positive-options-1': {
-    path: 'arrays.feedback.positive.options.1',
+  'arrays.feedback.positive.options.1': {
+    placeholder: 'bc-feedback-positive-options-1',
     fallback: 'Clear and easy to understand',
   },
-  'bc-feedback-positive-options-2': {
-    path: 'arrays.feedback.positive.options.2',
+  'arrays.feedback.positive.options.2': {
+    placeholder: 'bc-feedback-positive-options-2',
     fallback: 'Friendly and conversational tone',
   },
-  'bc-feedback-positive-options-3': {
-    path: 'arrays.feedback.positive.options.3',
+  'arrays.feedback.positive.options.3': {
+    placeholder: 'bc-feedback-positive-options-3',
     fallback: 'Other',
   },
-  'bc-feedback-negative-options-0': {
-    path: 'arrays.feedback.negative.options.0',
+  'arrays.feedback.negative.options.0': {
+    placeholder: 'bc-feedback-negative-options-0',
     fallback: 'Not helpful or relevant',
   },
-  'bc-feedback-negative-options-1': {
-    path: 'arrays.feedback.negative.options.1',
+  'arrays.feedback.negative.options.1': {
+    placeholder: 'bc-feedback-negative-options-1',
     fallback: 'Confusing or unclear',
   },
-  'bc-feedback-negative-options-2': {
-    path: 'arrays.feedback.negative.options.2',
+  'arrays.feedback.negative.options.2': {
+    placeholder: 'bc-feedback-negative-options-2',
     fallback: 'Too formal or robotic',
   },
-  'bc-feedback-negative-options-3': {
-    path: 'arrays.feedback.negative.options.3',
+  'arrays.feedback.negative.options.3': {
+    placeholder: 'bc-feedback-negative-options-3',
     fallback: 'Other',
   },
 };
 
 function normalizeContentKey(key) {
-  if (BC_CONTENT_KEY_MAP[key]) return BC_CONTENT_KEY_MAP[key].path;
+  const mappedPath = Object.entries(BC_CONTENT_KEY_MAP).find(([, { placeholder }]) => placeholder === key)?.[0];
+  if (mappedPath) return mappedPath;
 
   const arrayMatch = key.match(/^bc-(welcome-examples|feedback-positive-options|feedback-negative-options)-(\d+)$/);
   if (!arrayMatch) return key;
@@ -255,7 +256,7 @@ const LOCALES = {
 
 export const SUPPORTED_LOCALES = new Set(Object.keys(LOCALES));
 
-const ueSheetCache = new Map();
+const brandConciergeSheetRequests = new Map();
 
 /**
  * Fetches published UE key-value rows for the specified language.
@@ -271,7 +272,7 @@ const ueSheetCache = new Map();
  */
 
 async function fetchBrandConciergeJson(lang) {
-  if (!ueSheetCache.has(lang)) {
+  if (!brandConciergeSheetRequests.has(lang)) {
     const request = fetch(`${SHEET_BASE_PATH}/${lang}/brand-concierge.json`)
       .then((res) => {
         if (!res.ok) {
@@ -312,14 +313,14 @@ async function fetchBrandConciergeJson(lang) {
         });
       })
       .catch((err) => {
-        ueSheetCache.delete(lang);
+        brandConciergeSheetRequests.delete(lang);
         throw err;
       });
 
-    ueSheetCache.set(lang, request);
+    brandConciergeSheetRequests.set(lang, request);
   }
 
-  return ueSheetCache.get(lang);
+  return brandConciergeSheetRequests.get(lang);
 }
 
 /**
@@ -419,8 +420,8 @@ export function rowsToConfig(rows) {
 }
 
 function getDefaultContentConfig() {
-  const defaultRows = Object.values(BC_CONTENT_KEY_MAP).map(({ path, fallback }) => ({
-    key: path,
+  const defaultRows = Object.entries(BC_CONTENT_KEY_MAP).map(([key, { fallback }]) => ({
+    key,
     value: fallback,
   }));
   return rowsToConfig(defaultRows);
