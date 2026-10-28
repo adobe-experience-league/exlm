@@ -936,7 +936,6 @@ export function getConfig() {
     adlsUrl: 'https://learning.adobe.com/courses.result.json',
     industryUrl: `${ethosOrigin}/api/industries?page_size=200&sort=Order&lang=${lang}`,
     articleUrl: `${cdnOrigin}/api/articles`,
-    solutionsUrl: `${cdnOrigin}/api/solutions?page_size=100`,
     pathsUrl: `${cdnOrigin}/api/paths`,
     // Personlized Home Page Link
     personalizedHomeLink: `/home`,
