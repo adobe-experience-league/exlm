@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { getConfig, getPathDetails, fetchJson } from '../scripts.js';
+import { getConfig, getPathDetails } from '../scripts.js';
 import { loadScript, decorateIcon } from '../lib-franklin.js';
 import { openDrawer } from '../dialog/dialog.js';
 import {
@@ -71,9 +71,8 @@ const warn = (...args) => console.warn('[BC]', ...args);
 const error = (...args) => console.error('[BC]', ...args);
 
 /**
- * Locale-resolved config (English base + any locale overlay), loaded async from per-locale
- * JSON in initBrandConcierge(). Null until loaded; consumers run only after the load resolves,
- * and the observer callbacks guard against a null value defensively.
+ * Locale-resolved config (English base + any locale overlay), loaded from published UE JSON.
+ * Null until loaded; consumers run only after the load resolves.
  */
 let activeConfig = null;
 /** Path language backing `activeConfig`; 'en' means no locale overlay is active. */
@@ -95,11 +94,26 @@ let keyboardScrollHandler = null;
 let keyboardScrollDialog = null;
 let impressionObserver = null;
 let bottomBarImpressionObserver = null;
-let defaultPromptsOverride = null;
 let initPromise = null;
 let initResolve = null;
 let initReject = null;
 let initStarted = false;
+
+function loadBrandConciergeStylesheet() {
+  const href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
+  cssLinkEl?.remove();
+  cssLinkEl = document.createElement('link');
+  cssLinkEl.rel = 'stylesheet';
+  cssLinkEl.href = href;
+
+  return new Promise((resolve, reject) => {
+    cssLinkEl.addEventListener('load', resolve, { once: true });
+    cssLinkEl.addEventListener('error', () => reject(new Error(`Failed to load Brand Concierge stylesheet: ${href}`)), {
+      once: true,
+    });
+    document.head.append(cssLinkEl);
+  });
+}
 
 /** Real BC conversationId, captured from response:started/response:completed events. */
 let bcConversationId = null;
@@ -149,17 +163,15 @@ function clearBrandConciergeTranscriptStorage(options = {}) {
  * with the localized send label. No-op for English so BC's own copy is preserved.
  */
 function localizeSubmitTooltip(mount) {
-  // Gate on whether a locale overlay actually applied, not the raw path lang — an unsupported
-  // locale (e.g. 'fr') falls back to English content but activeLang stays 'fr', which would
-  // otherwise overwrite BC's own default tooltip with our English override unnecessarily.
-  // Lowercased to match SUPPORTED_LOCALES' keys and loadBrandConciergeConfig()'s own comparison.
   const lang = (activeLang || '').toLowerCase();
-  if (lang === 'en' || !SUPPORTED_LOCALES.has(lang)) return;
-  const label = activeConfig?.text?.['input.send.aria'];
-  if (!label) return;
+  // Keep the SDK's default copy in English and unsupported locales.
+  const label = lang !== 'en' && SUPPORTED_LOCALES.has(lang) ? activeConfig?.text?.['input.send.aria'] : null;
+
   mount.querySelectorAll('.submit-button[aria-describedby]').forEach((btn) => {
     const tip = document.getElementById(btn.getAttribute('aria-describedby'));
-    if (tip && tip.textContent !== label) tip.textContent = label;
+    if (!tip) return;
+    tip.classList.add('bc-submit-button-tooltip');
+    if (label && tip.textContent !== label) tip.textContent = label;
   });
 }
 
@@ -458,6 +470,7 @@ function createBottomAskBar() {
 
   const bar = document.createElement('div');
   bar.id = BOTTOM_ASK_BAR_ID;
+  bar.className = 'bc-bottom-ask-bar';
   bar.dataset.expanded = initiallyExpanded ? 'true' : 'false';
   bar.setAttribute('role', 'region');
   bar.setAttribute('aria-label', bottomBar.label);
@@ -844,14 +857,13 @@ function handleBrandConciergeClientEvent(event) {
   scheduleScrollAfterSuggestion(mount);
 }
 
-function getBootstrapOptions(defaultPrompts = defaultPromptsOverride) {
-  // `ui` holds ExL chrome strings (rendered by our own code) — strip it so only BC's
-  // own styling/text/arrays are forwarded to the third-party web client.
-  const { stickySession = false, ui: _ui, arrays, ...stylingConfigurations } = activeConfig;
-  const effectiveArrays = defaultPrompts ? { ...arrays, 'welcome.examples': defaultPrompts } : arrays;
+function getBootstrapOptions() {
+  // UI strings are rendered by ExL, not by the third-party BC SDK.
+  const { stickySession = false, ui: _ui, ...stylingConfigurations } = activeConfig;
+
   return {
     instanceName: ALLOY_INSTANCE_NAME,
-    stylingConfigurations: { ...stylingConfigurations, arrays: effectiveArrays },
+    stylingConfigurations,
     selector: MOUNT_SELECTOR,
     stickySession,
     onEvent: handleBrandConciergeClientEvent,
@@ -1059,6 +1071,7 @@ async function clearBrandConciergeConversation() {
     await concierge.bootstrap(getBootstrapOptions());
   } catch (e) {
     warn('Clear: first re-bootstrap failed; retrying after broader storage cleanup', e?.message || e);
+
     clearBrandConciergeTranscriptStorage({ broad: true });
     await concierge.bootstrap(getBootstrapOptions());
   }
@@ -1133,12 +1146,17 @@ function installKeyboardScrollHandler(dialog, mount) {
 }
 
 function createMountPoint() {
-  if (document.getElementById(DIALOG_ID)) return document.getElementById(DIALOG_ID);
+  const existingDialog = document.getElementById(DIALOG_ID);
+  if (existingDialog) {
+    existingDialog.classList.add('bc-dialog');
+    return existingDialog;
+  }
 
   const { ui } = activeConfig;
 
   const trigger = document.createElement('button');
   trigger.id = TRIGGER_ID;
+  trigger.className = 'bc-trigger';
   trigger.setAttribute('aria-label', ui.triggerAriaLabel);
   trigger.setAttribute('aria-expanded', 'false');
   trigger.setAttribute('aria-controls', DIALOG_ID);
@@ -1185,6 +1203,7 @@ function createMountPoint() {
   });
 
   const { element: dialog } = drawerHandle;
+  dialog.classList.add('bc-dialog');
   installKeyboardScrollHandler(dialog, mount);
 
   trigger.addEventListener('click', () => {
@@ -1205,27 +1224,6 @@ function createMountPoint() {
   return dialog;
 }
 
-const BC_SHEET_PROMPT_COLUMN = 'Default prompts';
-
-async function fetchDefaultPromptsOverride() {
-  const lang = getPathDetails()?.lang || 'en';
-  const prefix = window.hlx.codeBasePath;
-  try {
-    const data = await fetchJson(`${prefix}/${lang}/brand-concierge.json`, `${prefix}/en/brand-concierge.json`);
-    const defaultPrompts = data
-      .filter((row) => row[BC_SHEET_PROMPT_COLUMN]?.trim())
-      .map((row) => ({ text: row[BC_SHEET_PROMPT_COLUMN].trim() }));
-    if (!defaultPrompts.length) {
-      warn('brand-concierge.json returned no valid prompt rows; using config defaults');
-      return null;
-    }
-    return defaultPrompts;
-  } catch (e) {
-    warn('Failed to fetch brand-concierge.json; using config defaults', e?.message || e);
-    return null;
-  }
-}
-
 async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
   await window[ALLOY_INSTANCE_NAME]('configure', {
     defaultConsent: 'in',
@@ -1240,15 +1238,18 @@ async function configureWebSdk(bcDatastreamId, bcOrgId, bcEdgeDomain) {
   await window[ALLOY_INSTANCE_NAME]('sendEvent', {});
 }
 
-function bootstrapWebClient(defaultPrompts) {
+function bootstrapWebClient() {
   if (typeof window.adobe?.concierge?.bootstrap !== 'function') {
     warn('bootstrap not available — confirm the datastream is enabled for Brand Concierge');
     return;
   }
 
-  log('bootstrap called', { instanceName: ALLOY_INSTANCE_NAME, selector: MOUNT_SELECTOR });
+  log('bootstrap called', {
+    instanceName: ALLOY_INSTANCE_NAME,
+    selector: MOUNT_SELECTOR,
+  });
 
-  window.adobe.concierge.bootstrap(getBootstrapOptions(defaultPrompts));
+  window.adobe.concierge.bootstrap(getBootstrapOptions());
 }
 
 /**
@@ -1293,7 +1294,6 @@ export function destroyBrandConcierge() {
   bcConversationId = null;
   bcMessageNumber = 0;
   bcHasMessage = false;
-  defaultPromptsOverride = null;
   initPromise = null;
   initResolve = null;
   initReject = null;
@@ -1306,30 +1306,36 @@ export async function initBrandConcierge() {
   if (initStarted) return initPromise;
   initStarted = true;
 
-  const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
-  activeLang = getPathDetails().lang;
-  activeConfig = await loadBrandConciergeConfig(activeLang);
-  // If even the English base sheet can't load, skip mounting rather than render an empty widget.
-  if (!activeConfig) {
-    initResolve?.();
-    initResolve = null;
-    initReject = null;
-    initStarted = false;
-    return initPromise;
-  }
-
-  // Route to the locale's Brand Concierge datastream (e.g. the Spanish concierge on /es/),
-  // falling back to the default datastream for locales without an override. Kept separate from
-  // activeConfig so this routing id never leaks into the styling payload sent to the BC client.
-  const datastreamId = getBrandConciergeDatastreamId(activeConfig.metadata.language, bcDatastreamId);
-  createMountPoint();
-  applyBcEntryChrome(resolveBcEntryExperience());
-  injectAlloyStub();
-
-  defaultPromptsOverride = null;
-  const defaultPromptsPromise = fetchDefaultPromptsOverride();
-
   try {
+    await loadBrandConciergeStylesheet();
+
+    const { bcAlloySdkUrl, bcDatastreamId, bcOrgId, bcWebClientUrl, bcEdgeDomain } = getConfig();
+    activeLang = getPathDetails().lang;
+    activeConfig = await loadBrandConciergeConfig(activeLang);
+    // If the English base sheet can't load, skip mounting rather than render an empty widget.
+    if (!activeConfig) {
+      cssLinkEl?.remove();
+      cssLinkEl = null;
+      initResolve?.();
+      initResolve = null;
+      initReject = null;
+      initStarted = false;
+      return initPromise;
+    }
+
+    log('Brand Concierge configuration loaded', {
+      language: activeLang,
+      welcomePrompts: activeConfig.arrays?.['welcome.examples']?.length || 0,
+    });
+
+    // Route to the locale's Brand Concierge datastream (e.g. the Spanish concierge on /es/),
+    // falling back to the default datastream for locales without an override. Kept separate from
+    // activeConfig so this routing id never leaks into the styling payload sent to the BC client.
+    const datastreamId = getBrandConciergeDatastreamId(activeConfig.metadata.language, bcDatastreamId);
+    createMountPoint();
+    applyBcEntryChrome(resolveBcEntryExperience());
+    injectAlloyStub();
+
     log('[BC] loading Web SDK (alloyBC instance)', { bcEdgeDomain, datastreamId, locale: activeLang });
     await loadScript(bcAlloySdkUrl);
     await configureWebSdk(datastreamId, bcOrgId, bcEdgeDomain);
@@ -1338,13 +1344,8 @@ export async function initBrandConcierge() {
     log('[BC] loading Web Client', bcWebClientUrl);
     await loadScript(bcWebClientUrl);
 
-    defaultPromptsOverride = await defaultPromptsPromise;
-    if (defaultPromptsOverride) {
-      log('[BC] default prompts overridden from brand-concierge.json', defaultPromptsOverride);
-    }
-
     log('[BC] Web Client loaded — calling bootstrap');
-    bootstrapWebClient(defaultPromptsOverride);
+    bootstrapWebClient();
     log('[BC] bootstrapWebClient called');
     const bcMount = getBrandConciergeMount();
     watchScrollToBottomButton(bcMount);
@@ -1352,11 +1353,7 @@ export async function initBrandConcierge() {
     patchBcSparkleIcons(bcMount);
     watchPanelDisclaimer(bcMount);
 
-    // Appended after bootstrap() so this <link> follows BC's injected <style> in document
-    // order, giving our overrides cascade priority at equal specificity.
-    cssLinkEl = document.createElement('link');
-    cssLinkEl.rel = 'stylesheet';
-    cssLinkEl.href = `${window.hlx.codeBasePath}/scripts/brand-concierge/brand-concierge.css`;
+    // Move the loaded stylesheet after BC's injected style to preserve override priority.
     const experience = resolveBcEntryExperience();
     applyBcEntryChrome(experience);
     document.head.append(cssLinkEl);

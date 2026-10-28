@@ -1,4 +1,10 @@
-#bc-bottom-ask-bar {
+.bc-trigger img {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.bc-bottom-ask-bar {
   position: fixed;
   inset: auto 0 0;
   z-index: 999;
@@ -9,7 +15,7 @@
   font-family: var(--body-font-family);
 }
 
-#bc-bottom-ask-bar:not([data-expanded='true']) {
+.bc-bottom-ask-bar:not([data-expanded='true']) {
   inset: auto 24px 0 auto;
   width: auto;
   padding: 0;
@@ -20,7 +26,7 @@
   backdrop-filter: none;
 }
 
-#bc-bottom-ask-bar[data-expanded='true'] {
+.bc-bottom-ask-bar[data-expanded='true'] {
   height: 72px;
   min-height: 72px;
   max-height: 72px;
@@ -112,6 +118,12 @@
   height: 18px;
 }
 
+/* Keep the outlined send glyph smaller than the shared sparkle icon. */
+.bc-trigger .bc-trigger-send img {
+  width: 16px;
+  height: 16px;
+}
+
 .bc-bottom-ask-bar-collapsed .icon-bc-ask-sparkles img {
   width: 18px;
   height: 18px;
@@ -149,12 +161,12 @@
   min-width: 0;
 }
 
-#bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-collapsed {
+.bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-collapsed {
   display: none;
 }
 
 /* Same 3-col track as docs `main` (left rail / article / right rail). */
-#bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
+.bc-bottom-ask-bar[data-expanded='true'] .bc-bottom-ask-bar-expanded {
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
   align-items: center;
@@ -427,7 +439,7 @@
   background-color: var(--link-hover-color);
 }
 
-#bc-trigger {
+button.bc-trigger {
   position: fixed;
   bottom: 24px;
   right: 24px;
@@ -461,7 +473,7 @@
     backdrop-filter 0.2s ease;
 }
 
-#bc-trigger::before {
+.bc-trigger::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -476,32 +488,26 @@
   z-index: 0;
 }
 
-#bc-trigger > * {
+.bc-trigger > * {
   position: relative;
   z-index: 1;
 }
 
-#bc-trigger:active {
+.bc-trigger:active {
   transform: scale(0.97);
   box-shadow:
     0 4px 14px rgb(0 0 0 / 12%),
     0 2px 6px rgb(0 0 0 / 8%);
 }
 
-#bc-trigger .icon {
+.bc-trigger .icon {
   display: flex;
   align-items: center;
   line-height: 0;
   margin: 0;
 }
 
-#bc-trigger img {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-#bc-trigger .bc-trigger-ask {
+.bc-trigger .bc-trigger-ask {
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-normal);
   line-height: 1.2;
@@ -510,7 +516,7 @@
   transition: color 0.2s ease;
 }
 
-#bc-trigger .bc-trigger-send {
+.bc-trigger .bc-trigger-send {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -519,38 +525,31 @@
   flex-shrink: 0;
 }
 
-/* The design's outlined send glyph fills a square box, unlike the flatter filled plane it
-   replaced, so scope it below the 18px shared with the sparkle icon to hold the FAB's weight. */
-#bc-trigger .bc-trigger-send img {
-  width: 16px;
-  height: 16px;
-}
-
 /* EXLM-5715 — entry variant visibility */
-body.bc-entry-pending #bc-trigger,
-body.bc-entry-pending #bc-bottom-ask-bar {
+body.bc-entry-pending .bc-trigger,
+body.bc-entry-pending .bc-bottom-ask-bar {
   visibility: hidden;
 }
 
-body:not([data-bc-entry='floating-ask-button']) #bc-trigger {
+body:not([data-bc-entry='floating-ask-button']) .bc-trigger {
   display: none;
 }
 
-body[data-bc-entry='floating-ask-button'] #bc-bottom-ask-bar {
+body[data-bc-entry='floating-ask-button'] .bc-bottom-ask-bar {
   display: none;
 }
 
 @media (min-width: 1200px) {
-  body[data-bc-entry='bottom-ask-bar'] #bc-bottom-ask-bar {
+  body[data-bc-entry='bottom-ask-bar'] .bc-bottom-ask-bar {
     display: flex;
   }
 }
 
-body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
+body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
   display: none;
 }
 
-#bc-trigger:hover:not(:active) {
+.bc-trigger:hover:not(:active) {
   background-color: var(--background-color);
   backdrop-filter: none;
   transform: translateY(-3px);
@@ -560,15 +559,15 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
     0 0 0 1px rgb(0 0 0 / 8%);
 }
 
-#bc-trigger:hover::before {
+.bc-trigger:hover::before {
   filter: brightness(1.12) saturate(1.08);
 }
 
-#bc-trigger:hover .bc-trigger-ask {
+.bc-trigger:hover .bc-trigger-ask {
   color: var(--spectrum-gray-800);
 }
 
-#bc-trigger[aria-expanded='true'] {
+.bc-trigger[aria-expanded='true'] {
   display: none;
 }
 
@@ -609,7 +608,7 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
   color: var(--spectrum-gray-800);
 }
 
-#bc-dialog #brand-concierge-mount {
+.bc-dialog #brand-concierge-mount {
   position: relative;
   width: 100%;
   height: 100%;
@@ -622,7 +621,7 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
   --exlm-font-size-content: var(--spectrum-body-size-m);
 }
 
-#bc-dialog .exl-dialog-body {
+.bc-dialog .exl-dialog-body {
   overflow: hidden;
 }
 
@@ -704,7 +703,7 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
   pointer-events: none !important;
 }
 
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section {
+.bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section {
   padding: 0 max(40px, 15%) !important;
 }
 
@@ -854,11 +853,11 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
 /* In the expanded state cap the bubble row at 50% of the content column.
  * BC also constrains .message-content to 50% internally, so reset that here
  * so the card fills the full bubble row width. */
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .user-message {
+.bc-dialog.exl-dialog-expanded #brand-concierge-mount .user-message {
   max-width: 50% !important;
 }
 
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .user-message .message-content {
+.bc-dialog.exl-dialog-expanded #brand-concierge-mount .user-message .message-content {
   max-width: 100% !important;
   width: 100% !important;
 }
@@ -866,12 +865,12 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
 /* Expanded: hide only BC’s duplicate welcome *cards* (carousel/grid). Do not hide `.cards-section`
  * — it can wrap other welcome content; hiding it removed the prompt-pill row too.
  * Keep the prompt-pill row (ExL card-style rules below + sparkle icons). */
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-card-carousel,
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-card-grid {
+.bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-card-carousel,
+.bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-card-grid {
   display: none !important;
 }
 
-#bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container {
+.bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container {
   display: flex !important;
   flex-flow: column nowrap !important;
   align-items: stretch !important;
@@ -889,19 +888,19 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
  */
 @media (min-width: 769px) {
   /* Expanded only: full-width prompt area; taller, half-width welcome pill cards (not in the narrow drawer). */
-  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container {
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container {
     max-width: 100% !important;
   }
 
-  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container {
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container {
     display: flex !important;
     flex-flow: row wrap !important;
     justify-content: center !important;
     gap: 8px !important;
   }
 
-  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container .bc-prompt-pill-button,
-  #bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container .bc-prompt-pill-button {
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container .bc-prompt-pill-button,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container .bc-prompt-pill-button {
     --bc-prompt-pill-gap-count: 3;
     --bc-prompt-pill-gap: 8px;
 
@@ -917,11 +916,11 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
   }
 
   /* Expanded in-chat follow-up suggestions: full-width pills, vertical stack (not the initial welcome row). */
-  #bc-dialog.exl-dialog-expanded
+  .bc-dialog.exl-dialog-expanded
     #brand-concierge-mount
     .chat-history
     .prompt-suggestions-container:has(.bc-prompt-suggestion-button),
-  #bc-dialog.exl-dialog-expanded
+  .bc-dialog.exl-dialog-expanded
     #brand-concierge-mount
     .chat-history
     .prompt-suggestions-container:has(.bc-prompt-suggestion-button)
@@ -940,7 +939,7 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
     z-index: 6 !important;
   }
 
-  #bc-dialog.exl-dialog-expanded
+  .bc-dialog.exl-dialog-expanded
     #brand-concierge-mount
     .chat-history
     .prompt-suggestions-container
@@ -990,7 +989,7 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
  * horizontal center — via `right` + translateX(50%) so it self-centers regardless of label
  * width — instead of relying on BC's clamped `left`.
  */
-#brand-concierge-mount [id^='submit-button-tooltip'] {
+#brand-concierge-mount .bc-submit-button-tooltip {
   left: auto !important;
   right: 28px !important;
   transform: translateX(50%) !important;
@@ -1003,7 +1002,7 @@ body:has(#bc-dialog[open]) #bc-bottom-ask-bar {
  * that rule intentionally re-enables pointer-events for input-container's contents after
  * .input-section's own passthrough override.
  */
-#brand-concierge-mount .input-section .input-container [id^='submit-button-tooltip'] {
+#brand-concierge-mount .input-section .input-container .bc-submit-button-tooltip {
   pointer-events: none !important;
 }
 
