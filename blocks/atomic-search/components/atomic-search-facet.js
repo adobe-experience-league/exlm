@@ -35,6 +35,57 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
   // Parent-only deep links expand once. A facet click means the user is driving selection.
   let expandParentFromUrl = true;
   const baseElement = block.querySelector('atomic-facet');
+
+  /**
+   * Atomic Lit rebuilds facet value <li> nodes on every search. Until EXLM re-applies
+   * show-more (facet-collapsed) and CSS order, all Product/Content Type values paint
+   * at once — a tall flash QA sees as filters "squashing" then settling.
+   * Lock to the last settled height (not the post-Lit tall height) + shimmer.
+   */
+  const lockFacetValuesHeight = (atomicFacet) => {
+    const values = atomicFacet?.shadowRoot?.querySelector('[part="values"]');
+    if (!values || values.dataset.exlmHeightLock === 'true') return;
+    const current = Math.round(values.getBoundingClientRect().height);
+    const last = Number(atomicFacet.dataset.exlmLastValuesHeight || 0);
+    // If Lit already expanded the list, prefer the last settled (collapsed) height.
+    const height = last > 0 && current > last * 1.25 ? last : current || last;
+    if (height <= 0) return;
+    values.style.height = `${height}px`;
+    values.style.overflow = 'hidden';
+    values.dataset.exlmHeightLock = 'true';
+  };
+
+  const unlockFacetValuesHeight = (atomicFacet) => {
+    const values = atomicFacet?.shadowRoot?.querySelector('[part="values"]');
+    if (!values || values.dataset.exlmHeightLock !== 'true') return;
+    values.style.height = '';
+    values.style.overflow = '';
+    delete values.dataset.exlmHeightLock;
+  };
+
+  const rememberFacetValuesHeight = (atomicFacet) => {
+    const values = atomicFacet?.shadowRoot?.querySelector('[part="values"]');
+    if (!values) return;
+    const natural = Math.round(values.getBoundingClientRect().height);
+    if (natural > 0) atomicFacet.dataset.exlmLastValuesHeight = String(natural);
+  };
+
+  const showFacetShimmer = (atomicFacet) => {
+    atomicFacet?.shadowRoot?.querySelector('.facet-shimmer')?.part.add('show-shimmer');
+  };
+
+  const hideFacetShimmer = (atomicFacet) => {
+    atomicFacet?.shadowRoot?.querySelector('.facet-shimmer')?.part.remove('show-shimmer');
+  };
+
+  const lockAllFacetValueHeights = () => {
+    document.querySelectorAll('atomic-facet').forEach(lockFacetValuesHeight);
+  };
+
+  const showAllFacetShimmers = () => {
+    document.querySelectorAll('atomic-facet').forEach(showFacetShimmer);
+  };
+
   const adjustChildElementsPosition = (facet, atomicElement) => {
     if (facet.dataset.childfacet === 'true') {
       const parentName = facet.dataset.parent;
@@ -72,8 +123,10 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
       }
 
       try {
-        const shimmer = atomicElement.shadowRoot.querySelector('.facet-shimmer');
-        shimmer?.part.add('show-shimmer');
+        // Lock every facet before the next Coveo paint — Lit rebuilds value rows without
+        // EXLM show-more / order parts, which otherwise flashes a tall "squashed" list.
+        lockAllFacetValueHeights();
+        showAllFacetShimmers();
         const wasChecked = facet.dataset.preclickChecked === 'true';
         const filtersChanged = syncFacetParentChildFilters({
           facet,
@@ -81,8 +134,11 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
           onlyOptionClicked,
           wasChecked: facet.dataset.preclickChecked == null ? null : wasChecked,
         });
-        if (!filtersChanged && shimmer) {
-          shimmer.part.remove('show-shimmer');
+        if (!filtersChanged) {
+          document.querySelectorAll('atomic-facet').forEach((facetEl) => {
+            hideFacetShimmer(facetEl);
+            unlockFacetValuesHeight(facetEl);
+          });
         }
       } finally {
         finishFacetHistoryBatch(historyBatch);
@@ -278,12 +334,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     if (facetParent.dataset.showMoreBtn && existingBtn) {
       const expanded = existingBtn.dataset.expanded === 'true';
       handleFacetsVisibility(facetParent, facets, expanded);
-      const shimmerElement = facetParent.querySelector('.facet-shimmer');
-      if (shimmerElement) {
-        setTimeout(() => {
-          shimmerElement.part.remove('show-shimmer');
-        }, 50);
-      }
+      // Shimmer is cleared by settleFacetUI after unlock — do not hide early here.
       return;
     }
 
@@ -532,6 +583,8 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
       const facetParent = atomicFacet.shadowRoot.querySelector('[part="facet"]');
       updateChildElementUI(parentWrapper);
       updateShowMoreVisibility(facetParent);
+      // First successful EXLM pass — CSS can reveal values (see template).
+      atomicFacet.setAttribute('data-exlm-facet-ready', 'true');
       if (atomicFacet.dataset.clickmore) {
         const showMoreBtn = atomicFacet.shadowRoot.querySelector('[part="show-more"]');
         if (showMoreBtn) {
@@ -553,36 +606,87 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
     }
   };
 
+  const settleFacetUI = (atomicFacet) => {
+    handleAtomicFacetUI(atomicFacet);
+    unlockFacetValuesHeight(atomicFacet);
+    rememberFacetValuesHeight(atomicFacet);
+    // One frame after collapse/order so the locked height is not removed mid-paint.
+    requestAnimationFrame(() => {
+      hideFacetShimmer(atomicFacet);
+    });
+  };
+
   const observeFacetValuesList = (atomicFacet) => {
+    if (atomicFacet.dataset.valuesObserved === 'true') return;
+    atomicFacet.dataset.valuesObserved = 'true';
     const shadow = atomicFacet.shadowRoot;
-    const valuesObserver = new MutationObserver((mutations) => {
+    let rafId = 0;
+    let settling = false;
+    const scheduleSettle = () => {
+      if (settling) return;
+      if (rafId) cancelAnimationFrame(rafId);
+      // Double rAF: coalesce Lit's multi-node inserts, then settle before the next paint.
+      rafId = requestAnimationFrame(() => {
+        rafId = requestAnimationFrame(() => {
+          rafId = 0;
+          settling = true;
+          try {
+            settleFacetUI(atomicFacet);
+          } finally {
+            queueMicrotask(() => {
+              settling = false;
+            });
+          }
+        });
+      });
+    };
+
+    const onValuesChildListChange = () => {
+      if (settling) return;
+      lockFacetValuesHeight(atomicFacet);
+      showFacetShimmer(atomicFacet);
+      scheduleSettle();
+    };
+
+    const attachValuesObserver = (valuesEl) => {
+      if (!valuesEl || valuesEl.dataset.exlmValuesObserved === 'true') return;
+      valuesEl.dataset.exlmValuesObserved = 'true';
+      // Only the value <li> list — not fieldset chrome (show-more/shimmer) we append ourselves.
+      const valuesObserver = new MutationObserver(onValuesChildListChange);
+      valuesObserver.observe(valuesEl, { childList: true });
+    };
+
+    attachValuesObserver(shadow.querySelector('[part="values"]'));
+
+    const shadowObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === Node.ELEMENT_NODE && node.matches('fieldset.contents')) {
-            handleAtomicFacetUI(atomicFacet);
+          if (node.nodeType !== Node.ELEMENT_NODE) return;
+          if (node.matches?.('[part="values"], fieldset.contents') || node.querySelector?.('[part="values"]')) {
+            attachValuesObserver(shadow.querySelector('[part="values"]'));
+            onValuesChildListChange();
           }
         });
       });
     });
-    valuesObserver.observe(shadow, { childList: true, subtree: true });
+    shadowObserver.observe(shadow, { childList: true, subtree: true });
   };
 
   const onResultsUpdate = () => {
+    // RESULT_UPDATED can arrive after Lit already mutated values. Lock/shimmer
+    // immediately, then settle on the next frames (MutationObserver may also fire).
+    lockAllFacetValueHeights();
+    showAllFacetShimmers();
     if (resultTimerId) {
       clearTimeout(resultTimerId);
       resultTimerId = 0;
     }
     resultTimerId = setTimeout(() => {
       maybeEndFacetClearInProgress();
-      const atomicFacets = document.querySelectorAll('atomic-facet');
-      atomicFacets.forEach((atomicFacet) => {
-        handleAtomicFacetUI(atomicFacet);
-        const shimmer = atomicFacet.shadowRoot.querySelector('.facet-shimmer');
-        setTimeout(() => {
-          shimmer?.part.remove('show-shimmer');
-        }, 50);
+      document.querySelectorAll('atomic-facet').forEach((atomicFacet) => {
+        settleFacetUI(atomicFacet);
       });
-    }, 100);
+    }, 16);
   };
 
   const onNoResultFoundUpdate = () => {
@@ -591,14 +695,10 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
       noResultFoundTimerId = 0;
     }
     noResultFoundTimerId = setTimeout(() => {
-      const atomicFacets = document.querySelectorAll('atomic-facet');
-      atomicFacets.forEach((atomicFacet) => {
-        const shimmer = atomicFacet.shadowRoot.querySelector('.facet-shimmer');
-        setTimeout(() => {
-          shimmer?.part.remove('show-shimmer');
-        }, 50);
+      document.querySelectorAll('atomic-facet').forEach((atomicFacet) => {
+        settleFacetUI(atomicFacet);
       });
-    }, 100);
+    }, 16);
   };
 
   let facetEventListenersBound = false;
@@ -617,7 +717,7 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
 
     atomicFacets.forEach((atomicFacet) => {
       observeFacetValuesList(atomicFacet);
-      handleAtomicFacetUI(atomicFacet);
+      settleFacetUI(atomicFacet);
     });
     if (facetEventListenersBound) {
       return;
@@ -630,6 +730,13 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
         resultTimerId = 0;
       }
       clearBaselineFingerprint = facetSelectionFingerprint();
+      // Nothing selected → Clear All is a no-op. Do not lock/shimmer or filters stay grey.
+      if (!clearBaselineFingerprint) {
+        return;
+      }
+      // Clear All rebuilds every facet list — lock before Atomic's next paint.
+      lockAllFacetValueHeights();
+      showAllFacetShimmers();
       facetClearInProgress = true;
       if (facetClearSafetyTimerId) {
         clearTimeout(facetClearSafetyTimerId);
@@ -649,6 +756,10 @@ export default function atomicFacetHandler(block, placeholders, searchInterface)
           if (facetClearInProgress) {
             endFacetClearInProgress();
           }
+          // If RESULT_UPDATED never arrived, drop any stuck shimmer/height lock.
+          document.querySelectorAll('atomic-facet').forEach((atomicFacet) => {
+            settleFacetUI(atomicFacet);
+          });
           facetClearSafetyTimerId = 0;
         }, 2000);
       };

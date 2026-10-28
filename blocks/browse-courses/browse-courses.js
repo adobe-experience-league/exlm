@@ -34,6 +34,13 @@ let placeholders = {};
 const numberOfResults = 1000;
 
 /**
+ * Coveo Search API `tab` / UA `originLevel2` for the Courses Hub interface only.
+ * Distinct from Events Hub (`Events Hub`) and from the library default (`default`).
+ * @see EXLM-6193
+ */
+const COURSES_SEARCH_TAB = 'Courses';
+
+/**
  * DOM selectors used throughout the module
  */
 const SELECTORS = {
@@ -428,6 +435,7 @@ async function fetchCourseData(selectedFilters = [], selectedLevels = [], state 
     ...(selectedLevels.length > 0 && { level: selectedLevels, el_level_all: state?.allLevels }),
     el_product_all: state?.allProducts,
     noOfResults: numberOfResults,
+    tab: COURSES_SEARCH_TAB,
   };
 
   // Fetch browse cards data (automatically enriched by BrowseCardsDelegate for signed-in users)
@@ -435,6 +443,15 @@ async function fetchCourseData(selectedFilters = [], selectedLevels = [], state 
   const facetsResponse = BrowseCardsDelegate.fetchFacetsData(param);
   state.facetsResponse = facetsResponse;
   populateValidFacets(facetsResponse, state);
+
+  // Stamp originLevel2 for Coveo UA click events from this interface only (EXLM-6193).
+  if (Array.isArray(data)) {
+    data.forEach((card) => {
+      if (card && typeof card === 'object') {
+        card.originLevel2 = COURSES_SEARCH_TAB;
+      }
+    });
+  }
 
   return data;
 }
@@ -1319,8 +1336,10 @@ export default async function decorate(block) {
   // Check if user is signed in (required for status dropdown)
   const isUserSignedIn = await isSignedInUser();
 
-  // Fetch products and levels using Coveo facet fields
-  const facetDetails = await BrowseCardsDelegate.fetchCoveoFacetFields(['el_product', 'el_level']);
+  // Fetch products and levels using Coveo facet fields (same Tab as content queries)
+  const facetDetails = await BrowseCardsDelegate.fetchCoveoFacetFields(['el_product', 'el_level'], {
+    tab: COURSES_SEARCH_TAB,
+  });
   const products = facetDetails.el_product || [];
   const levels = facetDetails.el_level || [];
 

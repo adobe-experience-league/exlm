@@ -610,6 +610,12 @@ export default function atomicResultHandler(block, placeholders) {
   }
 
   function onClearBtnClick() {
+    const clearLabel = document.querySelector('.clear-label');
+    // Disabled Clear All is still clickable in the DOM; ignore it so SEARCH_CLEARED
+    // does not leave facet shimmers stuck (EXLM-6175 regression).
+    if (!clearLabel?.classList.contains('clear-btn-enabled')) {
+      return;
+    }
     const atomicBreadBox = document.querySelector('atomic-breadbox');
     // Atomic 3.60 may expose clear as part token list; keep exact + contains match.
     const coveoClearBtn =

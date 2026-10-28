@@ -90,6 +90,7 @@ jobs:
         run: npm install --global @github/copilot@1.0.91
 
       - name: Prepare diff-only review
+        id: prepare
         uses: actions/github-script@v7
         env:
           REVIEW_HEAD_SHA: ${{ needs.validate-request.outputs.head-sha }}
@@ -122,11 +123,14 @@ jobs:
               'scripts/confetti/canvas-confetti-1.9.3.module.min.mjs',
             ];
             files.forEach((file) => {
+              const visualTestFile = file.filename.startsWith('tools/visual-tests/');
               const reason = vendoredPaths.some((vendorPath) => vendorPath.endsWith('/')
                 ? file.filename.startsWith(vendorPath)
                 : file.filename === vendorPath)
                 ? 'Vendored library'
-                : file.filename.endsWith('.map') ? 'Source map' : null;
+                : file.filename.endsWith('.map') ? 'Source map'
+                : file.filename === 'package-lock.json' ? 'Generated lockfile'
+                : visualTestFile ? 'Visual test directory' : null;
               if (reason) {
                 coverage.excluded.push({ path: file.filename, reason });
                 return;
@@ -161,12 +165,23 @@ jobs:
             });
             const diff = patches.join('\n\n');
             if (!coverage.reviewed.length && !coverage.metadataOnly.length) {
-              throw new Error('No reviewable patches or file metadata remain after exclusions. Review the vendored/generated assets manually.');
+              core.setOutput('reviewable', 'false');
+              core.info(`Skipping Copilot review: all ${files.length} changed files are excluded.`);
+              await core.summary
+                .addHeading('Copilot review skipped')
+                .addRaw('No reviewable changes remain after exclusions. Visual tests still run independently.\n\n')
+                .addTable([
+                  [{ data: 'Excluded file', header: true }, { data: 'Reason', header: true }],
+                  ...coverage.excluded.map((file) => [file.path, file.reason]),
+                ])
+                .write();
+              return;
             }
+            core.setOutput('reviewable', 'true');
             if (Buffer.byteLength(diff, 'utf8') > 80000) {
               throw new Error('Authored patches exceed the 80 KB review limit. Review it manually.');
             }
-            core.info(`Reviewing ${coverage.reviewed.length} content patches and ${coverage.metadataOnly.length} metadata-only changes of ${files.length} changed files; excluded ${coverage.excluded.length} vendored/generated assets.`);
+            core.info(`Reviewing ${coverage.reviewed.length} content patches and ${coverage.metadataOnly.length} metadata-only changes of ${files.length} changed files; excluded ${coverage.excluded.length} files.`);
             const [reviews, reviewComments, conversationComments] = await Promise.all([
               github.paginate(github.rest.pulls.listReviews, { ...params, per_page: 100 }),
               github.paginate(github.rest.pulls.listReviewComments, { ...params, per_page: 100 }),
@@ -226,7 +241,7 @@ jobs:
               'Use concise Assessment and Suggested verification headings in the summary. Suggested checks must be specific to these changes and explicitly marked not run.',
               'If prior findings exist, add a Prior findings section distinguishing addressed, still present, and unverifiable findings with links; do not turn these into new inline comments.',
               'Include diff-only limitations and any Discussion follow-up. If there are no new high-confidence findings, use an empty comments array.',
-              'Excluded vendored/generated assets were not inspected. Their correctness and dependency compatibility require human validation; do not describe this as a complete PR review.',
+              'Excluded vendored/generated assets and all files under tools/visual-tests/ were not inspected. They require separate validation; do not describe this as a complete PR review.',
               'Do not approve or request changes. A human must validate the findings.',
               '',
               'BEGIN TRUSTED PROJECT GUIDANCE',
@@ -258,6 +273,7 @@ jobs:
             fs.writeFileSync(path.join(dir, 'coverage.json'), JSON.stringify(coverage));
 
       - name: Run Copilot review
+        if: steps.prepare.outputs.reviewable == 'true'
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_REVIEW_PAT }}
           COPILOT_HOME: ${{ runner.temp }}/copilot-home
@@ -269,7 +285,7 @@ jobs:
             echo "::error::Set the COPILOT_REVIEW_PAT repository secret to a fine-grained PAT with Copilot Requests permission."
             exit 1
           fi
-          copilot --prompt "$(cat prompt.txt)" --silent \
+          copilot --model claude-opus-5.5 --prompt "$(cat prompt.txt)" --silent \
             --available-tools='' \
             --deny-tool shell --deny-tool write --deny-tool url \
             --disable-builtin-mcps --no-custom-instructions --no-auto-update \
@@ -280,6 +296,7 @@ jobs:
           fi
 
       - name: Submit PR review
+        if: steps.prepare.outputs.reviewable == 'true'
         uses: actions/github-script@v7
         env:
           REVIEW_HEAD_SHA: ${{ needs.validate-request.outputs.head-sha }}
@@ -379,8 +396,8 @@ jobs:
                 '\n</details>',
               ] : []),
               ...(coverage.excluded.length ? [
-                'Vendored/generated assets below were not inspected; validate library upgrades and compatibility manually.',
-                '<details><summary>Excluded vendored/generated assets</summary>\n',
+                'Excluded files below were not inspected; validate vendored/generated assets manually and visual-test directory changes separately, including running the visual-test workflow.',
+                '<details><summary>Excluded files</summary>\n',
                 ...coverage.excluded.map((file) => `- ${JSON.stringify(file.path)} (${file.reason})`),
                 '\n</details>',
               ] : []),

@@ -244,11 +244,12 @@ const getCoveoAtomicMarkup = (placeholders) => {
               .clear-label {
                 font-size: 12px;
                 color: #767676;
-                
+                pointer-events: none;
               }
               .clear-label.clear-btn-enabled, .clear-label.clear-btn-enabled label {
                 color: var(--non-spectrum-navy-blue);
                 cursor: pointer;
+                pointer-events: auto;
               }
             </style>
             <div class="facet-header">
@@ -305,6 +306,11 @@ const getCoveoAtomicMarkup = (placeholders) => {
                 }
                 atomic-facet::part(show-shimmer) {
                   display: block;
+                }
+                /* Hide Atomic's raw value list until EXLM applies show-more + order.
+                   Without this, Product (number-of-values=500) flashes fully expanded. */
+                atomic-facet:not([data-exlm-facet-ready])::part(values) {
+                  visibility: hidden;
                 }
                 atomic-facet::part(facet-show-more-wrapper) {
                   display: flex;
