@@ -605,6 +605,10 @@ function createBottomAskBar() {
     openBrandConcierge().catch((e) => warn('Open from bottom bar expand failed', e?.message || e));
   });
   hideBtn.addEventListener('click', () => {
+    pushBcInteractionEvent('bc widget hide', {
+      bcChatId: bcConversationId,
+      bcChatMessageNumber: bcMessageNumber,
+    });
     setBottomAskBarExpanded(bar, false);
   });
 
