@@ -6,6 +6,3 @@ package.json
 package-lock.json
 test/*
 tools/visual-tests/*
-blocks/code/code.test.js
-blocks/code/code.spec.js
-blocks/code/playwright.config.js

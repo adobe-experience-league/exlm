@@ -1,5 +1,4 @@
 import { htmlToElement, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
-import joinCodeLines from './join-code-lines.js';
 
 function getDataLineValue(arr) {
   let dataLineValue = '';
@@ -7,6 +6,11 @@ function getDataLineValue(arr) {
     dataLineValue += `${className.slice(2)}, `;
   });
   return dataLineValue.slice(0, -2);
+}
+
+/** One published line is its own pre and ends with a newline. */
+function joinCodeLines(lines) {
+  return lines.map((line) => line.replace(/\n$/, '')).join('\n');
 }
 
 /**
