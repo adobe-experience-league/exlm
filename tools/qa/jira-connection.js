@@ -28,6 +28,32 @@ export default async function checkJiraConnection({ baseUrl, token, fetchImpl = 
     if (['TimeoutError', 'AbortError'].includes(error.name)) {
       throw new Error('Jira request timed out. Check runner access to the corporate network.');
     }
+    const code = error.cause?.code ?? error.code;
+    if (['ENOTFOUND', 'EAI_AGAIN'].includes(code)) {
+      throw new Error(`Jira DNS lookup failed (${code}). Check the base hostname and runner access to corporate DNS.`);
+    }
+    if (['ETIMEDOUT', 'UND_ERR_CONNECT_TIMEOUT'].includes(code)) {
+      throw new Error(`Jira connection timed out (${code}). Check runner routing, firewall, and proxy access.`);
+    }
+    if (['ECONNREFUSED', 'ECONNRESET'].includes(code)) {
+      throw new Error(
+        `Jira connection was refused or reset (${code}). Check runner routing, firewall, and proxy access.`,
+      );
+    }
+    if (
+      [
+        'CERT_HAS_EXPIRED',
+        'DEPTH_ZERO_SELF_SIGNED_CERT',
+        'SELF_SIGNED_CERT_IN_CHAIN',
+        'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+        'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+        'ERR_TLS_CERT_ALTNAME_INVALID',
+      ].includes(code)
+    ) {
+      throw new Error(
+        `Jira TLS verification failed (${code}). Check certificate validity, hostname, and approved corporate CA trust.`,
+      );
+    }
     throw new Error(
       'Unable to reach Jira. Check runner DNS, corporate network/proxy access, and trusted TLS certificates.',
     );

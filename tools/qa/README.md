@@ -37,6 +37,14 @@ runner may not reach corporate Jira; arrange an approved runner or gateway if
 necessary. Do not disable TLS verification or expose corporate Jira to work around
 network restrictions.
 
+Recognized network failures include only allowlisted error codes, never raw
+exception details: `ENOTFOUND`/`EAI_AGAIN` indicate DNS lookup failures,
+`ETIMEDOUT`/`UND_ERR_CONNECT_TIMEOUT` indicate connection timeouts,
+`ECONNREFUSED`/`ECONNRESET` indicate rejected/reset connections, and certificate
+codes identify TLS verification failures. Unknown errors retain a generic message
+to avoid leaking sensitive diagnostics. A request that fails before an HTTP
+response does not establish whether the PAT is valid.
+
 Actions secrets cannot be read back locally. The live connection is not verified
 until this workflow actually succeeds. The existing PR test jobs never receive
 the Jira secret. No GitHub PAT is needed for this connection check.

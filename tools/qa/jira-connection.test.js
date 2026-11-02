@@ -90,6 +90,61 @@ test('reports network/TLS errors and timeouts without leaking low-level exceptio
   );
 });
 
+test('reports allowlisted DNS, connection and TLS codes without exposing underlying errors', async () => {
+  const cases = [
+    { code: 'ENOTFOUND', message: /DNS lookup failed/ },
+    { code: 'EAI_AGAIN', message: /DNS lookup failed/ },
+    { code: 'ETIMEDOUT', message: /connection timed out/ },
+    { code: 'UND_ERR_CONNECT_TIMEOUT', message: /connection timed out/ },
+    { code: 'ECONNREFUSED', message: /connection was refused or reset/ },
+    { code: 'ECONNRESET', message: /connection was refused or reset/ },
+    { code: 'CERT_HAS_EXPIRED', message: /TLS verification failed/ },
+    { code: 'DEPTH_ZERO_SELF_SIGNED_CERT', message: /TLS verification failed/ },
+    { code: 'SELF_SIGNED_CERT_IN_CHAIN', message: /TLS verification failed/ },
+    { code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE', message: /TLS verification failed/ },
+    { code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY', message: /TLS verification failed/ },
+    { code: 'ERR_TLS_CERT_ALTNAME_INVALID', message: /TLS verification failed/ },
+  ];
+  await Promise.all(
+    cases.map(async ({ code, message }) => {
+      await assert.rejects(
+        checkJiraConnection({
+          ...config,
+          fetchImpl: async () => {
+            throw new Error(`private diagnostic ${config.token}`, { cause: { code } });
+          },
+        }),
+        (error) => message.test(error.message) && error.message.includes(code) && !error.message.includes(config.token),
+      );
+    }),
+  );
+  await assert.rejects(
+    checkJiraConnection({
+      ...config,
+      fetchImpl: async () => {
+        const error = new Error('private diagnostic');
+        error.code = 'ECONNRESET';
+        throw error;
+      },
+    }),
+    /ECONNRESET/,
+  );
+});
+
+test('does not echo arbitrary error codes', async () => {
+  await assert.rejects(
+    checkJiraConnection({
+      ...config,
+      fetchImpl: async () => {
+        throw new Error('private diagnostic', { cause: { code: config.token } });
+      },
+    }),
+    {
+      message: 'Unable to reach Jira. Check runner DNS, corporate network/proxy access, and trusted TLS certificates.',
+    },
+  );
+});
+
 test('connection workflow is restricted to pushes or manual runs on the trusted pilot branch', () => {
   const workflow = yaml.load(
     fs.readFileSync(new URL('../../.github/workflows/qa-jira-connection.yaml', import.meta.url), 'utf8'),
