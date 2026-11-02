@@ -13,3 +13,4 @@ scripts/confetti/canvas-confetti-1.9.3.module.min.mjs
 scripts/jspdf/jspdf.umd.min.js
 # Recorded network fixtures for visual tests (see tools/visual-tests/record-coveo-har.js)
 *.har
+tools/qa/results/

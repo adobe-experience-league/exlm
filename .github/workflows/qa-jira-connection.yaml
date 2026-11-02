@@ -1,0 +1,37 @@
+name: QA Jira Connection
+
+on:
+  push:
+    branches: [exlm-6172]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  connect:
+    if: >-
+      github.repository == 'adobe-experience-league/exlm' &&
+      github.ref == 'refs/heads/exlm-6172'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check out trusted connection check
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            package.json
+            tools/qa/jira-connection.js
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify Jira reachability and PAT authentication
+        env:
+          JIRA_BASE_URL: ${{ vars.JIRA_BASE_URL }}
+          JIRA_PAT_PR_QA: ${{ secrets.JIRA_PAT_PR_QA }}
+        run: node tools/qa/jira-connection.js

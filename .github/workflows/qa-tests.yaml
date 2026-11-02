@@ -1,0 +1,73 @@
+name: QA Pilot Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-pilot-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: QA tests (advisory)
+    if: >-
+      github.repository == 'adobe-experience-league/exlm' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.53.1-jammy
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Select affected tests
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node tools/qa/select-tests.js "$BASE_SHA" "$HEAD_SHA"
+
+      - name: Test QA selection and reporting
+        run: node --test tools/qa/*.test.js
+
+      - name: Functional tests
+        id: functional
+        continue-on-error: true
+        run: node tools/qa/run-tests.js functional
+
+      - name: Visual tests
+        id: visual
+        continue-on-error: true
+        run: |
+          if node -e "const p=require('./tools/qa/results/plan.json'); process.exit(p.visual.length ? 0 : 1)"; then
+            npm install -g @adobe/aem-cli --no-audit --no-fund
+          fi
+          node tools/qa/run-tests.js visual
+
+      - name: Upload QA evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-pilot-evidence
+          path: tools/qa/results/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Preserve failed test status
+        if: ${{ !cancelled() && (steps.functional.outcome == 'failure' || steps.visual.outcome == 'failure') }}
+        run: exit 1
