@@ -1108,3 +1108,32 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
 #brand-concierge-mount .citations-number-container {
   margin-top: 0 !important;
 }
+
+.bc-dialog.exl-dialog-expanded {
+  max-width: 1400px !important;
+  margin-inline: auto !important;
+}
+
+@media (min-width: 1401px) {
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message .message-content,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message .message-text,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-prompt-pill-button,
+  /* stylelint-disable-next-line selector-class-pattern -- BC internal BEM class */
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-prompt-pill-button__text,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-prompt-suggestion-button,
+  /* stylelint-disable-next-line selector-class-pattern -- BC internal BEM modifier */
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .chat-input--input {
+    font-size: 16px !important;
+  }
+
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container .bc-prompt-pill-button {
+    min-height: calc((16px + 1.4 * 16px) * 3) !important;
+    padding: 30px 15px !important;
+  }
+
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section .bc-panel-disclaimer,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section .bc-panel-disclaimer a {
+    font-size: 14px !important;
+  }
+}
