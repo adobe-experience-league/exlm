@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { DEFAULT_CONFIG } from '../lib/config.js';
 import { StageError } from '../lib/errors.js';
+import { GithubError } from '../lib/github.js';
 import { previewUrl, runTicket } from '../lib/runner.js';
 import { REPAIR_FILE, RESULT_FILE, TASK_FILE } from '../lib/task.js';
 import { silentLog, tempDir } from './helpers.js';
@@ -67,8 +68,13 @@ function fakeSteps({
       calls.push(['runQuality', ok]);
       return { ok, output: ok ? '' : 'lint error' };
     },
+    pushBranch: async (args) => {
+      calls.push(['pushBranch', args]);
+      return 'abc123';
+    },
     commitAndPush: async (args) => {
       calls.push(['commitAndPush', args]);
+      if (args.push) await args.push({ workDir: args.workDir, branch: args.branch, env: args.env });
       return 'abc123';
     },
     createGithubClient: (args) => {
@@ -163,6 +169,7 @@ test('happy path writes the task, runs Copilot once, pushes, and opens a draft P
     'runQuality',
     'collectDiff',
     'commitAndPush',
+    'pushBranch',
     'createDraftPr',
     'removeWorktree',
   ]);
@@ -306,4 +313,90 @@ test('dry run skips push and PR, keeps the worktree, and returns the PR text', a
   assert.ok(!fake.names().includes('commitAndPush'));
   assert.ok(!fake.names().includes('createDraftPr'));
   assert.ok(!fake.names().includes('removeWorktree'));
+});
+
+const master = {
+  jiraUser: 'otto-master',
+  githubPat: 'master-github',
+  copilotPat: 'master-copilot',
+  gitName: 'Otto',
+  gitEmail: 'otto@example.com',
+};
+
+test('push denial retries the push without making another commit or changing the author', async () => {
+  const fake = fakeSteps();
+  const tokens = [];
+  fake.steps.pushBranch = async ({ env }) => {
+    tokens.push(env.OTTO_GIT_TOKEN);
+    if (env.OTTO_GIT_TOKEN !== master.githubPat) {
+      const error = new StageError('push', 'git push failed', 'Permission denied');
+      error.permissionDenied = true;
+      throw error;
+    }
+    return 'abc123';
+  };
+  const out = await run(fake, { master });
+  assert.deepEqual(tokens, ['gh-push-123456', 'master-github']);
+  assert.equal(fake.names().filter((n) => n === 'commitAndPush').length, 1);
+  assert.equal(fake.calls.find(([n]) => n === 'commitAndPush')[1].gitName, 'Jane');
+  assert.equal(out.warnings[0].service, 'github');
+  assert.ok(out.body.includes('master-github') === false);
+  assert.ok(out.body.includes('otto-master'));
+  assert.equal(fake.githubClientArgs.at(-1).token, 'master-github');
+});
+
+test('Copilot entitlement fallback uses the master home and remains active during repair', async () => {
+  const fake = fakeSteps({ quality: [false, true] });
+  const tokens = [];
+  const original = fake.steps.runCopilot;
+  fake.steps.runCopilot = async (args) => {
+    tokens.push(args.token);
+    if (args.token !== master.copilotPat) {
+      const error = new StageError('copilot', 'Copilot authentication failed');
+      error.permissionDenied = true;
+      throw error;
+    }
+    assert.ok(args.copilotHome.endsWith(path.join('copilot-homes', 'master')));
+    await original(args);
+  };
+  const out = await run(fake, { master });
+  assert.deepEqual(tokens, ['github_pat_copilot', 'master-copilot', 'master-copilot']);
+  assert.equal(out.warnings[0].service, 'copilot');
+  assert.equal(fake.calls.find(([n]) => n === 'commitAndPush')[1].env.OTTO_GIT_TOKEN, 'gh-push-123456');
+  assert.ok(out.body.includes('copilot'));
+});
+
+test('PR permission fallback rebuilds the warning body on retry', async () => {
+  const fake = fakeSteps();
+  const create = fake.steps.createGithubClient;
+  fake.steps.createGithubClient = (args) => {
+    const client = create(args);
+    if (args.token !== master.githubPat)
+      client.createDraftPr = async () => {
+        throw new GithubError(403, 'Resource not accessible by personal access token');
+      };
+    return client;
+  };
+  const out = await run(fake, { master });
+  assert.equal(out.prNumber, 9);
+  assert.ok(fake.calls.find(([n]) => n === 'createDraftPr')[1].body.includes('otto-master'));
+  assert.equal(out.warnings.length, 1);
+});
+
+test('dry-run Copilot fallback flags the PR text without pushing or writing a PR', async () => {
+  const fake = fakeSteps();
+  const original = fake.steps.runCopilot;
+  fake.steps.runCopilot = async (args) => {
+    if (args.token !== master.copilotPat) {
+      const error = new StageError('copilot', 'No Copilot subscription');
+      error.permissionDenied = true;
+      throw error;
+    }
+    return original(args);
+  };
+  const out = await run(fake, { master, dryRun: true });
+  assert.ok(out.body.includes('copilot: jdoe -> master account otto-master'));
+  assert.equal(fake.githubClientArgs.length, 0);
+  assert.ok(!fake.names().includes('commitAndPush'));
+  assert.ok(!fake.names().includes('pushBranch'));
 });

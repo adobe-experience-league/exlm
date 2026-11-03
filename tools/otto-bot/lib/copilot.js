@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { StageError } from './errors.js';
+import { commandPermissionDenied, StageError } from './errors.js';
 import { runCommand } from './exec.js';
 import { createRedactor } from './redact.js';
 
@@ -107,11 +107,13 @@ export async function runCopilot({
       throw new StageError('copilot', `Copilot CLI timed out after ${Math.round(timeoutMs / 60000)} minutes`);
     }
     if (result.code !== 0) {
-      throw new StageError(
+      const error = new StageError(
         'copilot',
         `Copilot CLI exited with code ${result.code}`,
-        redact(result.stderr.slice(-4000)),
+        redact((result.stderr || result.stdout).slice(-4000)),
       );
+      error.permissionDenied = commandPermissionDenied('copilot', `${result.stderr}\n${result.stdout}`);
+      throw error;
     }
   } finally {
     await redactCopilotArtifacts({ logDir, shareFile, redact });

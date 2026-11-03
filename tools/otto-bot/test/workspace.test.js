@@ -110,3 +110,23 @@ test('prepareWorktree fails the workspace stage when npm ci fails', async () => 
   const run = async () => ({ code: 1, stdout: '', stderr: 'npm ERR!', timedOut: false });
   await assert.rejects(prepareWorktree({ workDir, log: silentLog(), run }), (err) => err.stage === 'workspace');
 });
+
+test('mirror authentication failures can fall back but network and policy failures cannot', async () => {
+  for (const [stderr, want] of [
+    ["fatal: Authentication failed for 'https://github.com/o/r.git/'", true],
+    ['fatal: The requested URL returned error: 403', true],
+    ['fatal: Could not resolve host: github.com', false],
+    ['remote: Repository rule violations found', false],
+    ['fatal: The requested URL returned error: 403\nremote: organization policy prohibits this operation', false],
+  ]) {
+    const root = await tempDir();
+    await assert.rejects(
+      ensureMirror({
+        mirrorDir: path.join(root, 'mirror.git'),
+        remoteUrl: 'https://github.com/o/r.git',
+        run: async () => ({ code: 128, stdout: '', stderr }),
+      }),
+      (error) => Boolean(error.permissionDenied) === want,
+    );
+  }
+});

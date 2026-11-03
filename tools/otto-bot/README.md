@@ -12,6 +12,14 @@ Add the `otto` label to an EXLM Jira ticket and otto-bot opens a **draft** PR wr
 **Retry:** remove `otto-failed`, then add `otto` again. The same `exlm-1234` branch and PR are reused.
 
 otto-bot acts as the ticket's **assignee** if they are onboarded, otherwise as the master account.
+If an onboarded assignee's Jira, GitHub, or Copilot credentials are rejected, otto-bot retries the affected operation once with the master account, then uses that account for the affected service for the rest of the run. Other services still use the assignee's credentials; Git commit authorship and Slack ownership stay with the original identity.
+
+Fallback is limited to explicit authentication/permission errors (HTTP 401/403, recognized Git authentication failures, and recognized Copilot authentication/subscription errors). Network failures, rate limits, protected-branch/repository-rule rejections, organization-policy restrictions, task failures, and failed quality checks do not trigger credential fallback. Unknown CLI errors fail normally rather than guessing that access was denied. A denied push is retried without creating another commit.
+
+Every fallback is logged and persisted in run state, then flagged in a Jira comment, PR description, Slack completion/failure message (when configured), and run history with the assignee, effective master account, service, and sanitized reason. `otto status` displays warnings for current and recent runs; dry runs include them in the proposed PR text without writing to Jira or GitHub. A successful fallback finishes as `otto-done` with warnings, not `otto-failed`. If master access also fails, the operation fails without another credential retry. If Jira cannot be claimed even with master credentials, the failure is recorded locally and in Slack; Jira itself cannot be updated.
+
+Configure the master account only if it is explicitly authorized for the repository and Jira project and has an appropriate Copilot license/entitlement permitted by your organization's policies. Fallback does not override repository rules, Copilot licensing requirements, or organization policies. `otto doctor` still reports invalid user credentials so they can be repaired.
+
 Copilot gets the ticket summary, description, and the latest human comments (up to 20, ~20k chars; otto's own comments are skipped). Attachments are not read, so copy anything important from a PDF or screenshot into the description or a comment.
 Every otto-bot commit carries an `Otto-Run: <run id>` trailer; list them with `git log --grep '^Otto-Run:'`.
 Design: [`docs/superpowers/specs/2026-10-14-otto-bot-design.md`](../../docs/superpowers/specs/2026-10-14-otto-bot-design.md).

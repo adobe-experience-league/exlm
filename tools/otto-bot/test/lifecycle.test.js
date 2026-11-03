@@ -58,7 +58,7 @@ function fakeJira({ found = null, claimError = null, issueLabels = [LABELS.worki
     },
     updateLabels: async (key, change) => {
       calls.push({ token, op: 'labels', key, change });
-      if (claimError && change.add?.includes(LABELS.working)) throw claimError;
+      if (claimError && token !== 'master-jira-pat' && change.add?.includes(LABELS.working)) throw claimError;
     },
     addComment: async (key, body) => calls.push({ token, op: 'comment', key, body }),
   });
@@ -239,8 +239,8 @@ test('unexpected errors are reported as stage internal', async () => {
   assert.ok(jira.comments()[1].body.includes('boom'));
 });
 
-test('a rejected claim with the assignee token is failed by master without running', async () => {
-  const { config } = await setup();
+test('a rejected claim continues with master Jira only and flags the successful run', async () => {
+  const { config, stateDir } = await setup();
   const jira = fakeJira({ claimError: new JiraError(401, 'unauthorized') });
   let ran = false;
   const result = await processTicket({
@@ -253,19 +253,20 @@ test('a rejected claim with the assignee token is failed by master without runni
       now: () => NOW,
       runTicket: async () => {
         ran = true;
+        return outcome;
       },
     },
   });
-  assert.equal(ran, false);
-  assert.deepEqual(result, {
-    key: 'EXLM-1234',
-    runId: '20261014-140509-exlm-1234',
-    outcome: 'failed',
-    stage: 'claim',
-  });
+  assert.equal(ran, true);
+  assert.equal(result.outcome, 'done');
+  assert.equal(result.warnings[0].service, 'jira');
+  assert.equal(result.warnings[0].requestedUser, 'jdoe');
+  assert.equal(result.warnings[0].effectiveUser, 'otto-master');
   const masterLabels = jira.labels().filter((c) => c.token === 'master-jira-pat');
-  assert.deepEqual(masterLabels[0].change, { remove: ['otto'], add: ['otto-failed'] });
-  assert.ok(jira.comments()[0].body.includes("couldn't pick this up as jdoe"));
+  assert.deepEqual(masterLabels[0].change, { remove: ['otto'], add: ['otto-working'] });
+  assert.ok(masterLabels.some((c) => c.change.add.includes('otto-done')));
+  assert.ok(jira.comments().some((c) => /jira.*jdoe.*otto-master/.test(c.body)));
+  assert.deepEqual((await readHistory(stateDir))[0].warnings, result.warnings);
 });
 
 test('a network error during claim leaves the ticket for the next tick', async () => {
@@ -379,4 +380,17 @@ test('tick recovers, processes one ticket, and releases the lock', async () => {
   assert.deepEqual(result, { status: 'done', key: 'EXLM-1234', runId: '20261014-140509-exlm-1234' });
   assert.equal(jira.labels()[0].key, 'EXLM-1', 'recovery ran first');
   await assert.rejects(fs.access(path.join(stateDir, 'lock')));
+});
+
+test('tick exposes completed-with-warning details to the caller', async () => {
+  const { config } = await setup();
+  const jira = fakeJira({ found: issue(), claimError: new JiraError(403, 'denied') });
+  const result = await tick({
+    config,
+    users,
+    log: silentLog(),
+    deps: { createJiraClient: jira.createJiraClient, now: () => NOW, runTicket: async () => outcome },
+  });
+  assert.equal(result.status, 'done');
+  assert.equal(result.warnings[0].service, 'jira');
 });

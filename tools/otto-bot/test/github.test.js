@@ -78,6 +78,40 @@ test('convertPullRequestToDraft throws on GraphQL errors', async () => {
   );
 });
 
+test('GraphQL permission errors preserve permission classification for fallback', async () => {
+  const fetch = fakeFetch(() => jsonResponse({ errors: [{ type: 'FORBIDDEN', message: 'Resource not accessible' }] }));
+  const gh = createGithubClient({ owner: 'o', repo: 'r', token: 't', fetchImpl: fetch.impl });
+  await assert.rejects(
+    gh.convertPullRequestToDraft({ number: 8, node_id: 'PR_node' }),
+    (error) => error.stage === 'pr' && error.permissionDenied === true,
+  );
+});
+
+test('a push permission failure is marked but a commit failure is never eligible for fallback', async () => {
+  for (const failAt of ['commit', 'push']) {
+    const calls = [];
+    await assert.rejects(
+      commitAndPush({
+        workDir: '/work',
+        branch: 'exlm-1',
+        message: 'm',
+        gitName: 'Jane',
+        gitEmail: 'j@example.com',
+        run: async (_cmd, args) => {
+          calls.push(args);
+          return {
+            code: args.includes(failAt) ? 128 : 0,
+            stdout: '',
+            stderr: args.includes(failAt) ? 'remote: Permission to o/r.git denied to jdoe.' : '',
+          };
+        },
+      }),
+      (error) => error.stage === 'push' && Boolean(error.permissionDenied) === (failAt === 'push'),
+    );
+    assert.equal(calls.length, failAt === 'commit' ? 1 : 2);
+  }
+});
+
 test('convertPullRequestToDraft throws when GitHub does not confirm draft status', async () => {
   const fetch = fakeFetch(() =>
     jsonResponse({ data: { convertPullRequestToDraft: { pullRequest: { isDraft: false } } } }),

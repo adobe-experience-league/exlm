@@ -1,4 +1,4 @@
-import { StageError } from './errors.js';
+import { commandPermissionDenied, StageError } from './errors.js';
 import { runCommand } from './exec.js';
 import { createRedactor } from './redact.js';
 import { trimOutput } from './task.js';
@@ -39,10 +39,12 @@ export function createGithubClient({
     });
     const text = await res.text();
     if (!res.ok) {
-      throw new GithubError(
+      const error = new GithubError(
         res.status,
         `GitHub ${method} ${pathname.split('?')[0]} failed: ${res.status} ${text.slice(0, 300)}`,
       );
+      error.rateLimited = res.headers.get('x-ratelimit-remaining') === '0' || res.headers.has('retry-after');
+      throw error;
     }
     return { data: text ? JSON.parse(text) : null, headers: res.headers };
   }
@@ -54,7 +56,11 @@ export function createGithubClient({
         .map((error) => error?.message)
         .filter(Boolean)
         .join('; ');
-      throw new StageError('pr', redactString(`GitHub GraphQL failed: ${message || 'unknown error'}`));
+      const error = new StageError('pr', redactString(`GitHub GraphQL failed: ${message || 'unknown error'}`));
+      error.permissionDenied =
+        data.errors.every((entry) => ['FORBIDDEN', 'UNAUTHORIZED'].includes(entry?.type)) &&
+        !/rate.?limit|organization.*policy/i.test(message);
+      throw error;
     }
     return data;
   }
@@ -127,6 +133,22 @@ export function buildCommitMessage({ ticket, result, runId, redact = (value) => 
   return `${ticket.key}: ${redact(ticket.summary)}\n\n${redact(result.summary)}\n\n${ottoTrailer}${COAUTHOR_TRAILER}\n`;
 }
 
+export async function pushBranch({ workDir, branch, env = process.env, run = runCommand }) {
+  const result = await run('git', ['push', '--no-verify', '--force', 'origin', `HEAD:refs/heads/${branch}`], {
+    cwd: workDir,
+    env,
+    timeoutMs: 5 * 60 * 1000,
+  });
+  if (result.code !== 0) {
+    const error = new StageError('push', 'git push failed', result.stderr.trim());
+    error.permissionDenied = commandPermissionDenied('github', result.stderr);
+    throw error;
+  }
+  const sha = await run('git', ['rev-parse', 'HEAD'], { cwd: workDir, env, timeoutMs: 5 * 60 * 1000 });
+  if (sha.code !== 0) throw new StageError('push', 'git rev-parse failed', sha.stderr.trim());
+  return sha.stdout.trim();
+}
+
 export async function commitAndPush({
   workDir,
   branch,
@@ -135,6 +157,7 @@ export async function commitAndPush({
   gitEmail,
   env = process.env,
   run = runCommand,
+  push = (args) => pushBranch({ ...args, run }),
 }) {
   const step = async (name, args, input) => {
     const res = await run('git', args, { cwd: workDir, env, input, timeoutMs: 5 * 60 * 1000 });
@@ -144,8 +167,7 @@ export async function commitAndPush({
 
   const identity = ['-c', `user.name=${gitName}`, '-c', `user.email=${gitEmail}`];
   await step('commit', [...identity, 'commit', '--no-verify', '-F', '-'], message);
-  await step('push', ['push', '--no-verify', '--force', 'origin', `HEAD:refs/heads/${branch}`]);
-  return step('rev-parse', ['rev-parse', 'HEAD']);
+  return push({ workDir, branch, env });
 }
 
 export function toTestPath(p) {
@@ -191,7 +213,7 @@ ${testLines}
 ## AI Review Notes
 
 - Summary: ${result.summary}
-- Implemented using ${who}.
+- Started using ${who}.
 - Run ID: ${runId}
 ${questions}
 ---

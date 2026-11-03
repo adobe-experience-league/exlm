@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { StageError } from './errors.js';
+import { commandPermissionDenied, StageError } from './errors.js';
 import { runCommand } from './exec.js';
 
 const ASKPASS = `#!/bin/sh
@@ -29,7 +29,15 @@ export function gitAuthEnv({ askpassPath, token, baseEnv = process.env }) {
 async function mustGit(run, args, opts = {}) {
   const result = await run('git', args, opts);
   if (result.code !== 0) {
-    throw new StageError('workspace', `git ${args.find((arg) => !arg.startsWith('-'))} failed`, result.stderr.trim());
+    const error = new StageError(
+      'workspace',
+      `git ${args.find((arg) => !arg.startsWith('-'))} failed`,
+      result.stderr.trim(),
+    );
+    if (args.includes('clone') || args.includes('fetch')) {
+      error.permissionDenied = commandPermissionDenied('github', result.stderr);
+    }
+    throw error;
   }
   return result.stdout.trim();
 }

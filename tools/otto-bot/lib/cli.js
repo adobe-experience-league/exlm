@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { DEFAULT_CONFIG, allSecrets, defaultConfigDir, loadConfig, readUsersFile } from './config.js';
 import { doctorOk, formatDoctor, runDoctor } from './doctor.js';
+import { formatFallbackWarnings } from './fallback-warnings.js';
 import { resolveIdentity } from './identity.js';
 import { createJiraClient, toTicket } from './jira.js';
 import { makeRunId, processTicket, tick } from './lifecycle.js';
@@ -89,6 +90,7 @@ async function runCommandForKey([key, flag], { loaded, log, out, deps }) {
       const outcome = await (deps.runTicket || runTicket)({
         ticket,
         identity: resolveIdentity(users, ticket.assignee),
+        master: users.master,
         config,
         runId: `${makeRunId(key)}-dry`,
         log,
@@ -116,9 +118,13 @@ async function statusCommand({ config, out }) {
   const { stateDir } = dataPaths(config.dataDir);
   const current = await readCurrentRun(stateDir);
   out(current ? `Running: ${current.key} (run ${current.runId}, as ${current.identity})` : 'Idle');
+  if (current?.warnings?.length) out(`Credential fallback warning:\n${formatFallbackWarnings(current.warnings)}`);
   const history = await readHistory(stateDir, 10);
   if (history.length) out('Recent runs:');
-  history.forEach((h) => out(`- ${h.key} ${h.outcome} ${h.prUrl || h.stage || ''}`.trimEnd()));
+  history.forEach((h) => {
+    out(`- ${h.key} ${h.outcome} ${h.prUrl || h.stage || ''}`.trimEnd());
+    if (h.warnings?.length) out(`  Credential fallback warning:\n${formatFallbackWarnings(h.warnings)}`);
+  });
   return 0;
 }
 

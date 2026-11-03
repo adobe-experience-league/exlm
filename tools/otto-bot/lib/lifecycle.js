@@ -1,14 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {
-  buildClaimRejectedComment,
-  buildDoneComment,
-  buildFailedComment,
-  buildInterruptedComment,
-  buildPickupComment,
-} from './comments.js';
+import { buildDoneComment, buildFailedComment, buildInterruptedComment, buildPickupComment } from './comments.js';
 import { allSecrets } from './config.js';
+import { createCredentialContext } from './credentials.js';
 import { StageError } from './errors.js';
+import { formatFallbackWarnings, withFallbackWarnings } from './fallback-warnings.js';
+import { createGithubClient } from './github.js';
 import { cleanupRuns } from './housekeeping.js';
 import { resolveIdentity } from './identity.js';
 import { createJiraClient, JiraError, toTicket } from './jira.js';
@@ -63,12 +60,21 @@ export async function recover({ config, users, log, deps: overrides = {} }) {
     await clearCurrentRun(stateDir);
     return false;
   }
-  await jira.addComment(current.key, redact(buildInterruptedComment({ runId: current.runId })));
+  const warningText = formatFallbackWarnings(current.warnings);
+  await jira.addComment(
+    current.key,
+    redact(
+      `${buildInterruptedComment({ runId: current.runId })}${
+        warningText ? `\nCredential fallback warning:\n${warningText}` : ''
+      }`,
+    ),
+  );
   await jira.updateLabels(current.key, { remove: [LABELS.working], add: [LABELS.failed] });
   await notifierFor({ config, log, redact, deps })('failed', {
     ticket: toTicket({ ...issue, key: current.key }),
     identity: resolveIdentity(users, current.identity),
     stage: 'interrupted',
+    warnings: current.warnings,
   });
   await appendHistory(stateDir, {
     ...current,
@@ -89,67 +95,143 @@ export async function processTicket({ issue, config, users, log, deps: overrides
   const runId = makeRunId(ticket.key, deps.now());
   const { stateDir } = dataPaths(config.dataDir);
   const { runDir } = runPaths(config.dataDir, runId);
-  const jira = deps.createJiraClient({ baseUrl: config.jiraBaseUrl, token: identity.creds.jiraPat });
   const base = { key: ticket.key, runId };
   const notify = notifierFor({ config, log, redact, deps });
+  const current = { ...base, identity: identity.name, startedAt: deps.now().toISOString() };
+  const credentials = createCredentialContext({
+    identity,
+    master: users.master,
+    log,
+    requestedUser: ticket.assignee || identity.name,
+    onFallback: async () => writeCurrentRun(stateDir, { ...current, warnings: credentials.warnings }),
+  });
+  const jira = (operation) =>
+    credentials.run('jira', (account) =>
+      operation(
+        deps.createJiraClient({
+          baseUrl: config.jiraBaseUrl,
+          token: account.creds.jiraPat,
+        }),
+      ),
+    );
   log.info('claiming ticket', { ...base, identity: identity.name });
-  await writeCurrentRun(stateDir, { ...base, identity: identity.name, startedAt: deps.now().toISOString() });
-
-  try {
-    await jira.updateLabels(ticket.key, { remove: [LABELS.trigger], add: [LABELS.working] });
-  } catch (err) {
-    if (err instanceof JiraError && [401, 403].includes(err.status) && !identity.isMaster) {
-      const master = masterJira(config, users, deps);
-      await master.addComment(ticket.key, redact(buildClaimRejectedComment({ identity, status: err.status })));
-      await master.updateLabels(ticket.key, { remove: [LABELS.trigger], add: [LABELS.failed] });
-      await appendHistory(stateDir, {
-        ...base,
-        outcome: 'failed',
-        stage: 'claim',
-        finishedAt: deps.now().toISOString(),
-      });
-      await clearCurrentRun(stateDir);
-      return { ...base, outcome: 'failed', stage: 'claim' };
-    }
-    throw err;
-  }
-
+  await writeCurrentRun(stateDir, current);
   await fs.mkdir(runDir, { recursive: true });
   log.attachFile(path.join(runDir, 'otto.log'));
-  await jira
-    .addComment(ticket.key, redact(buildPickupComment()))
-    .catch((err) => log.warn('pickup comment failed', { error: err.message }));
-  await notify('picked-up', { ticket, identity });
+  try {
+    await jira((client) => client.updateLabels(ticket.key, { remove: [LABELS.trigger], add: [LABELS.working] }));
+  } catch (error) {
+    if (!credentials.warnings.length && !(error instanceof JiraError && [401, 403].includes(error.status))) throw error;
+    const summary = { ...base, outcome: 'failed', stage: 'claim' };
+    if (credentials.warnings.length) summary.warnings = [...credentials.warnings];
+    log.error('claim failed after credential fallback; Jira could not be updated', {
+      ...summary,
+      error: redact(error.message),
+    });
+    await appendHistory(stateDir, { ...summary, finishedAt: deps.now().toISOString() });
+    await clearCurrentRun(stateDir);
+    await notify('failed', {
+      ticket,
+      identity,
+      stage: 'claim',
+      reason: redact(error.message),
+      warnings: credentials.warnings,
+    });
+    return summary;
+  }
 
   let outcome;
   let failure;
   try {
-    outcome = await deps.runTicket({ ticket, identity, config, runId, log, secrets, deps: { steps: deps.steps } });
+    try {
+      await jira((client) => client.addComment(ticket.key, redact(buildPickupComment())));
+    } catch (error) {
+      if (error instanceof StageError) throw error;
+      if (error instanceof JiraError && [401, 403].includes(error.status))
+        throw new StageError('claim', 'Jira pickup comment was denied', redact(error.message));
+      log.warn('pickup comment failed', { error: redact(error.message) });
+    }
+    await notify('picked-up', { ticket, identity, warnings: credentials.warnings });
+    outcome = await deps.runTicket({
+      ticket,
+      identity,
+      credentials,
+      config,
+      runId,
+      log,
+      secrets,
+      deps: { steps: deps.steps },
+    });
   } catch (err) {
     failure = err;
   }
 
   let summary;
-  if (outcome) {
-    const preview = previewUrl(outcome.branch, { owner: config.githubOwner, repo: config.githubRepo });
-    await jira.addComment(ticket.key, redact(buildDoneComment({ outcome, preview })));
-    await jira.updateLabels(ticket.key, { remove: [LABELS.working], add: [LABELS.done] });
-    await notify('done', { ticket, identity, outcome });
-    summary = { ...base, outcome: 'done', prUrl: outcome.prUrl };
-  } else {
-    const stage = failure instanceof StageError ? failure.stage : 'internal';
-    log.error('run failed', { stage, error: failure.message, stack: failure.stack });
-    const comment = buildFailedComment({
-      stage,
-      message: failure.message,
-      details: failure.details || '',
-      runId,
-    });
-    await jira.addComment(ticket.key, redact(comment));
-    await jira.updateLabels(ticket.key, { remove: [LABELS.working], add: [LABELS.failed] });
-    await notify('failed', { ticket, identity, stage, reason: failure.message });
-    summary = { ...base, outcome: 'failed', stage };
+  try {
+    if (outcome) {
+      const preview = previewUrl(outcome.branch, { owner: config.githubOwner, repo: config.githubRepo });
+      await jira((client) => client.addComment(ticket.key, redact(buildDoneComment({ outcome, preview }))));
+      await jira((client) => client.updateLabels(ticket.key, { remove: [LABELS.working], add: [LABELS.done] }));
+      summary = { ...base, outcome: 'done', prUrl: outcome.prUrl };
+    } else {
+      const stage = failure instanceof StageError ? failure.stage : 'internal';
+      log.error('run failed', { stage, error: redact(failure.message), stack: redact(failure.stack) });
+      const comment = buildFailedComment({
+        stage,
+        message: failure.message,
+        details: failure.details || '',
+        runId,
+      });
+      await jira((client) => client.addComment(ticket.key, redact(comment)));
+      await jira((client) => client.updateLabels(ticket.key, { remove: [LABELS.working], add: [LABELS.failed] }));
+      summary = { ...base, outcome: 'failed', stage };
+    }
+    if (credentials.warnings.length) {
+      let prWarningCount = outcome?.warnings?.length || 0;
+      let jiraWarningCount;
+      do {
+        await jira((client) =>
+          client.addComment(
+            ticket.key,
+            redact(`Credential fallback warning:\n${formatFallbackWarnings(credentials.warnings)}`),
+          ),
+        );
+        jiraWarningCount = credentials.warnings.length;
+        if (outcome?.baseBody && prWarningCount !== credentials.warnings.length) {
+          await credentials.run('github', (account) =>
+            (deps.steps?.createGithubClient || createGithubClient)({
+              owner: config.githubOwner,
+              repo: config.githubRepo,
+              token: account.creds.githubPat,
+              redact,
+            }).updatePr(outcome.prNumber, {
+              title: outcome.title,
+              body: withFallbackWarnings(outcome.baseBody, credentials.warnings),
+            }),
+          );
+          prWarningCount = credentials.warnings.length;
+        }
+      } while (jiraWarningCount !== credentials.warnings.length);
+    }
+  } catch (error) {
+    failure = error;
+    summary = { ...base, outcome: 'failed', stage: 'reporting', ...(outcome ? { prUrl: outcome.prUrl } : {}) };
+    log.error('could not finish Jira/PR reporting', { ...summary, error: redact(error.message) });
+    await jira((client) =>
+      client.updateLabels(ticket.key, {
+        remove: [LABELS.working, LABELS.done],
+        add: [LABELS.failed],
+      }),
+    ).catch((labelError) => log.error('could not mark Jira failed', { error: redact(labelError.message) }));
   }
+  if (credentials.warnings.length) summary.warnings = [...credentials.warnings];
+  await notify(summary.outcome, {
+    ticket,
+    identity,
+    outcome,
+    warnings: credentials.warnings,
+    ...(failure ? { stage: summary.stage, reason: redact(failure.message) } : {}),
+  });
   await appendHistory(stateDir, { ...summary, finishedAt: deps.now().toISOString() });
   await clearCurrentRun(stateDir);
   log.info('run finished', summary);
@@ -173,7 +255,12 @@ export async function tick({ config, users, log, deps: overrides = {} }) {
       return { status: 'idle' };
     }
     const result = await processTicket({ issue, config, users, log, deps });
-    return { status: result.outcome, key: result.key, runId: result.runId };
+    return {
+      status: result.outcome,
+      key: result.key,
+      runId: result.runId,
+      ...(result.warnings?.length ? { warnings: result.warnings } : {}),
+    };
   } finally {
     await release();
   }

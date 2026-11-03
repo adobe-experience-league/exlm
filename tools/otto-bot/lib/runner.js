@@ -1,8 +1,17 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { runCopilot } from './copilot.js';
+import { createCredentialContext } from './credentials.js';
 import { StageError } from './errors.js';
-import { buildCommitMessage, buildPrBody, buildPrTitle, commitAndPush, createGithubClient } from './github.js';
+import { withFallbackWarnings } from './fallback-warnings.js';
+import {
+  buildCommitMessage,
+  buildPrBody,
+  buildPrTitle,
+  commitAndPush,
+  createGithubClient,
+  pushBranch,
+} from './github.js';
 import { checkDiff, collectDiff } from './guardrails.js';
 import { issueUrl } from './jira.js';
 import { runPaths } from './paths.js';
@@ -41,6 +50,7 @@ export const DEFAULT_STEPS = Object.freeze({
   collectDiff,
   runQuality,
   commitAndPush,
+  pushBranch,
   createGithubClient,
 });
 
@@ -69,7 +79,19 @@ function assertRunnableResult(result) {
   return result;
 }
 
-export async function runTicket({ ticket, identity, config, runId, log, secrets, dryRun = false, deps = {} }) {
+export async function runTicket({
+  ticket,
+  identity,
+  master,
+  credentials: suppliedCredentials,
+  config,
+  runId,
+  log,
+  secrets,
+  dryRun = false,
+  deps = {},
+}) {
+  const credentials = suppliedCredentials || createCredentialContext({ identity, master, log });
   const steps = { ...DEFAULT_STEPS, ...deps.steps };
   const paths = runPaths(config.dataDir, runId);
   const { workDir, runDir } = paths;
@@ -77,24 +99,37 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
   const branch = branchName(ticket.key);
   const baseRef = `origin/${config.baseBranch}`;
   const remoteUrl = `https://github.com/${config.githubOwner}/${config.githubRepo}.git`;
-  const copilotHome = path.join(paths.copilotHomesDir, identity.slug);
-  let gitEnv;
+  let askpassPath;
+  const gitEnv = () => gitAuthEnv({ askpassPath, token: credentials.account('github').creds.githubPat });
+  const github = (operation) =>
+    credentials.run('github', (account) =>
+      operation(
+        steps.createGithubClient({
+          owner: config.githubOwner,
+          repo: config.githubRepo,
+          token: account.creds.githubPat,
+          redact,
+        }),
+      ),
+    );
 
   let session = 0;
   const copilot = async (prompt, timeoutMinutes) => {
-    session += 1;
-    log.info('copilot session start', { session, timeoutMinutes });
-    await steps.runCopilot({
-      copilotBin: config.copilotBin,
-      workDir,
-      prompt,
-      model: config.model,
-      timeoutMs: timeoutMinutes * MINUTE_MS,
-      copilotHome,
-      token: identity.creds.copilotPat,
-      runDir,
-      sessionName: `session-${session}`,
-      redact,
+    await credentials.run('copilot', async (account) => {
+      session += 1;
+      log.info('copilot session start', { session, timeoutMinutes });
+      return steps.runCopilot({
+        copilotBin: config.copilotBin,
+        workDir,
+        prompt,
+        model: config.model,
+        timeoutMs: timeoutMinutes * MINUTE_MS,
+        copilotHome: path.join(paths.copilotHomesDir, account.slug),
+        token: account.creds.copilotPat,
+        runDir,
+        sessionName: `session-${session}`,
+        redact,
+      });
     });
   };
 
@@ -112,9 +147,10 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
   try {
     try {
       await fs.mkdir(runDir, { recursive: true });
-      const askpassPath = await steps.writeAskpass(paths.binDir);
-      gitEnv = gitAuthEnv({ askpassPath, token: identity.creds.githubPat });
-      await steps.ensureMirror({ mirrorDir: paths.mirrorDir, remoteUrl, env: gitEnv });
+      askpassPath = await steps.writeAskpass(paths.binDir);
+      await credentials.run('github', () =>
+        steps.ensureMirror({ mirrorDir: paths.mirrorDir, remoteUrl, env: gitEnv() }),
+      );
       await steps.createWorktree({ mirrorDir: paths.mirrorDir, workDir, branch, baseBranch: config.baseBranch });
       worktreeCreated = true;
       await steps.prepareWorktree({ workDir, log });
@@ -147,7 +183,7 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
     await guard();
 
     const title = redact(buildPrTitle({ ticket, qualityOk: quality.ok }));
-    const body = redact(
+    const baseBody = redact(
       buildPrBody({
         ticket,
         jiraUrl: issueUrl(config.jiraBaseUrl, ticket.key),
@@ -157,20 +193,24 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
         runId,
       }),
     );
-    const outcome = { dryRun, branch, workDir, result, quality, title, body };
-    if (dryRun) return outcome;
+    const body = () => withFallbackWarnings(baseBody, credentials.warnings);
+    const outcome = () => ({
+      dryRun,
+      branch,
+      workDir,
+      result,
+      quality,
+      title,
+      baseBody,
+      body: body(),
+      warnings: [...credentials.warnings],
+    });
+    if (dryRun) return outcome();
 
-    let gh;
     let existing;
     try {
-      gh = steps.createGithubClient({
-        owner: config.githubOwner,
-        repo: config.githubRepo,
-        token: identity.creds.githubPat,
-        redact: createRedactor(secrets),
-      });
-      existing = await gh.findOpenPr(branch);
-      if (existing?.draft === false) await gh.convertPullRequestToDraft(existing);
+      existing = await github((gh) => gh.findOpenPr(branch));
+      if (existing?.draft === false) await github((gh) => gh.convertPullRequestToDraft(existing));
     } catch (err) {
       throw new StageError('pr', err.message);
     }
@@ -183,7 +223,8 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
         message: buildCommitMessage({ ticket, result, runId, redact }),
         gitName: identity.creds.gitName,
         gitEmail: identity.creds.gitEmail,
-        env: gitEnv,
+        env: gitEnv(),
+        push: (args) => credentials.run('github', () => steps.pushBranch({ ...args, env: gitEnv() })),
       });
     } catch (err) {
       throw err instanceof StageError ? err : new StageError('push', err.message);
@@ -192,12 +233,12 @@ export async function runTicket({ ticket, identity, config, runId, log, secrets,
 
     try {
       if (existing) {
-        await gh.updatePr(existing.number, { title, body });
-        await gh.commentOnPr(existing.number, `Pushed new changes (\`${sha.slice(0, 7)}\`).`);
-        return { ...outcome, sha, prUrl: existing.html_url, prNumber: existing.number, reusedPr: true };
+        await github((gh) => gh.commentOnPr(existing.number, `Pushed new changes (\`${sha.slice(0, 7)}\`).`));
+        await github((gh) => gh.updatePr(existing.number, { title, body: body() }));
+        return { ...outcome(), sha, prUrl: existing.html_url, prNumber: existing.number, reusedPr: true };
       }
-      const pr = await gh.createDraftPr({ title, body, head: branch, base: config.baseBranch });
-      return { ...outcome, sha, prUrl: pr.html_url, prNumber: pr.number, reusedPr: false };
+      const pr = await github((gh) => gh.createDraftPr({ title, body: body(), head: branch, base: config.baseBranch }));
+      return { ...outcome(), sha, prUrl: pr.html_url, prNumber: pr.number, reusedPr: false };
     } catch (err) {
       throw new StageError('pr', err.message);
     }

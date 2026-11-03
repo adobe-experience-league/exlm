@@ -132,6 +132,7 @@ test('runCopilot throws a copilot StageError on timeout and on failure', async (
     stdout: '',
     stderr: 'auth failed copilot-secret-value',
   });
+
   await assert.rejects(
     runCopilot({ ...base, run: timedOut }),
     (e) => e.stage === 'copilot' && /timed out/.test(e.message),
@@ -140,4 +141,33 @@ test('runCopilot throws a copilot StageError on timeout and on failure', async (
     runCopilot({ ...base, run: failed }),
     (e) => e.stage === 'copilot' && /auth failed/.test(e.details) && !e.details.includes('copilot-secret-value'),
   );
+});
+
+test('only explicit CLI authentication or entitlement failures enable fallback', async () => {
+  const root = await tempDir();
+  for (const [output, want] of [
+    ['Error: Authentication failed', true],
+    ['Error: No Copilot subscription found', true],
+    ['Error: HTTP 403: Resource not accessible by personal access token', true],
+    ['Error: HTTP 403: rate limit exceeded', false],
+    ['Error: organization policy prohibits Copilot', false],
+    ['tests failed: expected "authentication failed"', false],
+    ['Error: model unavailable', false],
+  ]) {
+    await assert.rejects(
+      runCopilot({
+        copilotBin: 'copilot',
+        workDir: root,
+        prompt: 'p',
+        model: 'auto',
+        timeoutMs: 1000,
+        copilotHome: path.join(root, 'home'),
+        token: 'secret-token',
+        runDir: root,
+        sessionName: 'session',
+        run: async () => ({ code: 1, signal: null, timedOut: false, stdout: output, stderr: '' }),
+      }),
+      (error) => Boolean(error.permissionDenied) === want,
+    );
+  }
 });

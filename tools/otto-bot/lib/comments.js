@@ -10,7 +10,15 @@ const REJECTED_PREFIX = "I couldn't pick this up as ";
 // Older releases posted bot-branded comments.
 const LEGACY_PATTERN = /^\s*(🤖\s*|❌\s*|✅\s*|⚠️\s*)?otto-bot\b/i;
 
-const OTTO_PREFIXES = [PICKUP_TEXT, DONE_PREFIX, UPDATED_PREFIX, FAILED_PREFIX, INTERRUPTED_PREFIX, REJECTED_PREFIX];
+const OTTO_PREFIXES = [
+  PICKUP_TEXT,
+  DONE_PREFIX,
+  UPDATED_PREFIX,
+  FAILED_PREFIX,
+  INTERRUPTED_PREFIX,
+  REJECTED_PREFIX,
+  'Credential fallback warning:',
+];
 
 export function isOttoComment(body) {
   const text = String(body || '').trimStart();

@@ -1,4 +1,5 @@
 import { issueUrl } from './jira.js';
+import { formatFallbackWarnings } from './fallback-warnings.js';
 
 const MESSAGE_LIMIT = 1500;
 const TIMEOUT_MS = 10_000;
@@ -22,7 +23,12 @@ export function buildNotification(event, data, config) {
       return {
         status: '👀 Picked up',
         ticket: ticketLine(data.ticket),
-        message: `On it for ${ownerName(data.identity)}. I'll post here when the draft PR is ready.`,
+        message: [
+          `On it for ${ownerName(data.identity)}. I'll post here when the draft PR is ready.`,
+          formatFallbackWarnings(data.warnings),
+        ]
+          .filter(Boolean)
+          .join('\n'),
         jira_link: jira(data.ticket.key),
         pr_link: branchPrsUrl(config, data.ticket.key.toLowerCase()),
         owner: data.identity.creds.gitEmail,
@@ -30,6 +36,7 @@ export function buildNotification(event, data, config) {
     case 'done': {
       const { outcome } = data;
       const lines = [outcome.result.summary];
+      if (data.warnings?.length) lines.push(`Credential fallback warning:\n${formatFallbackWarnings(data.warnings)}`);
       if (!outcome.quality.ok) lines.push('⚠️ Quality checks are still failing, see the PR description.');
       if (outcome.result.openQuestions?.length)
         lines.push(`Open questions: ${outcome.result.openQuestions.join(' · ')}`);
@@ -51,7 +58,9 @@ export function buildNotification(event, data, config) {
           data.stage === 'interrupted'
             ? 'My run was interrupted (crash, timeout, or VM restart), so a branch or PR may be half done.'
             : `Got stuck at the ${data.stage} step: ${data.reason}`
-        }\nTo retry, remove otto-failed and add otto again.`,
+        }\nTo retry, remove otto-failed and add otto again.${
+          data.warnings?.length ? `\nCredential fallback warning:\n${formatFallbackWarnings(data.warnings)}` : ''
+        }`,
         jira_link: jira(data.ticket.key),
         pr_link: branchPrsUrl(config, data.ticket.key.toLowerCase()),
         owner: data.identity.creds.gitEmail,

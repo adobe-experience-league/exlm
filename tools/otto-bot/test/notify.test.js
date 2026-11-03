@@ -64,6 +64,27 @@ test('fallback identities are named as the master account', () => {
   assert.equal(payload.owner, 'm@adobe.com');
 });
 
+test('completion and failure notifications flag service fallback without changing the owner', () => {
+  const warnings = [
+    {
+      service: 'copilot',
+      requestedUser: 'gsnair',
+      effectiveUser: 'otto-master',
+      reason: 'authentication or entitlement denied',
+    },
+  ];
+  for (const [event, data] of [
+    ['done', events.done],
+    ['failed', events.failed],
+  ]) {
+    const payload = buildNotification(event, { ...data, warnings }, config);
+    assert.ok(payload.message.includes('copilot'));
+    assert.ok(payload.message.includes('otto-master'));
+    assert.ok(payload.message.includes('gsnair'));
+    assert.equal(payload.owner, 'gsnair@adobe.com');
+  }
+});
+
 test('notifier posts a redacted JSON payload to the webhook', async () => {
   const sent = [];
   const fetchImpl = async (url, init) => {

@@ -70,17 +70,25 @@ test('status shows the current run and recent history', async () => {
   const { opts, out, dataDir } = await cliEnv();
   await main(['users', 'add', '--master'], opts);
   const stateDir = path.join(dataDir, 'state');
-  await writeCurrentRun(stateDir, { key: 'EXLM-2', runId: 'r2', identity: 'jdoe' });
+  await writeCurrentRun(stateDir, {
+    key: 'EXLM-2',
+    runId: 'r2',
+    identity: 'jdoe',
+    warnings: [{ service: 'copilot', requestedUser: 'jdoe', effectiveUser: 'otto-master', reason: 'denied' }],
+  });
   await appendHistory(stateDir, {
     key: 'EXLM-1',
     runId: 'r1',
     outcome: 'done',
     prUrl: 'https://github.com/o/r/pull/1',
+    warnings: [{ service: 'github', requestedUser: 'jdoe', effectiveUser: 'otto-master', reason: 'denied' }],
   });
   assert.equal(await main(['status'], opts), 0);
   const text = out.join('\n');
   assert.ok(text.includes('Running: EXLM-2 (run r2, as jdoe)'));
   assert.ok(text.includes('EXLM-1 done https://github.com/o/r/pull/1'));
+  assert.ok(text.includes('copilot: jdoe -> master account otto-master'));
+  assert.ok(text.includes('github: jdoe -> master account otto-master'));
 });
 
 test('tick returns 1 and logs when the config is invalid', async () => {

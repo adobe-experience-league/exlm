@@ -26,6 +26,7 @@ test('isOttoComment recognizes every comment otto posts', () => {
     buildClaimRejectedComment({ identity: { name: 'jdoe' }, status: 401 }),
     '🤖 otto-bot picked this up using the otto-bot master account.',
     '❌ otto-bot failed at stage **push**: git push failed',
+    'Credential fallback warning:\ncopilot: jdoe -> master account otto-master (denied)',
   ].forEach((body) => assert.ok(isOttoComment(body), body));
 });
 
