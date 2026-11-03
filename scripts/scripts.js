@@ -923,8 +923,8 @@ export function getConfig() {
     targetCriteriaIds,
     premiumLearningAuthAPI,
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
-    khorosProfileUrl: `${cdnOrigin}/api/action/gainsight/profile-menu-list`,
-    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/gainsight/profile-details`,
+    gainsightProfileUrl: `${cdnOrigin}/api/action/gainsight/profile-menu-list`,
+    gainsightProfileDetailsUrl: `${cdnOrigin}/api/action/gainsight/profile-details`,
     // Profile and JWT Token Ethos APIs are reverse proxied through the ExL CDN domains.
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
