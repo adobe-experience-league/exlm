@@ -83,7 +83,7 @@ async function fetchToc(tocID) {
  * @returns {string} product name from metadata
  */
 function getProductName() {
-  const productNames = getMetadata('original-solution') || getMetadata('solution');
+  const productNames = getMetadata('product_v2') || getMetadata('solution');
   return productNames.includes(',') ? productNames.split(',')[0].trim() : productNames;
 }
 
