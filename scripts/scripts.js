@@ -726,6 +726,19 @@ export function decorateMain(main, isFragment = false) {
   decorateExternalLinks(main);
   buildAutoBlocks(main, isFragment);
   decorateSections(main);
+  const sectionIds = new Set(
+    [...main.ownerDocument.querySelectorAll('[id]'), ...main.querySelectorAll('[id]')].map((element) => element.id),
+  );
+  main.querySelectorAll('.section[data-section-id]').forEach((section) => {
+    const { sectionId } = section.dataset;
+    if (!sectionId || section.id) return;
+    if (sectionIds.has(sectionId)) {
+      console.warn(`Duplicate section ID "${sectionId}". Section IDs must be unique within the page.`);
+      return;
+    }
+    section.id = sectionId;
+    sectionIds.add(sectionId);
+  });
   decorateBlocks(main);
   buildSectionBasedAutoBlocks(main);
   decorateLinksWithinSection(main);
@@ -1240,7 +1253,14 @@ async function loadLazy(doc) {
   await loadBlocks(main);
 
   const { hash } = window.location;
-  const target = hash ? doc.getElementById(hash.substring(1)) : null;
+  let targetId = hash.substring(1);
+  try {
+    targetId = decodeURIComponent(targetId);
+  } catch (error) {
+    if (!(error instanceof URIError)) throw error;
+    console.warn(`Invalid URL fragment encoding: ${hash}`);
+  }
+  const target = targetId ? doc.getElementById(targetId) : null;
 
   if (!embedMode) {
     const headerPromise = loadHeader(doc.querySelector('header'));

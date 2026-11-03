@@ -23,6 +23,13 @@ function setActiveLink(activeAnchor, block) {
   }
 }
 
+function getSectionTarget(sectionId) {
+  return (
+    document.getElementById(sectionId) ||
+    [...document.querySelectorAll('[data-section-id]')].find((section) => section.dataset.sectionId === sectionId)
+  );
+}
+
 function buildNavList(rows, block) {
   const navList = document.createElement('ul');
   navList.className = 'sticky-nav-list';
@@ -38,16 +45,22 @@ function buildNavList(rows, block) {
     const sectionId = sectionIdValue || linkText.toLowerCase().replace(/\s+/g, '-');
 
     const anchor = document.createElement('a');
-    anchor.href = `#${sectionId}`;
+    anchor.href = `#${encodeURIComponent(getSectionTarget(sectionId)?.id || sectionId)}`;
     anchor.textContent = linkText;
     anchor.className = 'sticky-nav-link';
     anchor.dataset.sectionTarget = sectionId;
 
     anchor.addEventListener('click', (event) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
-      const target = document.querySelector(`[data-section-id="${sectionId}"]`);
-      if (!target) return;
+      const target = getSectionTarget(sectionId);
+      if (!target) {
+        // eslint-disable-next-line no-console -- Report a misconfigured authored target.
+        console.warn(`Sticky nav target "${sectionId}" was not found.`);
+        return;
+      }
       const navHeight = block.querySelector('.sticky-nav-container')?.offsetHeight ?? 0;
+      if (window.location.hash !== anchor.hash) window.history.pushState(null, '', anchor.hash);
       window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navHeight, behavior: 'smooth' });
       setActiveLink(anchor, block);
     });
@@ -66,16 +79,35 @@ function setupScrollSpy(block) {
   const navLinks = [...block.querySelectorAll('.sticky-nav-link[data-section-target]')];
   if (navLinks.length === 0) return;
 
-  const navHeight = block.querySelector('.sticky-nav-container')?.offsetHeight ?? 0;
+  const nav = block.querySelector('.sticky-nav-container');
+  let navHeight = nav?.offsetHeight ?? 0;
   const sectionMap = new Map(
-    navLinks
-      .map((link) => [document.querySelector(`[data-section-id="${link.dataset.sectionTarget}"]`), link])
-      .filter(([target]) => target !== null),
+    navLinks.map((link) => [getSectionTarget(link.dataset.sectionTarget), link]).filter(([target]) => target),
   );
 
   if (sectionMap.size === 0) return;
 
   const sections = [...sectionMap.keys()];
+
+  const updateScrollMargins = () => {
+    navHeight = nav?.offsetHeight ?? 0;
+    const targets = new Set([...document.querySelectorAll('main .section[id]'), ...sections]);
+    targets.forEach((section) => {
+      section.style.scrollMarginTop = `${navHeight}px`;
+    });
+  };
+  updateScrollMargins();
+  const stylesheet = document.querySelector('link[href$="/blocks/sticky-nav/sticky-nav.css"]');
+  if (stylesheet && !stylesheet.sheet) stylesheet.addEventListener('load', updateScrollMargins, { once: true });
+  if (nav && window.ResizeObserver) new ResizeObserver(updateScrollMargins).observe(nav);
+
+  const updateHashLink = () => {
+    const activeLink = navLinks.find((link) => link.hash === window.location.hash);
+    if (activeLink) setActiveLink(activeLink, block);
+  };
+  updateHashLink();
+  window.addEventListener('hashchange', updateHashLink);
+  window.addEventListener('popstate', updateHashLink);
 
   const getVisibleRatio = (target) => {
     const rect = target.getBoundingClientRect();

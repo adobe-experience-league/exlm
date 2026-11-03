@@ -1093,7 +1093,7 @@
         "name": "section-id",
         "value": "",
         "label": "Section ID (Optional)",
-        "description": "Optional. A unique identifier for this section used for anchor links and navigation."
+        "description": "Optional. Set a unique, stable ID to link directly to this section by adding # followed by this ID to the page URL (for example, #post-event-resources). Use lowercase letters and numbers separated by hyphens (kebab-case), with no spaces or leading #. Keep the ID unchanged after sharing links."
       },
       {
         "component": "select",
@@ -10138,7 +10138,7 @@
         "name": "sectionId",
         "value": "",
         "label": "Section ID",
-        "description": "The ID of the section this nav item navigates to. Must match the Section ID set on the target section."
+        "description": "Must exactly match the Section ID on the target section, without a leading #. Use lowercase letters and numbers separated by hyphens (for example, post-event-resources). Clicking this item adds the section anchor to the URL so the link can be copied and shared."
       },
       {
         "component": "text",
