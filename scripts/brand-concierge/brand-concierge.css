@@ -1109,9 +1109,12 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
   margin-top: 0 !important;
 }
 
-.bc-dialog.exl-dialog-expanded {
-  max-width: 1400px !important;
-  margin-inline: auto !important;
+@media (min-width: 1200px) {
+  .bc-dialog.exl-dialog-expanded {
+    width: min(80vw, 90dvh, 1200px) !important;
+    height: min(80vw, 90dvh, 1200px) !important;
+    margin-inline: auto !important;
+  }
 }
 
 @media (min-width: 1401px) {
