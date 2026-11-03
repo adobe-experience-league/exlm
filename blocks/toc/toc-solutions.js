@@ -21,8 +21,8 @@ const solutionMap = new Map([
   ['Data Collection', { class: 'Launch', name: 'Data Collection' }],
   ['Document Cloud', { class: 'DocumentCloud', name: 'Document Cloud' }],
   ['Dynamic Media Classic', { class: 'Asset', name: 'Dynamic Media Classic' }],
-  ['Experience Cloud', { class: 'CircleExpCloud', name: 'Experience Cloud' }],
-  ['Experience Cloud Services', { class: 'CircleExpCloud', name: 'Experience Cloud Services' }],
+  ['CX Enterprise', { class: 'CircleExpCloud', name: 'CX Enterprise' }],
+  ['CX Enterprise Services', { class: 'CircleExpCloud', name: 'CX Enterprise Services' }],
   ['Experience Manager', { class: 'ExperienceManager', name: 'Experience Manager' }],
   ['Experience Manager 6.4', { class: 'ExperienceManager', name: 'Experience Manager 6.4' }],
   ['Experience Manager 6.5', { class: 'ExperienceManager', name: 'Experience Manager 6.5' }],
@@ -50,6 +50,7 @@ const solutionMap = new Map([
   ['Marketo Engage', { class: 'MarketoEngage', name: 'Marketo Engage' }],
   ['Marketo Measure', { class: 'MarketoEngage', name: 'Marketo Measure' }],
   ['Mix Modeler', { class: 'MixModeler', name: 'Mix Modeler' }],
+  ['Marketing Campaign Analytics', { class: 'MixModeler', name: 'Marketing Campaign Analytics' }],
   ['Order Management', { class: 'CircleExpCloud', name: 'Order Management' }],
   ['PWA Studio', { class: 'CircleExpCloud', name: 'PWA Studio' }],
   ['Primetime', { class: 'PrimeTimeFunctional', name: 'Primetime' }],
@@ -68,7 +69,7 @@ const solutionMap = new Map([
   ['Sensei', { class: 'CircleExpCloud', name: 'Sensei' }],
   ['Target', { class: 'target', name: 'Target' }],
   ['Workfront', { class: 'WorkfrontCircle', name: 'Workfront' }],
-  ['default', { class: 'CircleExpCloud', name: 'Experience Cloud' }],
+  ['default', { class: 'CircleExpCloud', name: 'CX Enterprise' }],
 ]);
 
 export default function getSolutionByName(solutionName) {
