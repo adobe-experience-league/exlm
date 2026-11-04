@@ -1115,8 +1115,8 @@ const loadMartech = async (headerPromise, footerPromise) => {
   const footerRenderPromise = footerPromise.then(
     () =>
       new Promise((resolve) => {
-        if (document.querySelector('[href="#onetrust"]')) {
-          // Element exists - resolve immediately.
+        // Link exists, or no footer was rendered (embed mode) - nothing to wait for.
+        if (document.querySelector('[href="#onetrust"]') || !document.querySelector('exl-footer')) {
           resolve();
           return;
         }
@@ -1132,7 +1132,7 @@ const loadMartech = async (headerPromise, footerPromise) => {
 
   // footer and one trust loaded, add event listener to open one trust popup,
   Promise.all([footerRenderPromise, oneTrustPromise]).then(() => {
-    document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
+    document.querySelector('[href="#onetrust"]')?.addEventListener('click', (e) => {
       e.preventDefault();
       window.adobePrivacy.showConsentPopup();
     });
@@ -1241,6 +1241,7 @@ async function loadLazy(doc) {
 
   const { hash } = window.location;
   const target = hash ? doc.getElementById(hash.substring(1)) : null;
+  const martechOff = window.location.search?.indexOf('martech=off') !== -1;
 
   if (!embedMode) {
     const headerPromise = loadHeader(doc.querySelector('header'));
@@ -1253,7 +1254,6 @@ async function loadLazy(doc) {
         doc.addEventListener('header-loaded', resolve, { capture: true, once: true });
       }),
     );
-    const martechOff = window.location.search?.indexOf('martech=off') !== -1;
     // disable martech if martech=off is in the query string, this is used for testing ONLY
     if (!martechOff) {
       loadMartech(headerPromise, footerPromise);
@@ -1272,6 +1272,10 @@ async function loadLazy(doc) {
             window.addEventListener('load', resolve, { once: true });
           }),
     );
+    // Embed has no header/footer, but Launch / Web SDK interact must still fire.
+    if (!martechOff) {
+      loadMartech(Promise.resolve(), Promise.resolve());
+    }
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
