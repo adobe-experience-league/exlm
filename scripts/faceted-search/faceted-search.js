@@ -381,7 +381,6 @@ export function createFacetedSearchUI({
 export function createSidebarLayout({
   ui,
   prefix = 'fs',
-  placeholders = {},
   collapsibleOnMobile = true,
   cardColumns = true, // false: don't apply the 3-per-row card grid (blocks with their own results layout)
 }) {
@@ -403,7 +402,6 @@ export function createSidebarLayout({
     });
     toggle.innerHTML = `
       <span class="icon icon-atomic-search-filter"></span>
-      <span class="${prefix}-mobile-filter-toggle-label">${placeholders.filtersLabel || 'Filters'}</span>
       <span class="${prefix}-mobile-filter-toggle-count"></span>
       <span class="icon icon-chevron"></span>`;
     decorateIcons(toggle);

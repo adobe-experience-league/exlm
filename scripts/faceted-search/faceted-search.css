@@ -265,7 +265,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  margin: 0 0 var(--spectrum-spacing-400);
+  margin: 0 0 var(--spectrum-spacing-200);
   padding: 0 var(--spectrum-spacing-200, 12px);
   background: var(--background-color, #fff);
   border: 1px solid var(--footer-border-color, #909090);
@@ -364,7 +364,6 @@
 
 .fs-layout .fs-toolbar {
   display: grid;
-  gap: var(--spectrum-spacing-200, 12px);
 }
 
 .playlist-browse .fs-layout .fs-toolbar,
@@ -594,8 +593,8 @@
   box-sizing: border-box;
   inline-size: 100%;
   width: 100%;
-  margin: 0;
-  padding: var(--spectrum-spacing-300, 10px) 14px;
+  margin: 16px 0;
+  padding: var(--spectrum-spacing-300, 16px);
   background: transparent;
   border: 0;
   border-radius: 4px;
@@ -619,8 +618,8 @@
 .fs-layout .fs-mobile-filter-toggle .icon {
   display: inline-flex;
   flex: none;
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
 }
 
 .fs-layout .fs-mobile-filter-toggle .icon svg,
@@ -681,6 +680,10 @@
 
   .fs-layout .fs-view-switcher {
     display: flex;
+  }
+
+  .fs-layout .fs-keyword {
+    margin: 0 0 var(--spectrum-spacing-400);
   }
 }
 
