@@ -29,6 +29,14 @@ import { PLAYLIST_EMBED_BODY_CLASS } from './utils/playlist-embed-utils.js';
  * Load files async using import() if you must.
  */
 
+const { userAgent } = window.navigator;
+const isIPhoneSafari =
+  /iPhone/i.test(userAgent) &&
+  /Version\/[\d.]+.*Safari\//i.test(userAgent) &&
+  !/(CriOS|FxiOS|EdgiOS|OPiOS)/i.test(userAgent);
+
+if (isIPhoneSafari) document.documentElement.classList.add('iphone-safari');
+
 const LCP_BLOCKS = [
   'video-embed',
   'marquee',

@@ -1,3 +1,11 @@
+@media (width <= 421px) {
+  html.iphone-safari body.docs.docs-landing main h1 {
+    font-size: clamp(28px, calc(11vw - 7px), 37px);
+    line-height: 1.28;
+    overflow-wrap: normal;
+  }
+}
+
 .docs.docs-landing main {
   margin: 0 12px;
   padding-top: 24px;
