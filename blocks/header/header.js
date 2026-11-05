@@ -48,7 +48,7 @@ import { pushBcWidgetImpressionEvent } from '../../scripts/analytics/lib-analyti
  * @property {() => {}} onSignOut - called when signout happens.
  * @property {() => {}} onSignIn - called when sign in happens.
  * @property {() => Promise<string>} getProfilePicture - url to profile picture to display in header
- * @property {string} khorosProfileUrl - url to fetch community profile data
+ * @property {string} gainsightProfileUrl - url to fetch community profile data
  * @property {CommunityOptions} community - is this a community header
  * @property {boolean} lang - language code
  * @property {string} navLinkOrigin - origin to be added to relative links in the nav
@@ -69,7 +69,7 @@ async function fetchHeaderFragment(fragmentPath, lang) {
 }
 
 let searchElementPromise = null;
-const { khorosProfileUrl, communityHost } = getConfig();
+const { gainsightProfileUrl, communityHost } = getConfig();
 
 /**
  *
@@ -726,7 +726,7 @@ class ExlHeader extends HTMLElement {
     options.community = options.community ?? { active: false };
     options.community.notificationsUrl = options.community.notificationsUrl || '/t5/notificationfeed/page';
     options.community.messagesUrl = options.community.messagesUrl || '/t5/notes/privatenotespage';
-    options.khorosProfileUrl = options.khorosProfileUrl || khorosProfileUrl;
+    options.gainsightProfileUrl = options.gainsightProfileUrl || gainsightProfileUrl;
     options.lang = options.lang || getPathDetails().lang || 'en';
     options.navLinkOrigin = options.navLinkOrigin || window.location.origin;
 

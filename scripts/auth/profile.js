@@ -9,7 +9,7 @@ import { deleteCookie } from '../utils/cookie-utils.js';
 
 // NOTE: to keep this viatl utility small, please do not increase the number of imports or use dynamic imports when needed.
 
-const { profileUrl, JWTTokenUrl, ppsOrigin, ims, khorosProfileDetailsUrl } = getConfig();
+const { profileUrl, JWTTokenUrl, ppsOrigin, ims, gainsightProfileDetailsUrl } = getConfig();
 
 const override = /^(recommended|votes)$/;
 
@@ -205,10 +205,10 @@ class ProfileClient {
     if (!signedIn) return null;
 
     const accountId = (await window.adobeIMS.getProfile()).userId;
-    const separator = khorosProfileDetailsUrl.includes('?') ? '&' : '?';
+    const separator = gainsightProfileDetailsUrl.includes('?') ? '&' : '?';
 
     try {
-      const response = await fetch(`${khorosProfileDetailsUrl}${separator}user=${accountId}`, {
+      const response = await fetch(`${gainsightProfileDetailsUrl}${separator}user=${accountId}`, {
         method: 'GET',
         headers: {
           'x-ims-token': await window.adobeIMS?.getAccessToken().token,
