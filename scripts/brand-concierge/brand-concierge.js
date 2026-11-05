@@ -606,6 +606,10 @@ function createBottomAskBar() {
   });
   hideBtn.addEventListener('click', () => {
     setBottomAskBarExpanded(bar, false);
+    pushBcInteractionEvent('bc widget hide', {
+      bcChatId: bcConversationId,
+      bcChatMessageNumber: bcMessageNumber,
+    });
   });
 
   document.body.append(bar);
