@@ -1,3 +1,27 @@
+@media (width <= 359px) {
+  html.iphone-safari body.docs.docs-landing main h1 {
+    font-size: 28px;
+    line-height: 36px;
+    overflow-wrap: normal;
+  }
+}
+
+@media (width >= 360px) and (width <= 389px) {
+  html.iphone-safari body.docs.docs-landing main h1 {
+    font-size: 34px;
+    line-height: 44px;
+    overflow-wrap: normal;
+  }
+}
+
+@media (width >= 390px) and (width < 422px) {
+  html.iphone-safari body.docs.docs-landing main h1 {
+    font-size: 37px;
+    line-height: 46px;
+    overflow-wrap: normal;
+  }
+}
+
 .docs.docs-landing main {
   margin: 0 12px;
   padding-top: 24px;

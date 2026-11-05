@@ -29,6 +29,13 @@ import { PLAYLIST_EMBED_BODY_CLASS } from './utils/playlist-embed-utils.js';
  * Load files async using import() if you must.
  */
 
+const userAgent = window.navigator.userAgent;
+const isIPhoneSafari = /iPhone/i.test(userAgent)
+  && /Version\/[\d.]+.*Safari\//i.test(userAgent)
+  && !/(CriOS|FxiOS|EdgiOS|OPiOS)/i.test(userAgent);
+
+if (isIPhoneSafari) document.documentElement.classList.add('iphone-safari');
+
 const LCP_BLOCKS = [
   'video-embed',
   'marquee',
@@ -1050,7 +1057,7 @@ export async function loadIms() {
   return window.imsLoaded;
 }
 
-const loadMartech = async (headerPromise, footerPromise, { hasFooter = true } = {}) => {
+const loadMartech = async (headerPromise, footerPromise) => {
   // start datalayer work early
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
@@ -1112,9 +1119,6 @@ const loadMartech = async (headerPromise, footerPromise, { hasFooter = true } = 
     async: true,
   });
 
-  // Embed / chrome-less pages: Launch + privacy still load; no footer Cookie Preferences link to wire.
-  if (!hasFooter) return;
-
   const footerRenderPromise = footerPromise.then(
     () =>
       new Promise((resolve) => {
@@ -1135,13 +1139,7 @@ const loadMartech = async (headerPromise, footerPromise, { hasFooter = true } = 
 
   // footer and one trust loaded, add event listener to open one trust popup,
   Promise.all([footerRenderPromise, oneTrustPromise]).then(() => {
-    const oneTrustLink = document.querySelector('[href="#onetrust"]');
-    if (!oneTrustLink) {
-      // eslint-disable-next-line no-console -- surface footer Cookie Preferences regressions
-      console.warn('[martech] Cookie Preferences (#onetrust) link missing after footer ready');
-      return;
-    }
-    oneTrustLink.addEventListener('click', (e) => {
+    document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
       e.preventDefault();
       window.adobePrivacy.showConsentPopup();
     });
@@ -1250,13 +1248,10 @@ async function loadLazy(doc) {
 
   const { hash } = window.location;
   const target = hash ? doc.getElementById(hash.substring(1)) : null;
-  const martechOff = window.location.search?.indexOf('martech=off') !== -1;
-  let headerPromise = Promise.resolve();
-  let footerPromise = Promise.resolve();
 
   if (!embedMode) {
-    headerPromise = loadHeader(doc.querySelector('header'));
-    footerPromise = loadFooter(doc.querySelector('footer'));
+    const headerPromise = loadHeader(doc.querySelector('header'));
+    const footerPromise = loadFooter(doc.querySelector('footer'));
     // Re-align the #hash target as the layout settles; stop on header-loaded (header rendered) or a user scroll.
     alignHashTarget(
       target,
@@ -1265,6 +1260,11 @@ async function loadLazy(doc) {
         doc.addEventListener('header-loaded', resolve, { capture: true, once: true });
       }),
     );
+    const martechOff = window.location.search?.indexOf('martech=off') !== -1;
+    // disable martech if martech=off is in the query string, this is used for testing ONLY
+    if (!martechOff) {
+      loadMartech(headerPromise, footerPromise);
+    }
     if (!isBrandConciergeExcludedPath() && !martechOff) {
       import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
     }
@@ -1279,11 +1279,6 @@ async function loadLazy(doc) {
             window.addEventListener('load', resolve, { once: true });
           }),
     );
-  }
-  // disable martech if martech=off is in the query string, this is used for testing ONLY
-  // Embed still loads Launch / Web SDK (hasFooter: false skips footer Cookie Preferences wiring).
-  if (!martechOff) {
-    loadMartech(headerPromise, footerPromise, { hasFooter: !embedMode });
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
