@@ -18,6 +18,8 @@ const solutionMap = new Map([
   ['Creative Cloud', { class: 'CircleExperienceCloud', name: 'Creative Cloud' }],
   ['Customer Experience Management', { class: 'ExperienceManager', name: 'Customer Experience Management' }],
   ['Customer Journey Analytics', { class: 'UserAnalytics', name: 'Customer Journey Analytics' }],
+  ['CX Enterprise', { class: 'CircleExpCloud', name: 'CX Enterprise' }],
+  ['CX Enterprise Services', { class: 'CircleExpCloud', name: 'CX Enterprise Services' }],
   ['Data Collection', { class: 'Launch', name: 'Data Collection' }],
   ['Document Cloud', { class: 'DocumentCloud', name: 'Document Cloud' }],
   ['Dynamic Media Classic', { class: 'Asset', name: 'Dynamic Media Classic' }],
@@ -46,6 +48,7 @@ const solutionMap = new Map([
   ['Learning Manager', { class: 'ContentProfile', name: 'Learning Manager' }],
   ['LLM Optimizer', { class: 'brandVisibility', name: 'Adobe Brand Visibility' }],
   ['Magento Business Intelligence', { class: 'CircleExperienceCloud', name: 'Magento Business Intelligence' }],
+  ['Marketing Campaign Analytics', { class: 'MixModeler', name: 'Marketing Campaign Analytics' }],
   ['Marketo', { class: 'MarketoEngage', name: 'Marketo' }],
   ['Marketo Engage', { class: 'MarketoEngage', name: 'Marketo Engage' }],
   ['Marketo Measure', { class: 'MarketoEngage', name: 'Marketo Measure' }],
@@ -68,7 +71,7 @@ const solutionMap = new Map([
   ['Sensei', { class: 'CircleExpCloud', name: 'Sensei' }],
   ['Target', { class: 'target', name: 'Target' }],
   ['Workfront', { class: 'WorkfrontCircle', name: 'Workfront' }],
-  ['default', { class: 'CircleExpCloud', name: 'Experience Cloud' }],
+  ['default', { class: 'CircleExpCloud', name: 'CX Enterprise' }],
 ]);
 
 export default function getSolutionByName(solutionName) {
