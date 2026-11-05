@@ -45,7 +45,7 @@ async function fetchCommunityProfileData(url = gainsightProfileUrl) {
 export default class ProfileMenu extends HTMLElement {
   /**
    *
-   * @param {import('./header.js').DecoratorOptions} decoratorOptions
+   * @param {import('./header-v2.js').DecoratorOptions} decoratorOptions
    * @param {HTMLElement} profileMenuBlock
    */
   constructor(decoratorOptions, profileMenuBlock) {
