@@ -14,10 +14,6 @@
   .docs.docs-landing main {
     padding: 28px 46px 48px;
   }
-
-  .docs.docs-landing main h1 {
-    overflow-wrap: inherit;
-  }
 }
 
 @media (width >= 900px) {
