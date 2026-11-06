@@ -10142,11 +10142,7 @@
         "name": "sectionId",
         "value": "",
         "label": "Section ID",
-        "description": "Match the target section's page-unique Section ID exactly, without #. Clicking adds #ID to the URL.",
-        "validation": {
-          "regExp": "^([a-z0-9]+(-[a-z0-9]+)*)?$",
-          "customErrorMsg": "Use lowercase letters and numbers separated by hyphens, without #."
-        }
+        "description": "Match the target section's page-unique Section ID exactly, without #. Clicking adds #ID to the URL."
       },
       {
         "component": "text",

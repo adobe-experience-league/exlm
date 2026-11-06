@@ -24,11 +24,12 @@ function setActiveLink(activeAnchor, block) {
 }
 
 function getSectionTarget(sectionId) {
-  return (
-    [...document.querySelectorAll('.section[data-section-id]')].find(
-      (section) => section.dataset.sectionId === sectionId,
-    ) || document.getElementById(sectionId)
+  const section = [...document.querySelectorAll('.section[data-section-id]')].find(
+    (element) => element.dataset.sectionId === sectionId,
   );
+  if (section) return section;
+  const target = document.getElementById(sectionId);
+  return target?.classList.contains('section') ? target : null;
 }
 
 function buildNavList(rows, block) {
