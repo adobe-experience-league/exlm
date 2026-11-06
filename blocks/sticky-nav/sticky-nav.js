@@ -46,7 +46,9 @@ function buildNavList(rows, block) {
 
     const sectionId = sectionIdValue || linkText.toLowerCase().replace(/\s+/g, '-');
     const sectionTarget = getSectionTarget(sectionId);
-    if (sectionTarget && !sectionTarget.id) sectionTarget.id = sectionId;
+    if (sectionTarget && !sectionTarget.id && !document.getElementById(sectionId)) {
+      sectionTarget.id = sectionId;
+    }
 
     const anchor = document.createElement('a');
     anchor.href = `#${encodeURIComponent(sectionTarget?.id || sectionId)}`;
