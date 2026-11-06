@@ -394,8 +394,8 @@ const buildNavItems = (ul, level = 0, opts = {}) => {
 };
 
 /**
- * Wires hover-driven tab switching for level-0 dropdowns flagged with `@tab` (desktop only).
- * Each level-1 item is a tab in the left column; hovering it shows its content on the right.
+ * Wires click-driven tab switching for level-0 dropdowns flagged with `@tab` (desktop only).
+ * Each level-1 item is a tab in the left column; clicking it shows its content on the right.
  * @param {HTMLElement} navContainer the desktop nav ul
  */
 const setupTabDropdowns = (navContainer) => {
@@ -420,7 +420,7 @@ const setupTabDropdowns = (navContainer) => {
           `@tab dropdown "${label || 'unknown'}" has a nested dropdown link that won't be reachable on desktop`,
         );
       }
-      tab.addEventListener('mouseenter', () => setActive(tab));
+      tab.querySelector(':scope > .nav-item-toggle')?.addEventListener('click', () => setActive(tab));
     });
     // default to the first tab so the right pane is never empty when the dropdown opens
     setActive(tabs[0]);

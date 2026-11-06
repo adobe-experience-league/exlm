@@ -628,7 +628,7 @@ button.bc-header-ask:focus-visible {
 }
 
 /* ── Tab-style level-0 dropdown (opt-in via `@tab` in the root link href, desktop only).
-   Left column = level-1 items stacked as tabs; right pane = the hovered tab's content. ── */
+   Left column = level-1 items stacked as tabs; right pane = the selected tab's content. ── */
 @media (min-width: 1200px) {
   /* inner panel becomes a two-pane layout (left tab list + right active content) */
   .header .nav-item-content-tab > ul {
@@ -708,7 +708,7 @@ button.bc-header-ask:focus-visible {
     display: block;
   }
 
-  /* active (hovered) tab: gray bg + arrow indicator */
+  /* active tab: gray bg + arrow indicator */
   .header .nav-item-content-tab > ul > .nav-item.nav-tab-active > .nav-item-toggle {
     background-color: var(--border-color-regular);
     font-weight: var(--font-weight-semi-bold);
