@@ -25,8 +25,9 @@ function setActiveLink(activeAnchor, block) {
 
 function getSectionTarget(sectionId) {
   return (
-    document.getElementById(sectionId) ||
-    [...document.querySelectorAll('[data-section-id]')].find((section) => section.dataset.sectionId === sectionId)
+    [...document.querySelectorAll('.section[data-section-id]')].find(
+      (section) => section.dataset.sectionId === sectionId,
+    ) || document.getElementById(sectionId)
   );
 }
 
@@ -51,7 +52,6 @@ function buildNavList(rows, block) {
     anchor.dataset.sectionTarget = sectionId;
 
     anchor.addEventListener('click', (event) => {
-      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       const target = getSectionTarget(sectionId);
       if (!target) {
@@ -80,7 +80,7 @@ function setupScrollSpy(block) {
   if (navLinks.length === 0) return;
 
   const nav = block.querySelector('.sticky-nav-container');
-  let navHeight = nav?.offsetHeight ?? 0;
+  const navHeight = nav?.offsetHeight ?? 0;
   const sectionMap = new Map(
     navLinks.map((link) => [getSectionTarget(link.dataset.sectionTarget), link]).filter(([target]) => target),
   );
@@ -89,17 +89,15 @@ function setupScrollSpy(block) {
 
   const sections = [...sectionMap.keys()];
 
-  const updateScrollMargins = () => {
-    navHeight = nav?.offsetHeight ?? 0;
-    const targets = new Set([...document.querySelectorAll('main .section[id]'), ...sections]);
-    targets.forEach((section) => {
-      section.style.scrollMarginTop = `${navHeight}px`;
-    });
+  const updateScrollOffset = () => {
+    block.closest('main')?.style.setProperty('--sticky-nav-height', `${nav?.offsetHeight ?? 0}px`);
   };
-  updateScrollMargins();
-  const stylesheet = document.querySelector('link[href$="/blocks/sticky-nav/sticky-nav.css"]');
-  if (stylesheet && !stylesheet.sheet) stylesheet.addEventListener('load', updateScrollMargins, { once: true });
-  if (nav && window.ResizeObserver) new ResizeObserver(updateScrollMargins).observe(nav);
+  updateScrollOffset();
+  if (nav && window.ResizeObserver) {
+    new ResizeObserver(updateScrollOffset).observe(nav);
+  } else {
+    window.addEventListener('resize', updateScrollOffset, { passive: true });
+  }
 
   const updateHashLink = () => {
     const activeLink = navLinks.find((link) => link.hash === window.location.hash);

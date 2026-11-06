@@ -1093,7 +1093,7 @@
         "name": "section-id",
         "value": "",
         "label": "Section ID (Optional)",
-        "description": "Optional. Set a unique, stable ID to link directly to this section by adding # followed by this ID to the page URL (for example, #post-event-resources). Use lowercase letters and numbers separated by hyphens (kebab-case), with no spaces or leading #. Keep the ID unchanged after sharing links."
+        "description": "Optional. Set a unique section ID within the page for anchor links and navigation. Use lowercase letters and numbers separated by hyphens (kebab-case) without #. Append # followed by this ID to the page URL to link to this section."
       },
       {
         "component": "select",
@@ -10142,7 +10142,11 @@
         "name": "sectionId",
         "value": "",
         "label": "Section ID",
-        "description": "Must exactly match the Section ID on the target section, without a leading #. Use lowercase letters and numbers separated by hyphens (for example, post-event-resources). Clicking this item adds the section anchor to the URL so the link can be copied and shared."
+        "description": "Match the target section's page-unique Section ID exactly, without #. Clicking adds #ID to the URL.",
+        "validation": {
+          "regExp": "^([a-z0-9]+(-[a-z0-9]+)*)?$",
+          "customErrorMsg": "Use lowercase letters and numbers separated by hyphens, without #."
+        }
       },
       {
         "component": "text",

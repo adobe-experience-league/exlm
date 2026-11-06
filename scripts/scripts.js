@@ -726,13 +726,11 @@ export function decorateMain(main, isFragment = false) {
   decorateExternalLinks(main);
   buildAutoBlocks(main, isFragment);
   decorateSections(main);
-  const sectionIds = new Set(
-    [...main.ownerDocument.querySelectorAll('[id]'), ...main.querySelectorAll('[id]')].map((element) => element.id),
-  );
+  const sectionIds = new Set([...main.querySelectorAll('[id]')].map((element) => element.id));
   main.querySelectorAll('.section[data-section-id]').forEach((section) => {
     const { sectionId } = section.dataset;
     if (!sectionId || section.id) return;
-    if (sectionIds.has(sectionId)) {
+    if (sectionIds.has(sectionId) || main.ownerDocument.getElementById(sectionId)) {
       console.warn(`Duplicate section ID "${sectionId}". Section IDs must be unique within the page.`);
       return;
     }
@@ -1270,7 +1268,6 @@ async function loadLazy(doc) {
     console.warn(`Invalid URL fragment encoding: ${hash}`);
   }
   const target = targetId ? doc.getElementById(targetId) : null;
-  const target = hash ? doc.getElementById(hash.substring(1)) : null;
   const martechOff = window.location.search?.indexOf('martech=off') !== -1;
   let headerPromise = Promise.resolve();
   let footerPromise = Promise.resolve();

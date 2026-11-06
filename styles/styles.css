@@ -1068,6 +1068,10 @@ picture[align="right"] {
   visibility: hidden;
 }
 
+main:has(.sticky-nav) .section[id] {
+  scroll-margin-top: var(--sticky-nav-height, 0);
+}
+
 .section>.default-content-wrapper:last-child>p:last-child {
   margin-bottom: 0;
 }
