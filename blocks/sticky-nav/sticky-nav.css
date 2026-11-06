@@ -146,6 +146,10 @@
   margin-bottom: 0;
 }
 
+main:has(.sticky-nav) .section[id] {
+  scroll-margin-top: var(--sticky-nav-height, 0);
+}
+
 /* Sticky Nav — desktop-only (> 900px) horizontal tab bar, hidden on mobile/tablet */
 
 @media (min-width: 900px) {
