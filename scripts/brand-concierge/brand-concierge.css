@@ -1109,14 +1109,6 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
   margin-top: 0 !important;
 }
 
-@media (min-width: 1200px) {
-  .bc-dialog.exl-dialog-expanded {
-    width: min(80vw, 90dvh, 1200px) !important;
-    height: min(80vw, 90dvh, 1200px) !important;
-    margin-inline: auto !important;
-  }
-}
-
 @media (min-width: 1401px) {
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message,
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message .message-content,
@@ -1131,8 +1123,12 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
   }
 
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container .bc-prompt-pill-button {
-    min-height: calc((16px + 1.4 * 16px) * 3) !important;
-    padding: 30px 15px !important;
+    flex: 0 0 150px !important;
+    min-height: min-content !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    padding: 12px !important;
   }
 
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section .bc-panel-disclaimer,
