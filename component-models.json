@@ -1093,7 +1093,7 @@
         "name": "id",
         "value": "",
         "label": "Section ID (Optional)",
-        "description": "Optional. A page-unique ID for anchor links, without #. Reuse the previous Section ID when reauthoring."
+        "description": "Optional. A page-unique ID for links directly to this section, without #. Please use kebab-case: lowercase words separated by hyphens, e.g. section-id."
       },
       {
         "component": "select",
