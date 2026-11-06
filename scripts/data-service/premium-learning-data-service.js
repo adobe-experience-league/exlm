@@ -395,7 +395,7 @@ export default class PLDataService {
       'page[limit]': '10',
       sort: '-recommendationScore',
       'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
-      include: 'instances.loResources.resources,skills.skillLevel.skill',
+      include: 'instances.loResources.resources',
     });
   }
 
@@ -468,7 +468,7 @@ export default class PLDataService {
         const token = getPLAccessToken();
         const payload = {
           'filter.recommendationProducts': products.map((p) => ({ name: p.name })),
-          'filter.recommendationRoles': roles.map((r) => ({ name: r.name, levels: r.levels ?? [] })),
+          'filter.recommendationRoles': roles.map((role) => ({ name: role.name })),
           'filter.loTypes': PLDataService.determineLearningObjectTypes(contentType),
           'filter.ignoreEnhancedLP': false,
           'filter.learnerState': ['notenrolled'],
@@ -480,7 +480,7 @@ export default class PLDataService {
           'page[limit]': String(noOfResults || PLDataService.DEFAULT_SEARCH_RESULTS_COUNT),
           sort: '-recommendationScore',
           'enforcedFields[learningObject]': 'products,roles,extensionOverrides,effectivenessData',
-          include: 'instances.loResources.resources,skills.skillLevel.skill',
+          include: 'instances.loResources.resources',
         });
         const headers = {
           Authorization: `oauth ${token}`,
