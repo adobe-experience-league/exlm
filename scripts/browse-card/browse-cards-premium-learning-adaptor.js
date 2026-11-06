@@ -2,6 +2,9 @@ import browseCardDataModel from '../data-model/browse-cards-model.js';
 import PL_CONTENT_TYPES from '../data-service/premium-learning/premium-learning-constants.js';
 import { fetchLanguagePlaceholders, getConfig, getPathDetails } from '../scripts.js';
 
+// Premium Learning's recommendation fallback cutoff; explicit API deadlines take precedence.
+const ENROLLMENT_CUTOFF_DAYS_BEFORE_START = 3;
+
 /**
  * Build a map of learning object IDs to their skill levels
  * @param {Array} included - The included array from API response
@@ -90,12 +93,22 @@ const BrowseCardsPLAdaptor = (() => {
     return Date.now() > deadlineMs;
   }
 
+  /**
+   * Prefer the API deadline; otherwise derive the Premium Learning cutoff before the start date.
+   * @param {Object|null|undefined} instance - Learning object instance from PL API `included`
+   * @returns {string|null} Explicit deadline, derived ISO deadline, or null when neither is available
+   * @private
+   */
   function getEnrollmentDeadlineFromInstance(instance) {
+    const enrollmentDeadline = instance?.attributes?.enrollmentDeadline;
+    if (enrollmentDeadline) return enrollmentDeadline;
     const startDate = instance?.attributes?.startDate;
     const millisecondsPerDay = 24 * 60 * 60 * 1000;
-    const deadlineMs = startDate ? new Date(startDate).getTime() - 3 * millisecondsPerDay : NaN;
+    const deadlineMs = startDate
+      ? new Date(startDate).getTime() - ENROLLMENT_CUTOFF_DAYS_BEFORE_START * millisecondsPerDay
+      : NaN;
     if (!Number.isNaN(deadlineMs)) return new Date(deadlineMs).toISOString();
-    return instance?.attributes?.enrollmentDeadline || null;
+    return null;
   }
 
   /**
@@ -105,9 +118,9 @@ const BrowseCardsPLAdaptor = (() => {
    */
   function isActiveEnrollableInstance(instance) {
     return (
-      !!instance &&
+      instance?.type === 'learningObjectInstance' &&
       String(instance.attributes?.state || '').toLowerCase() === 'active' &&
-      !isEnrollmentExpired(instance.attributes?.enrollmentDeadline)
+      !isEnrollmentExpired(getEnrollmentDeadlineFromInstance(instance))
     );
   }
 
@@ -377,14 +390,9 @@ const BrowseCardsPLAdaptor = (() => {
     if (filterInactiveInstances) {
       const instanceById = new Map(included.map((instance) => [instance.id, instance]));
       rows = rows.filter((cardData) =>
-        (cardData.relationships?.instances?.data || []).some((reference) => {
-          const instance = instanceById.get(reference.id);
-          return (
-            instance?.type === 'learningObjectInstance' &&
-            String(instance.attributes?.state || '').toLowerCase() === 'active' &&
-            !isEnrollmentExpired(getEnrollmentDeadlineFromInstance(instance))
-          );
-        }),
+        (cardData.relationships?.instances?.data || []).some((reference) =>
+          isActiveEnrollableInstance(instanceById.get(reference.id)),
+        ),
       );
     }
 
