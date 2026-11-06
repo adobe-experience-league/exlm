@@ -8,6 +8,26 @@ function getDataLineValue(arr) {
   return dataLineValue.slice(0, -2);
 }
 
+/** One published line is its own pre and ends with a newline. */
+function joinCodeLines(lines) {
+  return lines.map((line) => line.replace(/\n$/, '')).join('\n');
+}
+
+/**
+ * Published pages store each code line as its own pre. One pre is left as authored.
+ * shortcut: a br inside an already-split line is not a line break, upgrade if publish emits brs there.
+ */
+function preFromCell(cell) {
+  const pres = [...cell.querySelectorAll(':scope > pre')];
+  if (pres.length === 1) return pres[0];
+  if (pres.length < 2) return null;
+  const pre = document.createElement('pre');
+  const code = document.createElement('code');
+  code.textContent = joinCodeLines(pres.map((linePre) => (linePre.querySelector('code') || linePre).textContent));
+  pre.append(code);
+  return pre;
+}
+
 /**
  * Adds collapsible functionality to code blocks with more than 3 lines
  * @param {HTMLElement} block - The code block container
@@ -31,8 +51,10 @@ function addCollapsibleCodeFeature(block, pre, lines, placeholders) {
     pre.style.maxHeight = `${collapsedHeight}em`;
 
     const toggleButton = document.createElement('button');
+    toggleButton.type = 'button';
     toggleButton.className = 'code-toggle-button collapsed';
     toggleButton.textContent = placeholders?.showMore || 'Show more';
+    toggleButton.setAttribute('aria-expanded', 'false');
 
     toggleButton.addEventListener('click', () => {
       const isCollapsed = pre.getAttribute('data-collapsed') === 'true';
@@ -42,6 +64,7 @@ function addCollapsibleCodeFeature(block, pre, lines, placeholders) {
       toggleButton.textContent = isCollapsed
         ? placeholders?.showLess || 'Show less'
         : placeholders?.showMore || 'Show more';
+      toggleButton.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
       pre.style.maxHeight = isCollapsed ? '' : `${collapsedHeight}em`;
     });
 
@@ -64,12 +87,15 @@ export default async function decorate(block) {
   const defaultLines = parseInt(defaultLineNumbers?.textContent, 10) || 15;
 
   const preTagAttributes = {};
-  let preTagElement = preElement.childElementCount === 1 ? preElement.firstElementChild : preElement;
-  if (preTagElement.tagName !== 'PRE') {
-    const newPre = htmlToElement(`<pre>${preTagElement.innerHTML}</pre>`);
-    preElement.innerHTML = '';
-    preElement.appendChild(newPre);
-    preTagElement = newPre;
+  let preTagElement = preFromCell(preElement);
+  if (!preTagElement) {
+    preTagElement = preElement.childElementCount === 1 ? preElement.firstElementChild : preElement;
+    if (preTagElement.tagName !== 'PRE') {
+      const newPre = htmlToElement(`<pre>${preTagElement.innerHTML}</pre>`);
+      preElement.innerHTML = '';
+      preElement.appendChild(newPre);
+      preTagElement = newPre;
+    }
   }
 
   if (!preTagElement.querySelector('code')) {
@@ -77,7 +103,9 @@ export default async function decorate(block) {
     preTagElement.innerHTML = '';
     preTagElement.appendChild(codeEl);
   }
-  preTagElement.innerHTML = preTagElement.innerHTML.replace(/<br>/g, '\n');
+  if (preElement.contains(preTagElement)) {
+    preTagElement.innerHTML = preTagElement.innerHTML.replace(/<br>/g, '\n');
+  }
   block.innerHTML = preTagElement.outerHTML;
   const dataLine = [];
   const pre = block.querySelector('pre');

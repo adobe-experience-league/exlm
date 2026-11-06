@@ -2,7 +2,7 @@ import { fetchLanguagePlaceholders, htmlToElement, getConfig } from '../../scrip
 import { isMobile, registerHeaderResizeHandler, simplifySingleCellBlock } from './header-utils.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 
-const { khorosProfileUrl } = getConfig();
+const { gainsightProfileUrl } = getConfig();
 
 const communityLocalesMap = new Map([
   ['de', 'de'],
@@ -19,7 +19,7 @@ const communityLocalesMap = new Map([
 
 export const formatTitleCase = (str) => str.replace(/[-\s]/g, '').replace(/\b\w/g, (match) => match.toUpperCase());
 
-async function fetchCommunityProfileData(url = khorosProfileUrl) {
+async function fetchCommunityProfileData(url = gainsightProfileUrl) {
   const locale = communityLocalesMap.get(document.querySelector('html').lang) || communityLocalesMap.get('en');
   const separator = url.includes('?') ? '&' : '?';
   try {
@@ -185,7 +185,7 @@ export default class ProfileMenu extends HTMLElement {
       });
       profileMenuBlock.append(signoutLink);
 
-      fetchCommunityProfileData(this.decoratorOptions.khorosProfileUrl)
+      fetchCommunityProfileData(this.decoratorOptions.gainsightProfileUrl)
         .then((res) => {
           if (res) {
             const communityLinks = communitySection.querySelector('.profile-menu-links');

@@ -936,8 +936,8 @@ export function getConfig() {
     targetCriteriaIds,
     premiumLearningAuthAPI,
     quizPassingCriteria: 0.65, // 65% passing criteria for quizzes
-    khorosProfileUrl: `${cdnOrigin}/api/action/gainsight/profile-menu-list`,
-    khorosProfileDetailsUrl: `${cdnOrigin}/api/action/gainsight/profile-details`,
+    gainsightProfileUrl: `${cdnOrigin}/api/action/gainsight/profile-menu-list`,
+    gainsightProfileDetailsUrl: `${cdnOrigin}/api/action/gainsight/profile-details`,
     // Profile and JWT Token Ethos APIs are reverse proxied through the ExL CDN domains.
     profileUrl: `${cdnOrigin}/api/profile?lang=${lang}`,
     JWTTokenUrl: `${cdnOrigin}/api/token?lang=${lang}`,
@@ -1063,7 +1063,7 @@ export async function loadIms() {
   return window.imsLoaded;
 }
 
-const loadMartech = async (headerPromise, footerPromise) => {
+const loadMartech = async (headerPromise, footerPromise, { hasFooter = true } = {}) => {
   // start datalayer work early
   // eslint-disable-next-line import/no-cycle
   const libAnalyticsPromise = import('./analytics/lib-analytics.js');
@@ -1125,6 +1125,9 @@ const loadMartech = async (headerPromise, footerPromise) => {
     async: true,
   });
 
+  // Embed / chrome-less pages: Launch + privacy still load; no footer Cookie Preferences link to wire.
+  if (!hasFooter) return;
+
   const footerRenderPromise = footerPromise.then(
     () =>
       new Promise((resolve) => {
@@ -1145,7 +1148,13 @@ const loadMartech = async (headerPromise, footerPromise) => {
 
   // footer and one trust loaded, add event listener to open one trust popup,
   Promise.all([footerRenderPromise, oneTrustPromise]).then(() => {
-    document.querySelector('[href="#onetrust"]').addEventListener('click', (e) => {
+    const oneTrustLink = document.querySelector('[href="#onetrust"]');
+    if (!oneTrustLink) {
+      // eslint-disable-next-line no-console -- surface footer Cookie Preferences regressions
+      console.warn('[martech] Cookie Preferences (#onetrust) link missing after footer ready');
+      return;
+    }
+    oneTrustLink.addEventListener('click', (e) => {
       e.preventDefault();
       window.adobePrivacy.showConsentPopup();
     });
@@ -1261,10 +1270,14 @@ async function loadLazy(doc) {
     console.warn(`Invalid URL fragment encoding: ${hash}`);
   }
   const target = targetId ? doc.getElementById(targetId) : null;
+  const target = hash ? doc.getElementById(hash.substring(1)) : null;
+  const martechOff = window.location.search?.indexOf('martech=off') !== -1;
+  let headerPromise = Promise.resolve();
+  let footerPromise = Promise.resolve();
 
   if (!embedMode) {
-    const headerPromise = loadHeader(doc.querySelector('header'));
-    const footerPromise = loadFooter(doc.querySelector('footer'));
+    headerPromise = loadHeader(doc.querySelector('header'));
+    footerPromise = loadFooter(doc.querySelector('footer'));
     // Re-align the #hash target as the layout settles; stop on header-loaded (header rendered) or a user scroll.
     alignHashTarget(
       target,
@@ -1273,11 +1286,6 @@ async function loadLazy(doc) {
         doc.addEventListener('header-loaded', resolve, { capture: true, once: true });
       }),
     );
-    const martechOff = window.location.search?.indexOf('martech=off') !== -1;
-    // disable martech if martech=off is in the query string, this is used for testing ONLY
-    if (!martechOff) {
-      loadMartech(headerPromise, footerPromise);
-    }
     if (!isBrandConciergeExcludedPath() && !martechOff) {
       import('./brand-concierge/brand-concierge-entry-target.js').catch(() => {});
     }
@@ -1292,6 +1300,11 @@ async function loadLazy(doc) {
             window.addEventListener('load', resolve, { once: true });
           }),
     );
+  }
+  // disable martech if martech=off is in the query string, this is used for testing ONLY
+  // Embed still loads Launch / Web SDK (hasFooter: false skips footer Cookie Preferences wiring).
+  if (!martechOff) {
+    loadMartech(headerPromise, footerPromise, { hasFooter: !embedMode });
   }
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   if (isLiveGradientBgPage) {
