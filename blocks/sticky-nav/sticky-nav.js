@@ -45,9 +45,11 @@ function buildNavList(rows, block) {
     if (!linkText) return;
 
     const sectionId = sectionIdValue || linkText.toLowerCase().replace(/\s+/g, '-');
+    const sectionTarget = getSectionTarget(sectionId);
+    if (sectionTarget && !sectionTarget.id) sectionTarget.id = sectionId;
 
     const anchor = document.createElement('a');
-    anchor.href = `#${encodeURIComponent(getSectionTarget(sectionId)?.id || sectionId)}`;
+    anchor.href = `#${encodeURIComponent(sectionTarget?.id || sectionId)}`;
     anchor.textContent = linkText;
     anchor.className = 'sticky-nav-link';
     anchor.dataset.sectionTarget = sectionId;

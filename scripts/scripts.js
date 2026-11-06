@@ -726,6 +726,9 @@ export function decorateMain(main, isFragment = false) {
   decorateExternalLinks(main);
   buildAutoBlocks(main, isFragment);
   decorateSections(main);
+  main.querySelectorAll(':scope > .section[data-id]').forEach((section) => {
+    section.id = section.dataset.id;
+  });
   decorateBlocks(main);
   buildSectionBasedAutoBlocks(main);
   decorateLinksWithinSection(main);
@@ -1249,7 +1252,13 @@ async function loadLazy(doc) {
   await loadBlocks(main);
 
   const { hash } = window.location;
-  const target = hash ? doc.getElementById(hash.substring(1)) : null;
+  let targetId = hash.substring(1);
+  try {
+    targetId = decodeURIComponent(targetId);
+  } catch (error) {
+    console.warn('Unable to decode URL fragment; using the original value.', error);
+  }
+  const target = hash ? doc.getElementById(targetId) : null;
   const martechOff = window.location.search?.indexOf('martech=off') !== -1;
   let headerPromise = Promise.resolve();
   let footerPromise = Promise.resolve();
