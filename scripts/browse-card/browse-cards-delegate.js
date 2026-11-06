@@ -222,7 +222,9 @@ const BrowseCardsDelegate = (() => {
     }
 
     if (cardData?.data?.length) {
-      return BrowseCardsPLAdaptor.mapResultsToCardsData(cardData);
+      return BrowseCardsPLAdaptor.mapResultsToCardsData(cardData, {
+        filterInactiveInstances: !!param.recommendationMode,
+      });
     }
 
     return [];

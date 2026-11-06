@@ -3,7 +3,7 @@ import { buildCard } from '../../scripts/browse-card/browse-card.js';
 import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js';
 import { createTag, fetchLanguagePlaceholders, getConfig } from '../../scripts/scripts.js';
 import { getPLAccessToken, isPLEligible, handlePLBlockError } from '../../scripts/utils/premium-learning-utils.js';
-import { defaultProfileClient, isSignedInUser } from '../../scripts/auth/profile.js';
+import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { getCookie } from '../../scripts/utils/cookie-utils.js';
 import ResponsiveList from '../../scripts/responsive-list/responsive-list.js';
 import { decorateCta } from '../../scripts/utils/button-utils.js';
@@ -135,20 +135,8 @@ export default async function decorate(block) {
       }
 
       try {
-        const [prefsData, profileData] = await Promise.all([
-          fetchRecommendationPreferences(),
-          defaultProfileClient.getMergedProfile(),
-        ]);
-        // ALM preferences can be stale until the user visits Premium Learning.
-        const profileInterests = Array.isArray(profileData?.interests) ? profileData.interests : [];
-        const products = [
-          ...new Set(
-            profileInterests
-              .filter((interest) => typeof interest === 'string')
-              .map((interest) => interest.trim())
-              .filter(Boolean),
-          ),
-        ].map((name) => ({ name }));
+        const prefsData = await fetchRecommendationPreferences();
+        const products = prefsData.data?.attributes?.products ?? [];
         const roles = prefsData.data?.attributes?.roles ?? [];
 
         const allCards = await BrowseCardsDelegate.fetchCardData({

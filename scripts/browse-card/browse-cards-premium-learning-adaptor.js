@@ -90,6 +90,14 @@ const BrowseCardsPLAdaptor = (() => {
     return Date.now() > deadlineMs;
   }
 
+  function getEnrollmentDeadlineFromInstance(instance) {
+    const startDate = instance?.attributes?.startDate;
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    const deadlineMs = startDate ? new Date(startDate).getTime() - 3 * millisecondsPerDay : NaN;
+    if (!Number.isNaN(deadlineMs)) return new Date(deadlineMs).toISOString();
+    return instance?.attributes?.enrollmentDeadline || null;
+  }
+
   /**
    * @param {Object|null|undefined} instance - Primary learning object instance from PL API `included`
    * @returns {boolean}
@@ -347,11 +355,14 @@ const BrowseCardsPLAdaptor = (() => {
   /**
    * Maps an array of Premium learning results to an array of BrowseCards data models.
    * @param {Object} data - Premium learning API payload (`data`, `included`).
-   * @param {{ filterInactiveCohortInstances?: boolean }} [options] - When `filterInactiveCohortInstances` is true (default),
-   *   learning programs (cohorts) without an active, enrollable primary instance are omitted. Courses are never filtered here.
+   * @param {{ filterInactiveCohortInstances?: boolean, filterInactiveInstances?: boolean }} [options] -
+   *   Filter cohorts by default, or all learning objects when `filterInactiveInstances` is true.
    * @returns {Promise<Array>} A promise that resolves with an array of BrowseCards data models.
    */
-  const mapResultsToCardsData = async (data, { filterInactiveCohortInstances = true } = {}) => {
+  const mapResultsToCardsData = async (
+    data,
+    { filterInactiveCohortInstances = true, filterInactiveInstances = false } = {},
+  ) => {
     let placeholders = {};
     try {
       placeholders = await fetchLanguagePlaceholders();
@@ -363,6 +374,20 @@ const BrowseCardsPLAdaptor = (() => {
     const included = data.included || [];
     let rows = data.data || [];
 
+    if (filterInactiveInstances) {
+      const instanceById = new Map(included.map((instance) => [instance.id, instance]));
+      rows = rows.filter((cardData) =>
+        (cardData.relationships?.instances?.data || []).some((reference) => {
+          const instance = instanceById.get(reference.id);
+          return (
+            instance?.type === 'learningObjectInstance' &&
+            String(instance.attributes?.state || '').toLowerCase() === 'active' &&
+            !isEnrollmentExpired(getEnrollmentDeadlineFromInstance(instance))
+          );
+        }),
+      );
+    }
+
     // One scan per cohort LO; reused by the optional filter and by mapResult (avoids duplicate findActiveEnrollableCohortInstance).
     const activeCohortInstanceByLoId = new Map();
     rows.forEach((cardData) => {
@@ -371,7 +396,7 @@ const BrowseCardsPLAdaptor = (() => {
       }
     });
 
-    if (filterInactiveCohortInstances) {
+    if (filterInactiveCohortInstances && !filterInactiveInstances) {
       rows = rows.filter((cardData) => {
         if (determineContentType(cardData) !== PL_CONTENT_TYPES.COHORT.MAPPING_KEY) {
           return true;
