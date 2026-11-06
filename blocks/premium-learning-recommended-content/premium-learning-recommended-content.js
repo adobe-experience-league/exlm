@@ -137,11 +137,17 @@ export default async function decorate(block) {
       try {
         const [prefsData, profileData] = await Promise.all([
           fetchRecommendationPreferences(),
-          defaultProfileClient.getMergedProfile(true),
+          defaultProfileClient.getMergedProfile(true).catch(() => null),
         ]);
-        const products = [
-          ...new Set((profileData?.interests ?? []).map((interest) => interest.trim()).filter(Boolean)),
+        const interestProducts = [
+          ...new Set(
+            (profileData?.interests ?? [])
+              .filter((interest) => typeof interest === 'string')
+              .map((interest) => interest.trim())
+              .filter(Boolean),
+          ),
         ].map((name) => ({ name }));
+        const products = interestProducts.length ? interestProducts : prefsData.data?.attributes?.products ?? [];
         const roles = prefsData.data?.attributes?.roles ?? [];
 
         const allCards = await BrowseCardsDelegate.fetchCardData({
