@@ -1047,7 +1047,6 @@ async function initHeadlessSearch(block, groups, placeholders) {
 
 export default async function decorate(block) {
   try {
-    loadCSS(`${window.hlx.codeBasePath}/scripts/faceted-search/faceted-search.css`).catch(() => {});
     await loadEventsCardStyles().catch(() => {});
     let placeholders = {};
     try {

@@ -400,10 +400,14 @@ export function createSidebarLayout({
       'aria-expanded': 'false',
       'aria-controls': panelId,
     });
-    toggle.innerHTML = `
-      <span class="icon icon-atomic-search-filter"></span>
-      <span class="${prefix}-mobile-filter-toggle-count"></span>
-      <span class="icon icon-chevron"></span>`;
+    const toggleLabel = createTag('span', { class: `${prefix}-mobile-filter-toggle-label` });
+    toggleLabel.textContent = ui.filtersEl.querySelector(`.${prefix}-filters-heading`)?.textContent || 'Filters';
+    toggle.append(
+      createTag('span', { class: 'icon icon-atomic-search-filter' }),
+      toggleLabel,
+      createTag('span', { class: `${prefix}-mobile-filter-toggle-count` }),
+      createTag('span', { class: 'icon icon-chevron' }),
+    );
     decorateIcons(toggle);
     const countBadge = toggle.querySelector(`.${prefix}-mobile-filter-toggle-count`);
 
