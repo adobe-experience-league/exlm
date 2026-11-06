@@ -224,6 +224,7 @@ const BrowseCardsDelegate = (() => {
     if (cardData?.data?.length) {
       return BrowseCardsPLAdaptor.mapResultsToCardsData(cardData, {
         filterInactiveInstances: !!param.recommendationMode,
+        includeSkillLevels: !param.recommendationMode,
       });
     }
 
