@@ -610,8 +610,10 @@ body.appear {
 }
 
 header {
+  --nav-height: 52px;
+
   height: var(--nav-height);
-  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
+  border-bottom: none;
 }
 
 /* Playlist product-iframe chrome only — selectors must stay under .playlist-embed-mode */
@@ -633,12 +635,6 @@ body.playlist-embed-mode > aside {
 
 body.playlist-embed-mode > main {
   margin: 0;
-}
-
-header.header-v2 {
-  --nav-height: 52px;
-
-  border-bottom: none;
 }
 
 dl,
