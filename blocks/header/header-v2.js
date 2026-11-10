@@ -402,14 +402,27 @@ const setupTabDropdowns = (navContainer) => {
   navContainer.querySelectorAll(':scope > .nav-item-tab').forEach((rootItem) => {
     const tabs = [...rootItem.querySelectorAll(':scope > .nav-item-content > ul > .nav-item')];
     if (!tabs.length) return;
-    const setActive = (active) => tabs.forEach((tab) => tab.classList.toggle('nav-tab-active', tab === active));
-    tabs.forEach((tab) => {
+    const dropdownLabel = rootItem.querySelector(':scope > .nav-item-toggle')?.textContent.trim() || 'unknown';
+    const setActive = (active) =>
+      tabs.forEach((tab) => {
+        const isActive = tab === active;
+        tab.classList.toggle('nav-tab-active', isActive);
+        const toggle = tab.querySelector(':scope > .nav-item-toggle');
+        if (toggle) {
+          if (isActive) toggle.setAttribute('aria-current', 'true');
+          else toggle.removeAttribute('aria-current');
+        }
+      });
+    tabs.forEach((tab, index) => {
       // give each tab's right pane a heading matching the tab label
       const toggle = tab.querySelector(':scope > .nav-item-toggle');
       const label = toggle?.textContent.trim();
       const content = tab.querySelector(':scope > .nav-item-content');
       if (label && content && !content.querySelector(':scope > .nav-tab-heading')) {
-        content.prepend(htmlToElement(`<div class="nav-tab-heading">${label}</div>`));
+        const heading = document.createElement('div');
+        heading.className = 'nav-tab-heading';
+        heading.textContent = label;
+        content.prepend(heading);
       }
       // @tab dropdowns only support root -> tabs -> leaf links; a link nested inside a
       // tab's own content that itself has a dropdown (a `.nav-item-toggle`) won't be
@@ -425,7 +438,7 @@ const setupTabDropdowns = (navContainer) => {
         toggle.addEventListener('click', () => setActive(tab));
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`@tab dropdown "${label || 'unknown'}" has a tab without a toggle`);
+        console.warn(`@tab dropdown "${dropdownLabel}" has a tab without a toggle at position ${index + 1}`);
       }
     });
     // default to the first tab so the right pane is never empty when the dropdown opens
