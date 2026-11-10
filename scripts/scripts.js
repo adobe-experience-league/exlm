@@ -1255,7 +1255,7 @@ async function loadLazy(doc) {
     try {
       target = doc.getElementById(decodeURIComponent(rawId));
     } catch (error) {
-      console.warn('Unable to decode URL fragment; using the original value.', error);
+      console.warn('Unable to decode URL fragment; no target found.', error);
     }
   }
   const martechOff = window.location.search?.indexOf('martech=off') !== -1;
