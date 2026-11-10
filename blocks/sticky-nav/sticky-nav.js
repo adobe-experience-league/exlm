@@ -60,7 +60,7 @@ function buildNavList(rows, block) {
       event.preventDefault();
       const target = getSectionTarget(sectionId);
       if (!target) {
-        // eslint-disable-next-line no-console -- Report a misconfigured authored target.
+        // eslint-disable-next-line no-console
         console.warn(`Sticky nav target "${sectionId}" was not found.`);
         return;
       }
