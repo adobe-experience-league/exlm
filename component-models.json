@@ -10367,6 +10367,18 @@
     "id": "featured-advocates",
     "fields": [
       {
+        "component": "aem-content",
+        "valueType": "string[]",
+        "value": [],
+        "name": "advocates",
+        "multi": true,
+        "label": "Advocates",
+        "description": "Optional. Multi-select advocate profile pages to feature. Leave empty to auto-include all eligible champions. Picker is English-only: champion pages and champion-index currently exist under /en/champions only (same pattern as other EXLM content pickers).",
+        "validation": {
+          "rootPath": "/content/exlm/global/en/champions"
+        }
+      },
+      {
         "component": "boolean",
         "valueType": "boolean",
         "name": "glassyEffect",
