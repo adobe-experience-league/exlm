@@ -1,6 +1,12 @@
 import { getPathDetails, fetchLanguagePlaceholders } from '../../scripts/scripts.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
-import { getFeaturedChampions, getRotatedChampions, getDesignationColor } from '../../scripts/utils/champion-utils.js';
+import {
+  getFeaturedChampions,
+  getChampionsByPaths,
+  getRotatedChampions,
+  getDesignationColor,
+  sanitizeAdvocatePaths,
+} from '../../scripts/utils/champion-utils.js';
 import {
   applyChampionSectionTheme,
   appendMoreFromSection,
@@ -9,6 +15,53 @@ import {
 } from '../champion-detail/champion-detail.js';
 import { renderChampionContentHTML } from '../champion-content/champion-content.js';
 import { pushComponentClick, generateComponentID } from '../../scripts/analytics/lib-analytics.js';
+
+/**
+ * Read authored advocate paths from a cell: <a> hrefs when present, else comma/newline-separated text
+ * (multi-field markup may be off by default).
+ * @param {HTMLElement | null | undefined} cell
+ * @returns {string[]}
+ */
+function extractAdvocatePaths(cell) {
+  if (!cell) return [];
+  const hrefs = [...cell.querySelectorAll('a')].map((anchor) => anchor.getAttribute('href')).filter(Boolean);
+  if (hrefs.length) return hrefs;
+
+  // Prefer per-element text (p/li) so adjacent blocks without whitespace do not concatenate
+  // into one invalid path like `/en/champions/a/en/champions/b`.
+  const parts = [...cell.querySelectorAll('p, li')].map((el) => el.textContent);
+  const source = parts.length ? parts : [cell.textContent || ''];
+  return source
+    .flatMap((text) => text.split(/[\n,]+/))
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+/**
+ * glassyEffect is the last authored field when present (true/false).
+ * Any preceding rows are treated as advocate path cells so a missing glassy row
+ * still honors an authored selection. Paths go through sanitizeAdvocatePaths so folder
+ * index / junk do not count as a selection (that would skip auto fallback). Sanitization
+ * is idempotent; getChampionsByPaths applies it again as a safe boundary for other callers.
+ * @param {HTMLElement} block
+ */
+function readAuthoredFields(block) {
+  const rows = [...block.children];
+  let glassyEffect = false;
+  let advocateRows = rows;
+  const lastText = rows[rows.length - 1]?.textContent.trim() ?? '';
+  if (lastText === 'true' || lastText === 'false') {
+    glassyEffect = lastText === 'true';
+    advocateRows = rows.slice(0, -1);
+  }
+
+  const rawPaths = [];
+  advocateRows.forEach((row) => {
+    rawPaths.push(...extractAdvocatePaths(row));
+  });
+
+  return { glassyEffect, advocatePaths: sanitizeAdvocatePaths(rawPaths) };
+}
 
 function buildAssociatedContentCard(item, championName, colorClass, placeholders, glassyEffect) {
   const card = document.createElement('div');
@@ -40,16 +93,18 @@ function buildAdvocatePanel(champion, total, placeholders, glassyEffect) {
 }
 
 export default async function decorate(block) {
-  // read authoring fields before clearing — this block is otherwise zero-config and
-  // rebuilt entirely from fetched champion data, so glassyEffect must be the last field.
-  const glassyEffect = block.children[block.children.length - 1]?.textContent.trim() === 'true';
+  // Read authored advocate paths + trailing glassy flag before clearing; then rebuild panels
+  // from fetched profiles (selected paths, or auto champion-index when selection is empty).
+  const { glassyEffect, advocatePaths } = readAuthoredFields(block);
   block.textContent = '';
 
   const { lang } = getPathDetails();
   const placeholders = await fetchLanguagePlaceholders(lang);
   let champions = [];
   try {
-    champions = await getFeaturedChampions(lang);
+    // Empty / junk selection → auto. Explicit picks that all fail eligibility stay empty
+    // (do not silently replace the author's curated list with the full auto set).
+    champions = advocatePaths.length ? await getChampionsByPaths(advocatePaths) : await getFeaturedChampions(lang);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching featured advocates:', error);
