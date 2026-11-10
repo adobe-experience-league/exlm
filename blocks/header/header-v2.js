@@ -405,7 +405,8 @@ const setupTabDropdowns = (navContainer) => {
     const setActive = (active) => tabs.forEach((tab) => tab.classList.toggle('nav-tab-active', tab === active));
     tabs.forEach((tab) => {
       // give each tab's right pane a heading matching the tab label
-      const label = tab.querySelector(':scope > .nav-item-toggle')?.textContent.trim();
+      const toggle = tab.querySelector(':scope > .nav-item-toggle');
+      const label = toggle?.textContent.trim();
       const content = tab.querySelector(':scope > .nav-item-content');
       if (label && content && !content.querySelector(':scope > .nav-tab-heading')) {
         content.prepend(htmlToElement(`<div class="nav-tab-heading">${label}</div>`));
@@ -420,7 +421,12 @@ const setupTabDropdowns = (navContainer) => {
           `@tab dropdown "${label || 'unknown'}" has a nested dropdown link that won't be reachable on desktop`,
         );
       }
-      tab.querySelector(':scope > .nav-item-toggle')?.addEventListener('click', () => setActive(tab));
+      if (toggle) {
+        toggle.addEventListener('click', () => setActive(tab));
+      } else {
+        // eslint-disable-next-line no-console
+        console.warn(`@tab dropdown "${label || 'unknown'}" has a tab without a toggle`);
+      }
     });
     // default to the first tab so the right pane is never empty when the dropdown opens
     setActive(tabs[0]);
