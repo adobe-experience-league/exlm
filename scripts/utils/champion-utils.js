@@ -6,6 +6,80 @@ export const MAX_CHAMPIONS = 18;
 // matches ffetch.js's own default concurrency (maxInFlight) for the same kind of fetch-each-entry work
 const MAX_CONCURRENT_FETCHES = 5;
 
+// Auto index stays /champions only (matches live query-index). Authored picks also allow
+// /advocates/ so a future folder rename does not need a runtime change.
+const CHAMPION_PROFILE_PATH_RE = /^\/[^/]+\/champions\/[^/]+$/;
+const AUTHORED_ADVOCATE_PATH_RE = /^\/[^/]+\/(champions|advocates)\/[^/]+$/;
+
+const AEM_CONTENT_ROOT = '/content/exlm/global';
+
+/**
+ * Normalize an authored advocate href/path to an EDS pathname.
+ * Handles absolute URLs, AEM content paths, query/hash, trailing slash, and optional .html.
+ * @param {string} hrefOrPath
+ * @returns {string}
+ */
+export function normalizeAdvocatePath(hrefOrPath) {
+  if (!hrefOrPath || typeof hrefOrPath !== 'string') return '';
+  let path = hrefOrPath.trim();
+  // reject before URL resolution — `new URL` would collapse `/a/../b` into `/b`
+  if (!path || path.startsWith('//') || path.includes('..')) return '';
+
+  try {
+    // always go through URL so relative paths also drop ?query / #hash
+    path = new URL(path, 'https://dummy.invalid').pathname;
+  } catch {
+    return '';
+  }
+
+  const aemRoot = (typeof window !== 'undefined' && window.hlx?.aemRoot) || AEM_CONTENT_ROOT;
+  if (path.startsWith(aemRoot)) {
+    path = path.slice(aemRoot.length) || '/';
+  }
+
+  path = path.replace(/\.html$/i, '').replace(/\/+$/, '') || '/';
+  // `..` already rejected pre-parse; URL resolution collapses any that slipped through.
+  // Keep `//` — e.g. `/.//x` can still normalize to a protocol-relative pathname.
+  if (path.startsWith('//')) return '';
+  return path;
+}
+
+/**
+ * Profile path under /champions/ — used for automatic champion-index discovery.
+ * @param {string} path
+ */
+export function isChampionProfilePath(path) {
+  if (!path || path.includes('..')) return false;
+  return CHAMPION_PROFILE_PATH_RE.test(path);
+}
+
+/**
+ * Profile path under /champions/ or /advocates/ — used for authored content-picker paths.
+ * @param {string} path
+ */
+export function isAdvocateProfilePath(path) {
+  if (!path || path.includes('..')) return false;
+  return AUTHORED_ADVOCATE_PATH_RE.test(path);
+}
+
+/**
+ * Normalize, validate, dedupe, and cap authored advocate paths. Single place for selection rules.
+ * @param {string[]} paths
+ * @returns {string[]}
+ */
+export function sanitizeAdvocatePaths(paths) {
+  const seen = new Set();
+  const championPaths = [];
+  (paths || []).forEach((hrefOrPath) => {
+    if (championPaths.length >= MAX_CHAMPIONS) return;
+    const path = normalizeAdvocatePath(hrefOrPath);
+    if (!path || !isAdvocateProfilePath(path) || seen.has(path)) return;
+    seen.add(path);
+    championPaths.push(path);
+  });
+  return championPaths;
+}
+
 // fileReference, name, jobTitle, quoteBio, communityProfileUrl, productDesignation, colorSelection
 export const CHAMPION_DETAIL_FIELD_COUNT = 7;
 
@@ -136,8 +210,26 @@ export async function getFeaturedChampions(lang) {
   }
   const championPaths = entries
     .map((entry) => entry.path)
-    .filter((path) => /\/champions\/.+/.test(path))
+    .filter((path) => isChampionProfilePath(path))
     .slice(0, MAX_CHAMPIONS);
+
+  const profiles = [];
+  for (let i = 0; i < championPaths.length; i += MAX_CONCURRENT_FETCHES) {
+    const batch = championPaths.slice(i, i + MAX_CONCURRENT_FETCHES);
+    // eslint-disable-next-line no-await-in-loop -- intentionally sequential to cap concurrent fetches
+    const batchProfiles = await Promise.all(batch.map((path) => fetchChampionProfile(path)));
+    profiles.push(...batchProfiles.filter(Boolean));
+  }
+  return profiles;
+}
+
+/**
+ * Fetch eligible Champion profiles for an explicit list of authored paths.
+ * Caps at MAX_CHAMPIONS, batches fetches, skips nulls, preserves input order of successes.
+ * @param {string[]} paths
+ */
+export async function getChampionsByPaths(paths) {
+  const championPaths = sanitizeAdvocatePaths(paths);
 
   const profiles = [];
   for (let i = 0; i < championPaths.length; i += MAX_CONCURRENT_FETCHES) {
