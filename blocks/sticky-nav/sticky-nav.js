@@ -23,6 +23,15 @@ function setActiveLink(activeAnchor, block) {
   }
 }
 
+function getSectionTarget(sectionId) {
+  const section = [...document.querySelectorAll('.section[data-section-id]')].find(
+    (element) => element.dataset.sectionId === sectionId,
+  );
+  if (section) return section;
+  const target = document.getElementById(sectionId);
+  return target?.classList.contains('section') ? target : null;
+}
+
 function buildNavList(rows, block) {
   const navList = document.createElement('ul');
   navList.className = 'sticky-nav-list';
@@ -36,18 +45,27 @@ function buildNavList(rows, block) {
     if (!linkText) return;
 
     const sectionId = sectionIdValue || linkText.toLowerCase().replace(/\s+/g, '-');
+    const sectionTarget = getSectionTarget(sectionId);
+    if (sectionTarget && !sectionTarget.id && !document.getElementById(sectionId)) {
+      sectionTarget.id = sectionId;
+    }
 
     const anchor = document.createElement('a');
-    anchor.href = `#${sectionId}`;
+    anchor.href = `#${encodeURIComponent(sectionTarget?.id || sectionId)}`;
     anchor.textContent = linkText;
     anchor.className = 'sticky-nav-link';
     anchor.dataset.sectionTarget = sectionId;
 
     anchor.addEventListener('click', (event) => {
       event.preventDefault();
-      const target = document.querySelector(`[data-section-id="${sectionId}"]`);
-      if (!target) return;
+      const target = getSectionTarget(sectionId);
+      if (!target) {
+        // eslint-disable-next-line no-console
+        console.warn(`Sticky nav target "${sectionId}" was not found.`);
+        return;
+      }
       const navHeight = block.querySelector('.sticky-nav-container')?.offsetHeight ?? 0;
+      if (target.id && window.location.hash !== anchor.hash) window.history.pushState(null, '', anchor.hash);
       window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navHeight, behavior: 'smooth' });
       setActiveLink(anchor, block);
     });
@@ -68,9 +86,7 @@ function setupScrollSpy(block) {
 
   const navHeight = block.querySelector('.sticky-nav-container')?.offsetHeight ?? 0;
   const sectionMap = new Map(
-    navLinks
-      .map((link) => [document.querySelector(`[data-section-id="${link.dataset.sectionTarget}"]`), link])
-      .filter(([target]) => target !== null),
+    navLinks.map((link) => [getSectionTarget(link.dataset.sectionTarget), link]).filter(([target]) => target),
   );
 
   if (sectionMap.size === 0) return;
