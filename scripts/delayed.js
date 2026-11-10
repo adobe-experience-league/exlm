@@ -35,10 +35,12 @@ function isBrandConciergeExcludedPath() {
 /**
  * Loads Brand Concierge on eligible page types.
  * Guards:
- *   - hidden on Support and Premium Learning routes
+ *   - ?martech=off (QA / embed hosts that want chrome without BC)
+ *   - playlist embed mode
+ *   - Support and Premium Learning routes
  */
 async function loadBrandConcierge() {
-  if (embedMode || isBrandConciergeExcludedPath()) return;
+  if (martechOff || embedMode || isBrandConciergeExcludedPath()) return;
 
   const { default: initBrandConcierge } = await import('./brand-concierge/brand-concierge.js');
   await initBrandConcierge();
