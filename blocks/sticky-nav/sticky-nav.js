@@ -139,15 +139,5 @@ export default function decorate(block) {
   const firstLink = block.querySelector('.sticky-nav-link');
   if (firstLink) firstLink.classList.add('active');
 
-  const updateScrollOffset = () => {
-    block.closest('main')?.style.setProperty('--sticky-nav-height', `${nav.offsetHeight}px`);
-  };
-  updateScrollOffset();
-  if (window.ResizeObserver) {
-    new ResizeObserver(updateScrollOffset).observe(nav);
-  } else {
-    window.addEventListener('resize', updateScrollOffset, { passive: true });
-  }
-
   setupScrollSpy(block);
 }
