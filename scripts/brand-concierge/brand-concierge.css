@@ -1110,29 +1110,26 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
 }
 
 @media (min-width: 1401px) {
+  /* Brand Concierge supplies BEM class names that do not match the project's kebab-case rule. */
+  /* stylelint-disable selector-class-pattern */
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message,
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message .message-content,
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message .message-text,
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-prompt-pill-button,
-  /* stylelint-disable-next-line selector-class-pattern -- BC internal BEM class */
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-prompt-pill-button__text,
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-prompt-suggestion-button,
-  /* stylelint-disable-next-line selector-class-pattern -- BC internal BEM modifier */
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .chat-input--input {
     font-size: 16px !important;
   }
+  /* stylelint-enable selector-class-pattern */
 
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container .bc-prompt-pill-button {
     flex: 0 0 150px !important;
-    min-height: min-content !important;
-    flex-direction: row !important;
-    align-items: flex-start !important;
-    gap: 8px !important;
     padding: 12px !important;
   }
 
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section .bc-panel-disclaimer,
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section .bc-panel-disclaimer a {
-    font-size: 14px !important;
+    font-size: 14px;
   }
 }
