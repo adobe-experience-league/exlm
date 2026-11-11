@@ -56,7 +56,8 @@ import { pushBcWidgetImpressionEvent } from '../../scripts/analytics/lib-analyti
  *   (the desktop nav doesn't need it and renders before this resolves)
  */
 
-const HEADER_CSS = `/blocks/header/header.css`;
+// Keep header.css empty: EDS loads it globally; these styles belong only in the shadow root.
+const HEADER_CSS = `/blocks/header/exl-header.css`;
 
 /** fetch the header fragment relative to /${lang}/global-fragments/, ignoring any page metadata override */
 async function fetchHeaderFragment(fragmentPath, lang) {
