@@ -1249,7 +1249,15 @@ async function loadLazy(doc) {
   await loadBlocks(main);
 
   const { hash } = window.location;
-  const target = hash ? doc.getElementById(hash.substring(1)) : null;
+  const rawId = hash.substring(1);
+  let target = rawId ? doc.getElementById(rawId) : null;
+  if (!target && rawId) {
+    try {
+      target = doc.getElementById(decodeURIComponent(rawId));
+    } catch (error) {
+      console.warn('Unable to decode URL fragment; no target found.', error);
+    }
+  }
   const martechOff = window.location.search?.indexOf('martech=off') !== -1;
   let headerPromise = Promise.resolve();
   let footerPromise = Promise.resolve();

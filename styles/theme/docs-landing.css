@@ -4,6 +4,12 @@
   width: auto;
 }
 
+@media (width <= 600px) {
+  .docs.docs-landing main h1 {
+    overflow-wrap: normal;
+  }
+}
+
 @media (width >= 600px) {
   .docs.docs-landing main {
     padding: 28px 46px 48px;
