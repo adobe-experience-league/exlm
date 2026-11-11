@@ -90,7 +90,7 @@
   --spectrum-body-color: var(--spectrum-gray-800);
 
   /* nav height */
-  --nav-height: 64px;
+  --nav-height: 52px;
 
   /* spectrum color palettes - light theme only
   https: //spectrum.adobe.com/page/color-palette/#Latest-Spectrum-colors */
@@ -611,7 +611,7 @@ body.appear {
 
 header {
   height: var(--nav-height);
-  border-bottom: 1px solid var(--non-spectrurm-whisper-gray);
+  border-bottom: none;
 }
 
 /* Playlist product-iframe chrome only — selectors must stay under .playlist-embed-mode */
@@ -633,12 +633,6 @@ body.playlist-embed-mode > aside {
 
 body.playlist-embed-mode > main {
   margin: 0;
-}
-
-header.header-v2 {
-  --nav-height: 52px;
-
-  border-bottom: none;
 }
 
 dl,
