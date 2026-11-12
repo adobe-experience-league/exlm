@@ -28,16 +28,15 @@ function extractAdvocatePaths(cell) {
   if (!cell) return [];
 
   const hrefs = [...cell.querySelectorAll('a')].map((anchor) => anchor.getAttribute('href')).filter(Boolean);
+  // Multi-field list markup (`<ul><li><a href=...>`) — use hrefs only so link labels
+  // (display names) are not treated as paths.
+  if (hrefs.length) return hrefs;
 
+  // Author-bio-page pattern: comma/newline-separated paths in plain text / meta-style cells.
   // Prefer per-element text (p/li) so adjacent blocks without whitespace do not concatenate
   // into one invalid path like `/en/champions/a/en/champions/b`.
   const parts = [...cell.querySelectorAll('p, li')].map((el) => el.textContent);
   const source = parts.length ? parts : [cell.textContent || ''];
-  // Multi-field list markup (`<ul><li><a href=...>`) — use hrefs only so link labels
-  // (display names) are not treated as paths. Same as preferring structured links over text.
-  if (hrefs.length) return hrefs;
-
-  // Author-bio-page pattern: comma/newline-separated paths in plain text / meta-style cells.
   return source
     .flatMap((text) => text.split(/[\n,]+/))
     .map((part) => part.trim())
