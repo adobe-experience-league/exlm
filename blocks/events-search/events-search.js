@@ -44,7 +44,7 @@ const MAX_PENDING_SYNC_PASSES = 12;
 
 /**
  * Per-block filter context created in setupFilters:
- * { store, ui, sort (shared sort control), awaiting: { intent, passes }|null, isClearing, lastResponseId, itemKeys: Map }
+ * { store, ui, sort (shared sort control), resetSearch, awaiting: { intent, passes }|null, isClearing, lastResponseId, itemKeys: Map }
  */
 const filterContexts = new WeakMap();
 
@@ -240,8 +240,8 @@ function applyEventsSearchSort(block, option, context) {
   state.sortController.sortBy(resolveEventsSearchSortCriterion(state, option, context));
 }
 
-/** Resets sort back to its default so Clear removes the sort along with filters and query. */
-function resetEventsSearchSort(block, { dispatch = true } = {}) {
+/** Resets local sort UI state; callers must reset the Headless sort separately (e.g. via ctx.resetSearch). */
+function resetEventsSearchSort(block) {
   const state = getEventsSearchSortState(block);
   state.selected = 'relevance';
   state.hasShownControl = false;
@@ -249,9 +249,6 @@ function resetEventsSearchSort(block, { dispatch = true } = {}) {
   state.urlRestorePending = false;
   state.urlRestoreGraceRemaining = null;
   state.lastHasQuery = false;
-  if (dispatch && state.sortController && state.criteria) {
-    state.sortController.sortBy(state.criteria.relevance());
-  }
 }
 
 /** Renders the sort dropdown anchors and the button caption for the given options and selection. */
@@ -809,27 +806,20 @@ function applyStoreChangeToHeadless(block, ctx, snapshot, source) {
   // Don't let a lagging Headless state overwrite this click until it has caught up (see syncFromHeadless).
   ctx.awaiting = { intent, passes: 0 };
 
-  if (source === 'clear') {
-    ctx.isClearing = true;
-    GROUP_IDS.forEach((id) => getFacetController(id)?.deselectAll?.());
-    window.headlessSearchBox?.updateText('');
-    ctx.isClearing = false;
-  } else {
+  if (source !== 'clear') {
     GROUP_IDS.forEach((id) => reconcileFacetSelection(getFacetController(id), filters[id]));
     if (source === 'keyword') window.headlessSearchBox?.updateText(keyword);
+    window.headlessPager?.selectPage(1);
   }
 
-  window.headlessPager?.selectPage(1);
-
   if (source === 'clear') {
-    // Drop the whole hash at once
-    const hadHash = Boolean(window.location.hash) && window.location.hash !== '#';
-    // Clear resets the sort back to default.
-    resetEventsSearchSort(block, { dispatch: !hadHash });
-    if (hadHash) {
-      window.location.hash = '';
-    } else {
-      executeSearch();
+    // Keep UI subscriptions from restoring stale query/sort state during URL synchronization.
+    ctx.isClearing = true;
+    try {
+      resetEventsSearchSort(block);
+      ctx.resetSearch();
+    } finally {
+      ctx.isClearing = false;
     }
     pushEventsClearFiltersEvent();
   } else if (source === 'keyword') {
@@ -945,7 +935,19 @@ function setupFilters(block, groups, placeholders) {
   });
   sort.setHidden(true);
 
-  const ctx = { store, ui, sort, awaiting: null, isClearing: false, lastResponseId: null, itemKeys: new Map() };
+  const ctx = {
+    store,
+    ui,
+    sort,
+    // Before Headless is ready, only URL state can have been restored.
+    resetSearch: () => {
+      window.location.hash = '';
+    },
+    awaiting: null,
+    isClearing: false,
+    lastResponseId: null,
+    itemKeys: new Map(),
+  };
   filterContexts.set(block, ctx);
 
   // Event Type options are static; counts arrive from Headless later.
@@ -993,7 +995,7 @@ async function initHeadlessSearch(block, groups, placeholders) {
     '../../scripts/coveo-headless/index.js'
   );
   const renderPageNumbers = () => renderEventsSearchPageNumbers(block, placeholders);
-  await initiateCoveoHeadlessSearch({
+  const { resetSearchHandler } = await initiateCoveoHeadlessSearch({
     handleSearchEngineSubscription: () => handleSearchEngineSubscription(block, groups, placeholders),
     renderPageNumbers,
     numberOfResults: getBrowseFiltersResultCount(),
@@ -1013,6 +1015,8 @@ async function initHeadlessSearch(block, groups, placeholders) {
       ctx.ui.refresh();
     },
   });
+  const blockCtx = filterContexts.get(block);
+  if (blockCtx && typeof resetSearchHandler === 'function') blockCtx.resetSearch = resetSearchHandler;
 
   if (window.headlessSearchEngine) {
     try {
