@@ -240,7 +240,7 @@ function applyEventsSearchSort(block, option, context) {
   state.sortController.sortBy(resolveEventsSearchSortCriterion(state, option, context));
 }
 
-/** Resets sort back to its default so Clear removes the sort along with filters and query. */
+/** Resets local sort UI state; callers must reset the Headless sort separately (e.g. via ctx.resetSearch). */
 function resetEventsSearchSort(block) {
   const state = getEventsSearchSortState(block);
   state.selected = 'relevance';
