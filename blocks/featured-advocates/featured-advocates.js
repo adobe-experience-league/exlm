@@ -17,24 +17,29 @@ import { renderChampionContentHTML } from '../champion-content/champion-content.
 import { pushComponentClick, generateComponentID } from '../../scripts/analytics/lib-analytics.js';
 
 /**
- * Read authored advocate paths from a cell: <a> hrefs when present, else comma/newline-separated text
- * (multi-field markup may be off by default).
+ * Read authored advocate paths from a cell.
+ * Same consumption pattern as author-bio-page meta: comma/newline-separated paths
+ * (`getMetadata('author-bio-page').split(',')`). Also accepts multi-field list markup
+ * (`<ul><li><a>`) when `public.xwalk.multi-field` is enabled via xwalk.json / Admin config.
  * @param {HTMLElement | null | undefined} cell
  * @returns {string[]}
  */
 function extractAdvocatePaths(cell) {
   if (!cell) return [];
+
   const hrefs = [...cell.querySelectorAll('a')].map((anchor) => anchor.getAttribute('href')).filter(Boolean);
-  if (hrefs.length) return hrefs;
 
   // Prefer per-element text (p/li) so adjacent blocks without whitespace do not concatenate
   // into one invalid path like `/en/champions/a/en/champions/b`.
   const parts = [...cell.querySelectorAll('p, li')].map((el) => el.textContent);
   const source = parts.length ? parts : [cell.textContent || ''];
-  return source
+  const textPaths = source
     .flatMap((text) => text.split(/[\n,]+/))
     .map((part) => part.trim())
     .filter(Boolean);
+
+  // Merge: multi-field links + author-bio-style comma list. sanitizeAdvocatePaths dedupes.
+  return [...hrefs, ...textPaths];
 }
 
 /**
