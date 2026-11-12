@@ -1251,6 +1251,14 @@
     "id": "courses-section",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "id",
+        "value": "",
+        "label": "Section ID (Optional)",
+        "description": "Optional. A page-unique ID for links directly to this section, without #. Please use kebab-case: lowercase words separated by hyphens, e.g. section-id."
+      },
+      {
         "component": "select",
         "name": "style",
         "value": "",
@@ -1284,6 +1292,14 @@
   {
     "id": "course-hub-section",
     "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "id",
+        "value": "",
+        "label": "Section ID (Optional)",
+        "description": "Optional. A page-unique ID for links directly to this section, without #. Please use kebab-case: lowercase words separated by hyphens, e.g. section-id."
+      },
       {
         "component": "select",
         "name": "style",
@@ -1333,6 +1349,14 @@
   {
     "id": "article-content-section",
     "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "id",
+        "value": "",
+        "label": "Section ID (Optional)",
+        "description": "Optional. A page-unique ID for links directly to this section, without #. Please use kebab-case: lowercase words separated by hyphens, e.g. section-id."
+      },
       {
         "component": "select",
         "name": "style",
@@ -6209,6 +6233,14 @@
     "id": "profile-section",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "id",
+        "value": "",
+        "label": "Section ID (Optional)",
+        "description": "Optional. A page-unique ID for links directly to this section, without #. Please use kebab-case: lowercase words separated by hyphens, e.g. section-id."
+      },
+      {
         "component": "select",
         "name": "style",
         "value": "",
@@ -6249,6 +6281,14 @@
   {
     "id": "profile-bottom-section",
     "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "id",
+        "value": "",
+        "label": "Section ID (Optional)",
+        "description": "Optional. A page-unique ID for links directly to this section, without #. Please use kebab-case: lowercase words separated by hyphens, e.g. section-id."
+      },
       {
         "component": "select",
         "name": "style",
@@ -6310,6 +6350,14 @@
   {
     "id": "premium-learning-section",
     "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "id",
+        "value": "",
+        "label": "Section ID (Optional)",
+        "description": "Optional. A page-unique ID for links directly to this section, without #. Please use kebab-case: lowercase words separated by hyphens, e.g. section-id."
+      },
       {
         "component": "select",
         "name": "style",
