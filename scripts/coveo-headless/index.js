@@ -537,6 +537,13 @@ export default async function initiateCoveoHeadlessSearch({
         const readyEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.READY);
         document.dispatchEvent(readyEvent);
         resolve({
+          resetSearchHandler: () => {
+            // Reset user choices without losing the page's fixed query scope.
+            const parameters = [];
+            if (baseAdvancedQuery) parameters.push(`aq=${encodeURIComponent(baseAdvancedQuery)}`);
+            if (tabId) parameters.push(`tab=${encodeURIComponent(tabId)}`);
+            urlManager.synchronize(parameters.join('&'));
+          },
           submitSearchHandler,
           searchInputKeydownHandler,
           searchInputKeyupHandler,
