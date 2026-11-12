@@ -1015,7 +1015,8 @@ async function initHeadlessSearch(block, groups, placeholders) {
       ctx.ui.refresh();
     },
   });
-  filterContexts.get(block).resetSearch = resetSearchHandler;
+  const blockCtx = filterContexts.get(block);
+  if (blockCtx && typeof resetSearchHandler === 'function') blockCtx.resetSearch = resetSearchHandler;
 
   if (window.headlessSearchEngine) {
     try {
