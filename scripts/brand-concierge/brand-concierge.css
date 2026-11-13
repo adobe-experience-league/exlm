@@ -539,7 +539,7 @@ body[data-bc-entry='floating-ask-button'] .bc-bottom-ask-bar {
   display: none;
 }
 
-@media (min-width: 1200px) {
+@media (width >= 1200px) {
   body[data-bc-entry='bottom-ask-bar'] .bc-bottom-ask-bar {
     display: flex;
   }
@@ -886,7 +886,7 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
  * aligns with when 80vw (~615px) can fit the card layout; below that, the base column stack
  * above applies.
  */
-@media (min-width: 769px) {
+@media (width >= 769px) {
   /* Expanded only: full-width prompt area; taller, half-width welcome pill cards (not in the narrow drawer). */
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .prompt-suggestions-container {
     max-width: 100% !important;
@@ -1107,4 +1107,30 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
 
 #brand-concierge-mount .citations-number-container {
   margin-top: 0 !important;
+}
+
+/* Apply the expanded Brand Concierge typography and card sizing at desktop widths. */
+@media (width >= 1440px) {
+  /* Brand Concierge supplies BEM class names that do not match the project's kebab-case rule. */
+  /* stylelint-disable selector-class-pattern */
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message .message-content,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message .message-text,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-prompt-pill-button,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-prompt-pill-button__text,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .bc-prompt-suggestion-button,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .chat-input--input {
+    font-size: 16px !important;
+  }
+  /* stylelint-enable selector-class-pattern */
+
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .initial-state .prompt-pills-container .bc-prompt-pill-button {
+    flex: 0 0 150px !important;
+    padding: 12px !important;
+  }
+
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section .bc-panel-disclaimer,
+  .bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section .bc-panel-disclaimer a {
+    font-size: 14px;
+  }
 }
