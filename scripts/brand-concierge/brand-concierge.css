@@ -1109,7 +1109,8 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
   margin-top: 0 !important;
 }
 
-@media (min-width: 1401px) {
+/* Apply the expanded Brand Concierge typography and card sizing at desktop widths. */
+@media (width >= 1440px) {
   /* Brand Concierge supplies BEM class names that do not match the project's kebab-case rule. */
   /* stylelint-disable selector-class-pattern */
   .bc-dialog.exl-dialog-expanded #brand-concierge-mount .concierge-message,
