@@ -55,7 +55,7 @@
     var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150))
     var(--spectrum-sidenav-item-padding-y)
     var(--spectrum-sidenav-item-padding-x, var(--spectrum-global-dimension-size-150));
-  margin: 4px 0;
+  margin: 0;
 }
 
 .mini-toc-wrapper .mini-toc ul li .is-padded-left-big {
