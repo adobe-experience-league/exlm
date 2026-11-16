@@ -76,9 +76,22 @@
         const fetchContainerPageMarkup = blockRenderer.prototype.fetchContainerPageMarkup;
         blockRenderer.prototype.fetchContainerPageMarkup = async function (...args) {
           const markup = await fetchContainerPageMarkup.apply(this, args);
+          const params = new URLSearchParams(window.location.search);
+          const blockName = new URL(args[0], window.location.href).pathname
+            .split('/')
+            .pop()
+            .replace(/\.html$/, '');
+          const mockModule = CONFIGS.BLOCK_PREVIEW_MOCKS[blockName];
+          let fixtureMarkup = '';
+          if (mockModule && (params.get('mock') === 'true' || params.get('vtest') === 'true')) {
+            const { default: fixtures } = await import(mockModule);
+            const data = JSON.stringify(fixtures).replace(/</g, '\\u003c');
+            fixtureMarkup = `<script id="preview-mock-data" type="application/json">${data}<\/script>`;
+          }
           return markup.replace(
             /<head([^>]*)>/i,
-            '<head$1><script src="/tools/visual-tests/preview-url.js"><\/script>',
+            (_, attributes) =>
+              `<head${attributes}>${fixtureMarkup}<script src="/tools/visual-tests/preview-url.js"><\/script><script src="/tools/visual-tests/preview-mocks.js"><\/script>`,
           );
         };
         document.body.prepend(library);

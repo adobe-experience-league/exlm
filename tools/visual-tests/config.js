@@ -36,6 +36,10 @@ export const SIDEKICK_CONFIG = {
   templatesPath: '/tools/sidekick/blocks/',
 };
 
+export const BLOCK_PREVIEW_MOCKS = {
+  'authorable-card': '/tools/visual-tests/mocks/authorable-card.js',
+};
+
 // Blocks that are too dynamic to snapshot reliably and are skipped by generate-visual-tests.js.
 //   atomic-search:  Coveo Atomic web components loaded from Coveo's CDN; layout depends on
 //                   remote scripts and shadow-DOM hydration timing.
