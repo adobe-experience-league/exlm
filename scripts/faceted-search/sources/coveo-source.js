@@ -1,3 +1,7 @@
+import { matchesSearchIntent } from '../store.js';
+
+export { matchesSearchIntent };
+
 export function reconcileFacetSelection(controller, wanted = []) {
   const want = new Set(wanted);
   const { values } = controller.state;
@@ -8,17 +12,6 @@ export function reconcileFacetSelection(controller, wanted = []) {
   wanted.forEach((value) => {
     if (!known.has(value)) controller.toggleSelect({ value, state: 'selected' });
   });
-}
-
-export function matchesSearchIntent(intent, state) {
-  return (
-    intent.keyword === state.keyword &&
-    (intent.page === undefined || intent.page === state.page) &&
-    Object.entries(intent.filters).every(([id, wanted]) => {
-      const selected = state.filters[id] || [];
-      return wanted.length === selected.length && wanted.every((value) => selected.includes(value));
-    })
-  );
 }
 
 /**
@@ -34,6 +27,9 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
   let lastSortKey = null;
   let selectedSort = initialSort;
   let lastNativeSort;
+  let sortRestore = null;
+  let restoreId = 0;
+  let navigationId = 0;
   const ownedHashes = new Set();
   const listeners = new Set();
   const unsubscribers = [];
@@ -77,6 +73,8 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
       ready: headless.status.state.firstSearchExecuted && Boolean(responseId),
       responseId,
       sortKey: lastSortKey,
+      sortRestore,
+      navigationId,
       items: search.results,
       total: search.response?.totalCount ?? 0,
       page: headless.pager.state.currentPage,
@@ -109,6 +107,17 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
         facetFields: groups.map(({ id }) => id),
         publishGlobals: false,
         skipGenericSortDropdown: true,
+        onUrlRestore(fragment) {
+          if (ownedHashes.has(window.location.hash)) return;
+          // Capture before Headless synchronizes; later URL-manager writes can omit sortCriteria.
+          navigationId += 1;
+          restoreId += 1;
+          pending = null;
+          lastSortKey = null;
+          const value = readSort(new URLSearchParams(fragment).get('sortCriteria'));
+          sortRestore = { id: restoreId, value, fragment };
+          if (value) selectedSort = value;
+        },
       });
       if (destroyed) {
         headless.destroy();
@@ -145,6 +154,7 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
     },
     getSnapshot,
     apply(state, action, sortSelection) {
+      if (action !== 'sort' || !sortSelection) sortRestore = null;
       pending = { state, responseId: headless.engine.state.search.searchResponseId };
       applying = true;
       try {

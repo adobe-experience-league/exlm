@@ -1,5 +1,5 @@
 import { createTag } from '../scripts.js';
-import { createFilterStore } from './store.js';
+import { createFilterStore, matchesSearchIntent } from './store.js';
 import createFacetedSearchUI from './components/facets.js';
 import createSidebarLayout from './components/layout.js';
 import { createSortControl } from './components/sort-control.js';
@@ -45,10 +45,12 @@ export default async function createFacetedSearch(block, config) {
   let destroyed = false;
   let view;
   let lastRenderKey;
-  let lastResponseId;
+  let lastAnalyticsResponseId;
   let intent = null;
+  let navigationId;
   let hasCompletedSearch = false;
   let wasLoading = false;
+  let restoreRetry;
   const itemKeys = new Map();
   const cleanups = [];
   const sort = sortPolicy
@@ -75,9 +77,9 @@ export default async function createFacetedSearch(block, config) {
   shell.results.append(results.body);
   block.replaceChildren(shell.layout);
 
-  function updateSort(state, action) {
+  function updateSort(state, action, snapshot) {
     if (!sortPolicy) return null;
-    const selection = sortPolicy.resolve(state, action);
+    const selection = sortPolicy.resolve(state, action, snapshot);
     store.setSort(selection.value, { silent: true });
     sort.setOptions(selection.options, selection.value);
     sort.setHidden(!selection.options.length);
@@ -122,7 +124,12 @@ export default async function createFacetedSearch(block, config) {
   });
 
   function receive(snapshot) {
+    clearTimeout(restoreRetry);
     if (destroyed) return;
+    if (snapshot.navigationId !== undefined && snapshot.navigationId !== navigationId) {
+      navigationId = snapshot.navigationId;
+      intent = null;
+    }
     if (snapshot.error) {
       coordinator.invalidate();
       reportError(snapshot.error);
@@ -145,8 +152,23 @@ export default async function createFacetedSearch(block, config) {
     store.setKeyword(snapshot.state.keyword, { silent: true });
     store.setSort(snapshot.state.sort ?? store.get().sort, { silent: true });
     store.setPage(snapshot.page || 1, { silent: true });
-    const selection = updateSort(store.get(), 'response');
+    const selection = updateSort(store.get(), 'response', snapshot);
     const state = store.get();
+    if (selection?.deferred) {
+      // A restoring policy must not dispatch against an intermediate backend state.
+      ui.refresh();
+      ui.setLoading(true);
+      results.setLoading(true);
+      if (pagination) pagination.el.style.display = 'none';
+      restoreRetry = setTimeout(() => {
+        try {
+          receive(source.getSnapshot());
+        } catch (error) {
+          reportError(error);
+        }
+      }, 50);
+      return;
+    }
     if (selection && (selection.value !== snapshot.state.sort || selection.key !== snapshot.sortKey)) {
       source.apply(state, 'sort', selection);
       return;
@@ -166,12 +188,22 @@ export default async function createFacetedSearch(block, config) {
     ui.setResultCount(snapshot.total, labels.resultsSuffix);
     pagination?.update(snapshot.page || 1, snapshot.maxPage || 1);
     results.grid.classList.toggle(`${resultsPrefix}-one-pg-result`, (snapshot.maxPage || 1) <= 1);
-    if (intent && snapshot.responseId && snapshot.responseId !== lastResponseId) {
+    if (
+      intent &&
+      snapshot.responseId &&
+      snapshot.responseId !== intent.responseId &&
+      snapshot.responseId !== lastAnalyticsResponseId &&
+      matchesSearchIntent({ keyword: intent.state.keyword, filters: intent.state.filters }, snapshot.state)
+    ) {
       const committedIntent = intent;
       intent = null;
-      track(analytics?.onCommit, { ...committedIntent, state, snapshot });
+      lastAnalyticsResponseId = snapshot.responseId;
+      track(analytics?.onCommit, {
+        ...committedIntent,
+        state: { ...committedIntent.state, sort: state.sort },
+        snapshot,
+      });
     }
-    lastResponseId = snapshot.responseId;
     const renderKey = `${snapshot.responseId}:${state.sort}`;
     if (renderKey !== lastRenderKey) {
       lastRenderKey = renderKey;
@@ -184,8 +216,9 @@ export default async function createFacetedSearch(block, config) {
       try {
         const selection = updateSort(state, action);
         const next = store.get();
-        if (action === 'filter' || (action === 'keyword' && next.keyword)) intent = { action, state: next };
-        else if (action === 'clear' || action === 'keyword') intent = null;
+        if (action === 'filter' || (action === 'keyword' && next.keyword)) {
+          intent = { action, state: next, responseId: source.getSnapshot().responseId };
+        } else if (action === 'clear' || action === 'keyword') intent = null;
         if (action === 'clear') track(analytics?.onClear);
         source.apply(next, action, selection);
       } catch (error) {
@@ -207,6 +240,7 @@ export default async function createFacetedSearch(block, config) {
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      clearTimeout(restoreRetry);
       observer?.disconnect();
       cleanups.forEach((cleanup) => cleanup());
       coordinator.destroy();

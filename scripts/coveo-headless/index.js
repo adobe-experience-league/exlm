@@ -169,6 +169,7 @@ export default async function initiateCoveoHeadlessSearch({
   skipGenericSortDropdown = false,
   tabId = '',
   publishGlobals = true,
+  onUrlRestore,
 }) {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
@@ -235,6 +236,7 @@ export default async function initiateCoveoHeadlessSearch({
           parameters.push(`tab=${encodeURIComponent(tabId)}`);
           return parameters.join('&');
         };
+        onUrlRestore?.(fragment());
         const urlManager = module.buildUrlManager(headlessSearchEngine, {
           initialState: { fragment: fragmentForSynchronization() },
         });
@@ -317,6 +319,7 @@ export default async function initiateCoveoHeadlessSearch({
         reapplyBaseAdvancedQuery();
 
         function onHashChange() {
+          onUrlRestore?.(fragment());
           urlManager.synchronize(fragmentForSynchronization());
           reapplyBaseAdvancedQuery({ rerunSearch: true });
         }

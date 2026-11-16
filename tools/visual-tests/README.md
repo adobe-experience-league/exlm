@@ -38,7 +38,7 @@ Each generated spec (e.g. [`blocks/accordion/accordion.spec.js`](blocks/accordio
    - `scripts/delayed.js` and Brand Concierge are replaced with no-ops. The stub still dispatches `delayed-load`, so blocks that listen for it keep working.
    - The `aem up` livereload client is disabled, so saving a file mid-run can't reload the page.
    - `Date` is frozen: Coveo-mocked blocks use their HAR recording time, other blocks use `SNAPSHOT_FIXED_TIME`. Locale/timezone are pinned to `en-US`/`UTC` in [`playwright.config.ts`](playwright.config.ts).
-   - Coveo calls are replayed from `blocks/<block>/<block>.har` for blocks in `COVEO_MOCKED_BLOCKS`.
+   - Coveo calls are replayed from `blocks/<block>/<block>.har` for blocks in `COVEO_MOCKED_BLOCKS`. Each search gets a fresh, deterministic response ID so Headless can distinguish completed follow-up searches; recorded results remain unchanged.
 2. Navigates to `/tools/sidekick/library.html?plugin=blocks&path=<template>&index=<variation>&vtest=true`. The `vtest=true` flag puts the library UI into a stripped-down "vtest mode" (see [`visual-test.js`](visual-test.js)) that hides chrome and lets the block render at full width.
 3. **Waits on real readiness signals (no fixed sleeps):**
    - every block in the iframe has `data-block-status="loaded"`, and `fonts.css`/`lazy-styles.css` are attached

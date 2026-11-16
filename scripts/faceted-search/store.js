@@ -89,3 +89,14 @@ export function normalizePage(value, maxPage) {
   if (!Number.isInteger(page)) return null;
   return Math.max(1, Math.min(page, Math.max(1, maxPage)));
 }
+
+export function matchesSearchIntent(intent, state) {
+  return (
+    intent.keyword === state.keyword &&
+    (intent.page === undefined || intent.page === state.page) &&
+    Object.entries(intent.filters).every(([id, wanted]) => {
+      const selected = state.filters[id] || [];
+      return wanted.length === selected.length && wanted.every((value) => selected.includes(value));
+    })
+  );
+}
