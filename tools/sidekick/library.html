@@ -71,6 +71,16 @@
             },
           },
         };
+        await customElements.whenDefined('block-renderer');
+        const blockRenderer = customElements.get('block-renderer');
+        const fetchContainerPageMarkup = blockRenderer.prototype.fetchContainerPageMarkup;
+        blockRenderer.prototype.fetchContainerPageMarkup = async function (...args) {
+          const markup = await fetchContainerPageMarkup.apply(this, args);
+          return markup.replace(
+            /<head([^>]*)>/i,
+            '<head$1><script src="/tools/visual-tests/preview-url.js"><\/script>',
+          );
+        };
         document.body.prepend(library);
       })();
     </script>
