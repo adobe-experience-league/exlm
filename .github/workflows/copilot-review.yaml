@@ -216,11 +216,6 @@ jobs:
             if (!projectGuidance || !reviewSkill) {
               throw new Error('Trusted project guidance or the installed code-review skill is empty.');
             }
-            const postingStart = reviewSkill.indexOf('\n### Step 8: Generate Review Summary');
-            if (postingStart < 1) {
-              throw new Error('Cannot locate the trusted code-review criteria boundary. Check the installed skill format.');
-            }
-            const reviewCriteria = reviewSkill.slice(0, postingStart);
             const prompt = [
               'Perform a strict, line-by-line pull request review for security vulnerabilities, bugs, regressions, and actionable code-quality issues, including small defects.',
               'This is Adobe Experience League on AEM Edge Delivery Services.',
@@ -271,7 +266,7 @@ jobs:
               'END TRUSTED PROJECT GUIDANCE',
               '',
               'BEGIN CODE-REVIEW SKILL CRITERIA',
-              reviewCriteria,
+              reviewSkill,
               'END CODE-REVIEW SKILL CRITERIA',
               '',
               'BEGIN UNTRUSTED PR DISCUSSION',
