@@ -111,12 +111,24 @@
   max-width: 1700px;
 }
 
+.docs.docs-landing main h1,
+.docs.docs-solution-landing main h1 {
+  overflow-wrap: normal;
+}
+
 .docs main .section {
   padding: 0;
 }
 
 .docs main .section + .last {
   margin-bottom: 48px;
+}
+
+@media (width >= 600px) {
+  .docs.docs-landing main h1,
+  .docs.docs-solution-landing main h1 {
+    overflow-wrap: inherit;
+  }
 }
 
 @media (width >= 900px) {
