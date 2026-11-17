@@ -400,11 +400,8 @@ export function createSidebarLayout({
       'aria-expanded': 'false',
       'aria-controls': panelId,
     });
-    const toggleLabel = createTag('span', { class: `${prefix}-mobile-filter-toggle-label` });
-    toggleLabel.textContent = ui.filtersEl.querySelector(`.${prefix}-filters-heading`)?.textContent || 'Filters';
     toggle.append(
       createTag('span', { class: 'icon icon-atomic-search-filter' }),
-      toggleLabel,
       createTag('span', { class: `${prefix}-mobile-filter-toggle-count` }),
       createTag('span', { class: 'icon icon-chevron' }),
     );
