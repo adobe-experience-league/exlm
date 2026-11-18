@@ -6,38 +6,47 @@ const highlightBackgrounds = ['ffeceb', 'ffcbc7', 'eb1100'];
 function resolveStyles(block) {
   const errors = [];
   const classes = [...block.classList];
-  const select = (prefix, allowed, fallback) => {
-    const values = classes.filter((name) => name.startsWith(prefix)).map((name) => name.slice(prefix.length));
-    if (values.length > 1 || values.some((value) => !allowed.includes(value))) {
-      errors.push(`Invalid or conflicting ${prefix} selection`);
-      return fallback;
-    }
-    return values[0] || fallback;
+  // UE replaces the block with server-rendered HTML. Only persisted class order is available,
+  // not click history; resolve each group from its last valid serialized choice.
+  const select = (prefix, allowed, fallback, aliases = {}) => {
+    let selected = fallback;
+    classes.forEach((name) => {
+      if (Object.hasOwn(aliases, name)) selected = aliases[name];
+      else if (name.startsWith(prefix)) {
+        const value = name.slice(prefix.length);
+        if (allowed.includes(value)) selected = value;
+        else errors.push(`Invalid ${prefix} selection: ${value}`);
+      }
+    });
+    return selected;
   };
-  const comparison = select('padding-comparison-', ['balanced', 'row-dense', 'column-dense', 'most-compact'], null);
-  if (comparison) block.dataset.columnsPaddingComparison = comparison;
+  const presets = ['default', 'balanced', 'row-dense', 'column-dense', 'most-compact'];
+  const comparison = select('padding-comparison-', presets, null);
+  if (comparison && comparison !== 'default') block.dataset.columnsPaddingComparison = comparison;
   else delete block.dataset.columnsPaddingComparison;
   ['row', 'column'].forEach((axis) => {
-    const padding = select(`${axis}-padding-`, ['default', 'compact'], 'default');
-    block.toggleAttribute(`data-columns-compact-${axis}`, !!comparison || padding === 'compact');
+    const padding = select(
+      `${axis}-padding-`,
+      ['default', 'compact'],
+      'default',
+      Object.fromEntries(
+        presets.map((preset) => [`padding-comparison-${preset}`, preset === 'default' ? 'default' : 'compact']),
+      ),
+    );
+    block.toggleAttribute(`data-columns-compact-${axis}`, padding === 'compact');
   });
+  const width = select('column-width-', ['equal', 'fit-content'], 'equal');
+  block.dataset.columnsWidth = width;
   const highlight = (axis) => {
-    if (!block.classList.contains(`highlight-first-${axis}`)) return null;
-    if (block.classList.contains(`highlight-${axis}-off`)) {
-      errors.push(`Conflicting ${axis} highlight On/Off selection`);
-      return null;
-    }
+    // Backgrounds are authoritative; deprecated On/Off tokens must not trap persisted content.
     const background = select(`${axis}-bg-`, highlightBackgrounds, null);
+    if (!background) return null;
     let foreground = select(`${axis}-text-`, ['black', 'white'], 'black');
-    if (!background) {
-      errors.push(`Select one background for the ${axis} highlight`);
-      return null;
-    }
     if (foreground === 'white' && background !== 'eb1100') {
       errors.push(`White text requires #EB1100 for the ${axis} highlight; rendering Black`);
       foreground = 'black';
     }
-    return { background: `#${background}`, foreground: foreground === 'white' ? '#ffffff' : '#000000' };
+    return { background, foreground };
   };
   const rowHighlight = highlight('row');
   const columnHighlight = highlight('column');
@@ -49,11 +58,11 @@ function resolveStyles(block) {
       const style = precedence === 'column' ? columnStyle || rowStyle : rowStyle || columnStyle;
       cell.toggleAttribute('data-columns-highlight', !!style);
       if (style) {
-        cell.style.setProperty('--columns-highlight-background', style.background);
-        cell.style.setProperty('--columns-highlight-foreground', style.foreground);
+        cell.dataset.columnsHighlightBackground = style.background;
+        cell.dataset.columnsHighlightForeground = style.foreground;
       } else {
-        cell.style.removeProperty('--columns-highlight-background');
-        cell.style.removeProperty('--columns-highlight-foreground');
+        delete cell.dataset.columnsHighlightBackground;
+        delete cell.dataset.columnsHighlightForeground;
       }
     });
   });
@@ -61,6 +70,7 @@ function resolveStyles(block) {
     'data-columns-enhanced',
     block.hasAttribute('data-columns-compact-row') ||
       block.hasAttribute('data-columns-compact-column') ||
+      width === 'fit-content' ||
       !!rowHighlight ||
       !!columnHighlight,
   );

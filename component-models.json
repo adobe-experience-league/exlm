@@ -1502,7 +1502,7 @@
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
-        "description": "Choose one option per group, except Style Options. Deselect the previous choice when switching; Default padding means no compact option selected. Highlight colors apply only when On; choose one background per enabled highlight. White text is only for #EB1100. Row wins intersections unless Column is selected.",
+        "description": "The last serialized choice in each group applies; selection click order depends on the editor. Deselect older choices if needed. Default restores existing padding. Fit to content aligns widths across rows from 600px; mobile stays stacked. Selecting a background enables that highlight; deselect all backgrounds for that row or column to disable it. Legacy highlight On/Off values are ignored. White text is only for #EB1100. Row wins intersections unless Column is selected.",
         "options": [
           {
             "name": "Style Options",
@@ -1514,7 +1514,7 @@
           {
             "name": "Padding (values per side)",
             "children": [
-              { "name": "Default", "value": "" },
+              { "name": "Default", "value": "padding-comparison-default" },
               {
                 "name": "Compact option 1 - Balanced: 8px top/bottom, 8px left/right",
                 "value": "padding-comparison-balanced"
@@ -1541,14 +1541,7 @@
             ]
           },
           {
-            "name": "Highlight first row",
-            "children": [
-              { "name": "Off (default)", "value": "highlight-row-off" },
-              { "name": "On", "value": "highlight-first-row" }
-            ]
-          },
-          {
-            "name": "First row background (used only when Highlight first row = On)",
+            "name": "First row background",
             "children": [
               { "name": "#FFECEB", "value": "row-bg-ffeceb" },
               { "name": "#FFCBC7", "value": "row-bg-ffcbc7" },
@@ -1556,21 +1549,14 @@
             ]
           },
           {
-            "name": "First row text (used only when Highlight first row = On)",
+            "name": "First row text",
             "children": [
               { "name": "Black (default)", "value": "row-text-black" },
               { "name": "White (only on #EB1100)", "value": "row-text-white" }
             ]
           },
           {
-            "name": "Highlight first column",
-            "children": [
-              { "name": "Off (default)", "value": "highlight-column-off" },
-              { "name": "On", "value": "highlight-first-column" }
-            ]
-          },
-          {
-            "name": "First column background (used only when Highlight first column = On)",
+            "name": "First column background",
             "children": [
               { "name": "#FFECEB", "value": "column-bg-ffeceb" },
               { "name": "#FFCBC7", "value": "column-bg-ffcbc7" },
@@ -1578,14 +1564,14 @@
             ]
           },
           {
-            "name": "First column text (used only when Highlight first column = On)",
+            "name": "First column text",
             "children": [
               { "name": "Black (default)", "value": "column-text-black" },
               { "name": "White (only on #EB1100)", "value": "column-text-white" }
             ]
           },
           {
-            "name": "Highlight precedence (used only when both highlights = On)",
+            "name": "Highlight precedence (used only when both backgrounds are selected)",
             "children": [
               { "name": "Row (default)", "value": "highlight-precedence-row" },
               { "name": "Column", "value": "highlight-precedence-column" }

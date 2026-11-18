@@ -40,6 +40,11 @@
   width: 96%;
 }
 
+.columns[data-columns-enhanced].b-alt-row > div > div {
+  box-sizing: border-box;
+  width: 100%;
+}
+
 .columns.block.b-alt-row > div:first-child {
   display: none;
 }
@@ -164,14 +169,29 @@
   padding-right: 0;
 }
 
-.columns.block[data-columns-decorated][data-columns-enhanced].b-alt-row > div > div {
-  box-sizing: border-box;
-  width: 100%;
-}
-
 .columns > div > div[data-columns-highlight] {
   background-color: var(--columns-highlight-background);
   color: var(--columns-highlight-foreground);
+}
+
+.columns [data-columns-highlight-background='ffeceb'] {
+  --columns-highlight-background: #ffeceb;
+}
+
+.columns [data-columns-highlight-background='ffcbc7'] {
+  --columns-highlight-background: #ffcbc7;
+}
+
+.columns [data-columns-highlight-background='eb1100'] {
+  --columns-highlight-background: #eb1100;
+}
+
+.columns [data-columns-highlight-foreground='black'] {
+  --columns-highlight-foreground: #000;
+}
+
+.columns [data-columns-highlight-foreground='white'] {
+  --columns-highlight-foreground: #fff;
 }
 
 .columns > div > div[data-columns-highlight] :is(p, h1, h2, h3, h4, h5, h6, li, strong, em, code):not(.button *),
@@ -188,15 +208,69 @@
   outline-offset: 2px;
 }
 
+.columns > div > div[data-columns-highlight] pre {
+  background-color: var(--columns-highlight-background);
+  color: var(--columns-highlight-foreground);
+}
+
+.columns > div > div[data-columns-highlight] :is(a.button.secondary, button.secondary) {
+  color: var(--columns-highlight-foreground);
+  border-color: currentcolor;
+  background-color: transparent;
+}
+
 .columns[data-columns-enhanced].b-alt-row .header-label,
 .columns[data-columns-enhanced].b-alt-row .cell-content {
   min-width: 0;
   box-sizing: border-box;
 }
 
+.columns.b-alt-row .cell-content > p:last-child,
+.columns.b-alt-row .cell-content > [data-aue-type^='richtext'] > p:last-child {
+  margin-bottom: 0;
+}
+
 @media (width >= 600px) {
   .columns[data-columns-enhanced] > div {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  /* Auto table tracks share intrinsic widths across authored rows without moving UE nodes. */
+  @media (width >= 600px) {
+    .columns.block[data-columns-width='fit-content'] {
+      display: table;
+      width: 100%;
+      table-layout: auto;
+      border-collapse: collapse;
+    }
+
+    .columns.block[data-columns-width='fit-content'] > div {
+      display: table-row;
+    }
+
+    .columns.block[data-columns-width='fit-content'] > div > div {
+      display: table-cell;
+      width: auto;
+      vertical-align: top;
+    }
+
+    .columns.block[data-columns-width='fit-content'] > div:first-child {
+      display: table-row;
+    }
+
+    .columns.block[data-columns-width='fit-content'].align-middle > div > div {
+      vertical-align: middle;
+    }
+
+    .columns.block[data-columns-width='fit-content'] > div > div > [data-aue-type^='richtext'] {
+      display: block;
+      width: auto;
+    }
+
+    .columns.block[data-columns-width='fit-content'] pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
   }
 
   .columns[data-columns-enhanced].b-alt-row > div > div {
