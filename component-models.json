@@ -1502,7 +1502,7 @@
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
-        "description": "The last serialized choice in each group applies; selection click order depends on the editor. Deselect older choices if needed. Default restores existing padding. Fit to content aligns widths across rows from 600px; mobile stays stacked. Selecting a background enables that highlight; deselect all backgrounds for that row or column to disable it. Legacy highlight On/Off values are ignored. White text is only for #EB1100. Row wins intersections unless Column is selected.",
+        "description": "Choose one option per group. Select a background color to highlight the first row or column. For accessibility, white text applies only on #EB1100. Row colors take precedence unless Column is selected.",
         "options": [
           {
             "name": "Style Options",
