@@ -20,19 +20,15 @@ export default function createSidebarLayout({
     const toggle = createTag('button', {
       class: `${prefix}-mobile-filter-toggle`,
       type: 'button',
+      'aria-label': ui.filtersEl.querySelector(`.${prefix}-filters-heading`)?.textContent || 'Filters',
       'aria-expanded': 'false',
       'aria-controls': panelId,
     });
-    const toggleLabel = createTag('span', { class: `${prefix}-mobile-filter-toggle-label` });
-    toggleLabel.textContent = ui.filtersEl.querySelector(`.${prefix}-filters-heading`)?.textContent || 'Filters';
     toggle.append(
       createTag('span', { class: 'icon icon-atomic-search-filter' }),
-      toggleLabel,
-      createTag('span', { class: `${prefix}-mobile-filter-toggle-count` }),
       createTag('span', { class: 'icon icon-chevron' }),
     );
     decorateIcons(toggle);
-    const countBadge = toggle.querySelector(`.${prefix}-mobile-filter-toggle-count`);
 
     const setOpen = (open) => {
       layout.classList.toggle('is-filters-open', open);
@@ -49,11 +45,6 @@ export default function createSidebarLayout({
       true,
     );
 
-    // show how many filters are active, so it's visible while the panel is collapsed
-    ui.onRefresh(() => {
-      const n = ui.store.get().tags.length;
-      countBadge.textContent = n ? `(${n})` : '';
-    });
     aside.append(toggle);
   }
 

@@ -606,15 +606,6 @@
   cursor: pointer;
 }
 
-.fs-layout .fs-mobile-filter-toggle-label {
-  flex: 1;
-}
-
-.fs-layout .fs-mobile-filter-toggle-count {
-  font-weight: 400;
-  color: var(--non-spectrum-article-dark-gray, #505050);
-}
-
 .fs-layout .fs-mobile-filter-toggle .icon {
   display: inline-flex;
   flex: none;
