@@ -1502,160 +1502,96 @@
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
+        "description": "Choose one option per group, except Style Options. Deselect the previous choice when switching; Default padding means no compact option selected. Highlight colors apply only when On; choose one background per enabled highlight. White text is only for #EB1100. Row wins intersections unless Column is selected.",
         "options": [
           {
-            "name": "Border w/ alternating rows",
-            "value": "b-alt-row"
+            "name": "Style Options",
+            "children": [
+              { "name": "Border w/ alternating rows", "value": "b-alt-row" },
+              { "name": "Align to middle", "value": "align-middle" }
+            ]
           },
           {
-            "name": "Align to middle",
-            "value": "align-middle"
+            "name": "Padding (values per side)",
+            "children": [
+              { "name": "Default", "value": "" },
+              {
+                "name": "Compact option 1 - Balanced: 8px top/bottom, 8px left/right",
+                "value": "padding-comparison-balanced"
+              },
+              {
+                "name": "Compact option 2 - Row-dense: 4px top/bottom, 8px left/right",
+                "value": "padding-comparison-row-dense"
+              },
+              {
+                "name": "Compact option 3 - Column-dense: 8px top/bottom, 4px left/right",
+                "value": "padding-comparison-column-dense"
+              },
+              {
+                "name": "Compact option 4 - Most compact: 4px top/bottom, 4px left/right",
+                "value": "padding-comparison-most-compact"
+              }
+            ]
+          },
+          {
+            "name": "Column width",
+            "children": [
+              { "name": "Equal", "value": "column-width-equal" },
+              { "name": "Fit to content", "value": "column-width-fit-content" }
+            ]
+          },
+          {
+            "name": "Highlight first row",
+            "children": [
+              { "name": "Off (default)", "value": "highlight-row-off" },
+              { "name": "On", "value": "highlight-first-row" }
+            ]
+          },
+          {
+            "name": "First row background (used only when Highlight first row = On)",
+            "children": [
+              { "name": "#FFECEB", "value": "row-bg-ffeceb" },
+              { "name": "#FFCBC7", "value": "row-bg-ffcbc7" },
+              { "name": "#EB1100", "value": "row-bg-eb1100" }
+            ]
+          },
+          {
+            "name": "First row text (used only when Highlight first row = On)",
+            "children": [
+              { "name": "Black (default)", "value": "row-text-black" },
+              { "name": "White (only on #EB1100)", "value": "row-text-white" }
+            ]
+          },
+          {
+            "name": "Highlight first column",
+            "children": [
+              { "name": "Off (default)", "value": "highlight-column-off" },
+              { "name": "On", "value": "highlight-first-column" }
+            ]
+          },
+          {
+            "name": "First column background (used only when Highlight first column = On)",
+            "children": [
+              { "name": "#FFECEB", "value": "column-bg-ffeceb" },
+              { "name": "#FFCBC7", "value": "column-bg-ffcbc7" },
+              { "name": "#EB1100", "value": "column-bg-eb1100" }
+            ]
+          },
+          {
+            "name": "First column text (used only when Highlight first column = On)",
+            "children": [
+              { "name": "Black (default)", "value": "column-text-black" },
+              { "name": "White (only on #EB1100)", "value": "column-text-white" }
+            ]
+          },
+          {
+            "name": "Highlight precedence (used only when both highlights = On)",
+            "children": [
+              { "name": "Row (default)", "value": "highlight-precedence-row" },
+              { "name": "Column", "value": "highlight-precedence-column" }
+            ]
           }
         ]
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "classes_rowPadding",
-        "label": "Row padding",
-        "value": "row-padding-default",
-        "options": [
-          { "name": "Default", "value": "row-padding-default" },
-          { "name": "Compact (provisional 8px)", "value": "row-padding-compact" }
-        ]
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "classes_columnPadding",
-        "label": "Column padding",
-        "value": "column-padding-default",
-        "options": [
-          { "name": "Default", "value": "column-padding-default" },
-          { "name": "Compact (provisional 8px)", "value": "column-padding-compact" }
-        ]
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "classes_paddingComparisonPreset",
-        "label": "Padding comparison preset (temporary)",
-        "description": "Temporary stakeholder comparison; remove after final selection. Values are per side: top/bottom and left/right. Selecting a numbered preset overrides both Row padding and Column padding; otherwise those independent controls apply.",
-        "value": "",
-        "options": [
-          { "name": "Use Row padding and Column padding (no override)", "value": "" },
-          {
-            "name": "Option 1 - Balanced compact: 8px top/bottom, 8px left/right",
-            "value": "padding-comparison-balanced"
-          },
-          {
-            "name": "Option 2 - Row-dense: 4px top/bottom, 8px left/right",
-            "value": "padding-comparison-row-dense"
-          },
-          {
-            "name": "Option 3 - Column-dense: 8px top/bottom, 4px left/right",
-            "value": "padding-comparison-column-dense"
-          },
-          {
-            "name": "Option 4 - Most compact: 4px top/bottom, 4px left/right",
-            "value": "padding-comparison-most-compact"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "valueType": "string",
-        "name": "classes_columnWidthMode",
-        "label": "Column width mode",
-        "value": "column-width-equal",
-        "options": [
-          { "name": "Equal", "value": "column-width-equal" },
-          { "name": "Fit to content", "value": "column-width-fit-content" }
-        ]
-      },
-      {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "classes_highlight-first-row",
-        "label": "Highlight first row",
-        "value": false
-      },
-      {
-        "condition": { "===": [{ "var": "classes_highlight-first-row" }, true] },
-        "component": "select",
-        "valueType": "string",
-        "name": "classes_rowBackground",
-        "label": "First row background",
-        "description": "Select a background. Light backgrounds use Black text.",
-        "required": true,
-        "options": [
-          { "name": "#FFECEB", "value": "row-bg-ffeceb" },
-          { "name": "#FFCBC7", "value": "row-bg-ffcbc7" },
-          { "name": "#EB1100", "value": "row-bg-eb1100" }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "classes_highlight-first-row" }, true] },
-            { "===": [{ "var": "classes_rowBackground" }, "row-bg-eb1100"] }
-          ]
-        },
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "classes_row-text-white",
-        "label": "Use White text in first row",
-        "description": "Off uses Black text. White is available only on #EB1100.",
-        "value": false
-      },
-      {
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "classes_highlight-first-column",
-        "label": "Highlight first column",
-        "value": false
-      },
-      {
-        "condition": { "===": [{ "var": "classes_highlight-first-column" }, true] },
-        "component": "select",
-        "valueType": "string",
-        "name": "classes_columnBackground",
-        "label": "First column background",
-        "description": "Select a background. Light backgrounds use Black text.",
-        "required": true,
-        "options": [
-          { "name": "#FFECEB", "value": "column-bg-ffeceb" },
-          { "name": "#FFCBC7", "value": "column-bg-ffcbc7" },
-          { "name": "#EB1100", "value": "column-bg-eb1100" }
-        ]
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "classes_highlight-first-column" }, true] },
-            { "===": [{ "var": "classes_columnBackground" }, "column-bg-eb1100"] }
-          ]
-        },
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "classes_column-text-white",
-        "label": "Use White text in first column",
-        "description": "Off uses Black text. White is available only on #EB1100.",
-        "value": false
-      },
-      {
-        "condition": {
-          "and": [
-            { "===": [{ "var": "classes_highlight-first-row" }, true] },
-            { "===": [{ "var": "classes_highlight-first-column" }, true] }
-          ]
-        },
-        "component": "boolean",
-        "valueType": "boolean",
-        "name": "classes_highlight-precedence-column",
-        "label": "Column highlight takes precedence",
-        "description": "Off: Row wins at the intersection. On: Column wins.",
-        "value": false
       }
     ]
   },
