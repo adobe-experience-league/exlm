@@ -1,4 +1,43 @@
-import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
+import { CONTENT_TYPES } from '../../data-service/coveo/coveo-exl-pipeline-constants.js';
+import { pushEventsFilterSearchEvent, pushEventsClearFiltersEvent } from '../../analytics/lib-analytics.js';
+
+export function alphabetical(a, b) {
+  return a.title.localeCompare(b.title, document.documentElement.lang || 'en', { sensitivity: 'base' });
+}
+
+export function getEventFacetItems(group, values, state) {
+  const selected = new Set(state.filters[group.id]);
+  if (group.items) {
+    return group.items
+      .map((item) => ({ ...item, count: values.find((value) => value.value === item.value)?.count ?? 0 }))
+      .filter((item) => selected.has(item.value) || item.count > 0);
+  }
+  return values
+    .filter((value) => selected.has(value.value) || value.count > 0)
+    .map((value) => ({ ...value, title: value.value.split('|').join(' | ') }))
+    .sort(alphabetical);
+}
+
+export const eventsSearchAnalytics = {
+  onClear: pushEventsClearFiltersEvent,
+  onCommit({ action, state, snapshot }) {
+    const linkMeta =
+      action === 'keyword'
+        ? { linkTitle: 'search events', linkType: 'search text box' }
+        : { linkTitle: 'events filter apply', linkType: 'filter' };
+    pushEventsFilterSearchEvent({
+      ...linkMeta,
+      count: snapshot.total,
+      filter: {
+        product: state.filters.el_product,
+        eventType: state.filters.el_contenttype,
+        series: state.filters.el_event_series,
+      },
+      sortBy: state.sort === 'relevance' ? 'relevancy' : state.sort,
+      term: state.keyword,
+    });
+  },
+};
 
 const UPCOMING = CONTENT_TYPES.UPCOMING_EVENT_V2.MAPPING_KEY;
 const ON_DEMAND = CONTENT_TYPES.ON_DEMAND_EVENT.MAPPING_KEY;

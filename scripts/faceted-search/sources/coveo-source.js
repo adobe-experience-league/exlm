@@ -1,4 +1,4 @@
-import { matchesSearchIntent } from '../store.js';
+import { matchesSearchIntent } from '../state/store.js';
 
 export { matchesSearchIntent };
 

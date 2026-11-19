@@ -21,6 +21,25 @@ export function sortItems(items, sort, getTitle = (item) => item.title) {
   );
 }
 
+/** Static options for collection sources; server-specific policies may also provide a criterion. */
+export function createCollectionSortPolicy({
+  options = getDefaultSortOptions(),
+  initial = options[0]?.value ?? '',
+  defaultSort = initial,
+} = {}) {
+  if (![initial, defaultSort].every((value) => options.some((option) => option.value === value))) {
+    throw new Error('Collection initial and default sorts must be present in options');
+  }
+  return {
+    initial,
+    default: defaultSort,
+    resolve(state) {
+      const value = options.some((option) => option.value === state.sort) ? state.sort : defaultSort;
+      return { value, key: value, options };
+    },
+  };
+}
+
 /**
  * "Sort: <current> v" dropdown. Options are [{ value, label }].
  * onChange(value) fires only on a user selection.

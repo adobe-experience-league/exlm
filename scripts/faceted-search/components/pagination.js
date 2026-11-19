@@ -1,5 +1,5 @@
 import { createTag } from '../../scripts.js';
-import { normalizePage } from '../store.js';
+import { normalizePage } from '../state/store.js';
 
 export default function createPagination({ prefix = 'fs', labels = {}, onChange }) {
   const abort = new AbortController();
