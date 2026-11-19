@@ -1502,7 +1502,7 @@
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
-        "description": "Choose one option per group. Select a background color to highlight the first row or column. For accessibility, white text applies only on #EB1100. Row colors take precedence unless Column is selected.",
+        "description": "Choose one option per group. Select a background color to highlight the first row or column. For accessibility, white text applies only on Adobe red. Row colors take precedence unless Column is selected.",
         "options": [
           {
             "name": "Style Options",
@@ -1516,19 +1516,11 @@
             "children": [
               { "name": "Default", "value": "padding-comparison-default" },
               {
-                "name": "Compact option 1 - Balanced: 8px top/bottom, 8px left/right",
+                "name": "Compact option 1: 8px top/bottom and left/right",
                 "value": "padding-comparison-balanced"
               },
               {
-                "name": "Compact option 2 - Row-dense: 4px top/bottom, 8px left/right",
-                "value": "padding-comparison-row-dense"
-              },
-              {
-                "name": "Compact option 3 - Column-dense: 8px top/bottom, 4px left/right",
-                "value": "padding-comparison-column-dense"
-              },
-              {
-                "name": "Compact option 4 - Most compact: 4px top/bottom, 4px left/right",
+                "name": "Compact option 2: 4px top/bottom and left/right",
                 "value": "padding-comparison-most-compact"
               }
             ]
@@ -1543,31 +1535,31 @@
           {
             "name": "First row background",
             "children": [
-              { "name": "#FFECEB", "value": "row-bg-ffeceb" },
-              { "name": "#FFCBC7", "value": "row-bg-ffcbc7" },
-              { "name": "#EB1100", "value": "row-bg-eb1100" }
+              { "name": "Very pale red", "value": "row-bg-ffeceb" },
+              { "name": "Light pink-red", "value": "row-bg-ffcbc7" },
+              { "name": "Adobe red", "value": "row-bg-eb1100" }
             ]
           },
           {
             "name": "First row text",
             "children": [
               { "name": "Black (default)", "value": "row-text-black" },
-              { "name": "White (only on #EB1100)", "value": "row-text-white" }
+              { "name": "White (only on Adobe red)", "value": "row-text-white" }
             ]
           },
           {
             "name": "First column background",
             "children": [
-              { "name": "#FFECEB", "value": "column-bg-ffeceb" },
-              { "name": "#FFCBC7", "value": "column-bg-ffcbc7" },
-              { "name": "#EB1100", "value": "column-bg-eb1100" }
+              { "name": "Very pale red", "value": "column-bg-ffeceb" },
+              { "name": "Light pink-red", "value": "column-bg-ffcbc7" },
+              { "name": "Adobe red", "value": "column-bg-eb1100" }
             ]
           },
           {
             "name": "First column text",
             "children": [
               { "name": "Black (default)", "value": "column-text-black" },
-              { "name": "White (only on #EB1100)", "value": "column-text-white" }
+              { "name": "White (only on Adobe red)", "value": "column-text-white" }
             ]
           },
           {
