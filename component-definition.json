@@ -792,9 +792,7 @@
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/columns/v1/columns",
-                "template": {
-                  "filter": "columns-rte-no-h1"
-                }
+                "template": {}
               }
             }
           }
