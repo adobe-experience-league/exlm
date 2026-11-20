@@ -295,7 +295,7 @@ main .browse-courses .browse-courses-results-grid,
 main .browse-courses.browse-courses-loading .browse-card-shimmer {
   display: grid;
   grid-template-columns: repeat(var(--browse-courses-columns), minmax(0, 1fr));
-  gap: var(--spectrum-spacing-300, 24px);
+  gap: var(--spectrum-spacing-300, 16px);
   margin: 0;
 }
 
@@ -318,7 +318,7 @@ main .browse-courses .browse-courses-status-empty:empty {
 }
 
 main .browse-courses .browse-courses-status-empty:not(:empty) {
-  padding: var(--spectrum-spacing-1000, 72px) var(--spectrum-spacing-300, 24px);
+  padding: var(--spectrum-spacing-1000, 72px) var(--spectrum-spacing-300, 16px);
   background-color: var(--spectrum-gray-200);
   color: var(--spectrum-gray-700);
   text-align: center;

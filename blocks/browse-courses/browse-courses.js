@@ -8,7 +8,8 @@ const LEGACY_URL_PARAMS = { product: 'el_product', level: 'el_level' };
 
 /** Migrate legacy query filters into `#f-…` before faceted-search init. */
 function migrateLegacyUrlParams() {
-  if (window.location.hash) return;
+  // Skip only when the hash already carries faceted product/level (not unrelated anchors).
+  if (/[#&]f-el_(product|level)=/.test(window.location.hash)) return;
   const params = new URLSearchParams(window.location.search);
   const fragment = Object.entries(LEGACY_URL_PARAMS)
     .map(([param, facet]) => {

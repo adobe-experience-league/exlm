@@ -82,18 +82,13 @@ function createStatusView(placeholders) {
     const items = () => [...body.querySelectorAll('.browse-courses-card-item')];
 
     function syncResultCount() {
-      const countEl = block.querySelector('.fs-results-count');
-      if (!countEl || coveoTotal == null) return;
-      const display = selectedStatuses.size > 0 ? items().filter((card) => !card.hidden).length : coveoTotal;
-      const formatted = new Intl.NumberFormat(document.documentElement.lang || undefined).format(display);
-      const valueEl = countEl.querySelector('.fs-results-count-value');
-      if (valueEl) {
-        valueEl.textContent = formatted;
-        return;
-      }
-      const value = createTag('strong', { class: 'fs-results-count-value' });
-      value.textContent = formatted;
-      countEl.replaceChildren(value, document.createTextNode(` ${placeholders.courseResultsCountSuffix || 'courses'}`));
+      // Only override the shared count while a Status filter is active.
+      if (!selectedStatuses.size || coveoTotal == null) return;
+      const countEl = block.querySelector('.fs-results-count .fs-results-count-value');
+      if (!countEl) return;
+      countEl.textContent = new Intl.NumberFormat(document.documentElement.lang || undefined).format(
+        items().filter((card) => !card.hidden).length,
+      );
     }
 
     function applyStatus() {
