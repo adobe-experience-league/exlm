@@ -8,14 +8,17 @@ import { createCollectionSortPolicy, createEventSortPolicy, readEventSort } from
 import { alphabetical, getEventFacetItems, getPlaylistFacetItems } from '../components/filters.js';
 import { renderPlaylistCard } from '../components/cards.js';
 
+const SUPPORTED_CONTENT_TYPES = ['event', 'playlist', 'perspective'];
+
 export default async function createContentConfig({
   contentType,
   filters = false,
   sort = false,
   viewSwitcher = false,
   pagination = false,
+  filterLabel,
 }) {
-  if (!['event', 'playlist'].includes(contentType)) {
+  if (!SUPPORTED_CONTENT_TYPES.includes(contentType)) {
     throw new Error(`Faceted-search configuration is not implemented for content type: ${contentType}`);
   }
   const features = { filters, sort, viewSwitcher, pagination };
@@ -29,6 +32,12 @@ export default async function createContentConfig({
     // eslint-disable-next-line no-console
     console.error('faceted-search: failed to load placeholders; using default labels', error);
   }
+
+  if (contentType === 'perspective') {
+    const { default: createPerspectiveConfig } = await import('./perspective-config.js');
+    return createPerspectiveConfig({ placeholders, filters, sort, pagination, filterLabel });
+  }
+
   if (contentType === 'playlist') {
     const pageSize = pagination ? 12 : Infinity;
     return {
@@ -145,6 +154,7 @@ export default async function createContentConfig({
       scrollToResults: () => window.scrollTo({ top: 0 }),
     };
   }
+
   const [
     { BASE_COVEO_ADVANCED_QUERY_EVENTS },
     { eventTypeOptions, getBrowseFiltersResultCount },

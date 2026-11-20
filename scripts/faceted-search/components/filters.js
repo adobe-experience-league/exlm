@@ -35,6 +35,34 @@ export function getPlaylistFacetItems(group, values) {
     );
 }
 
+const LEVEL_PRIORITY = ['Beginner', 'Intermediate', 'Experienced'];
+
+function rankLevel(value) {
+  const index = LEVEL_PRIORITY.findIndex((level) => level.toLowerCase() === String(value).toLowerCase());
+  return index < 0 ? LEVEL_PRIORITY.length : index;
+}
+
+/** Shared Coveo facet presentation for product/role/author (perspectives) and product/level (courses). */
+export function getCoveoFacetItems(group, values, state, placeholders = {}) {
+  const selected = new Set(state.filters[group.id]);
+  if (group.items?.length) {
+    return group.items
+      .map((item) => ({ ...item, count: values.find((value) => value.value === item.value)?.count ?? 0 }))
+      .filter((item) => selected.has(item.value) || item.count > 0);
+  }
+  const available = values.filter((value) => selected.has(value.value) || value.count > 0);
+  if (group.id === 'el_level') {
+    return available
+      .map((value) => ({
+        ...value,
+        title: placeholders[`filterExpLevel${value.value}Title`] || value.value,
+        description: placeholders[`filterExpLevel${value.value}Description`] || '',
+      }))
+      .sort((a, b) => rankLevel(a.value) - rankLevel(b.value) || alphabetical(a, b));
+  }
+  return available.map((value) => ({ ...value, title: value.value.split('|').join(' | ') })).sort(alphabetical);
+}
+
 export default function createFacetedSearchUI({
   store,
   groups,
