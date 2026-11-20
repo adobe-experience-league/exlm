@@ -10,10 +10,10 @@ const HEADING_TYPES = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 function readAuthoredContent(block) {
   const cells = [...block.children].map((row) => row.firstElementChild);
   const [headingCell, second, third] = cells;
-  const secondText = second?.textContent.trim() || '';
-  const headingType = HEADING_TYPES.has(secondText.toLowerCase()) ? secondText.toLowerCase() : 'h2';
-  const filterLabelCell = HEADING_TYPES.has(secondText.toLowerCase()) ? third : second;
-  const filterLabel = filterLabelCell?.textContent.trim() || '';
+  const secondText = second?.textContent.trim().toLowerCase() || '';
+  const hasHeadingType = HEADING_TYPES.has(secondText);
+  const headingType = hasHeadingType ? secondText : 'h2';
+  const filterLabel = (hasHeadingType ? third : second)?.textContent.trim() || '';
 
   const headingText = headingCell?.textContent.trim() || '';
   if (!headingText) return { heading: null, filterLabel };
