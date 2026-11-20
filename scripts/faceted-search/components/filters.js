@@ -2,6 +2,39 @@ import { createTag } from '../../scripts.js';
 import { decorateIcons } from '../../lib-franklin.js';
 import createSearchBar from './search-bar.js';
 
+export function alphabetical(a, b) {
+  return a.title.localeCompare(b.title, document.documentElement.lang || 'en', { sensitivity: 'base' });
+}
+
+export function getEventFacetItems(group, values, state) {
+  const selected = new Set(state.filters[group.id]);
+  if (group.items) {
+    return group.items
+      .map((item) => ({ ...item, count: values.find((value) => value.value === item.value)?.count ?? 0 }))
+      .filter((item) => selected.has(item.value) || item.count > 0);
+  }
+  return values
+    .filter((value) => selected.has(value.value) || value.count > 0)
+    .map((value) => ({ ...value, title: value.value.split('|').join(' | ') }))
+    .sort(alphabetical);
+}
+
+export function getPlaylistFacetItems(group, values) {
+  return values
+    .filter((item) => item.count > 0 || item.selected)
+    .map((item) => {
+      const option = group.items?.find(({ value }) => value.toLowerCase() === item.value.toLowerCase());
+      return { ...item, title: option?.title || item.value, description: option?.description };
+    })
+    .sort(
+      group.id === 'level'
+        ? (a, b) =>
+            group.items.findIndex((item) => item.value.toLowerCase() === a.value.toLowerCase()) -
+            group.items.findIndex((item) => item.value.toLowerCase() === b.value.toLowerCase())
+        : (a, b) => a.value.localeCompare(b.value),
+    );
+}
+
 export default function createFacetedSearchUI({
   store,
   groups,

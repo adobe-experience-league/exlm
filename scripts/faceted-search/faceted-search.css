@@ -15,6 +15,10 @@
   min-width: 0;
 }
 
+.fs-layout.fs-layout-no-filters {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .fs-layout .fs-filters-column {
   height: 100%;
   background: var(--background-color, #fff);

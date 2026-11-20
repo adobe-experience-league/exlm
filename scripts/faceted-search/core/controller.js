@@ -1,10 +1,10 @@
 import { createTag } from '../../scripts.js';
 import { createFilterStore, matchesSearchIntent } from '../state/store.js';
-import createFacetedSearchUI from '../components/facets.js';
+import createFacetedSearchUI from '../components/filters.js';
 import createSidebarLayout from '../components/layout.js';
 import { createSortControl } from '../components/sort-control.js';
 import createPagination from '../components/pagination.js';
-import createResults from '../components/results.js';
+import { createResults } from '../components/cards.js';
 import createRenderCoordinator from './render-coordinator.js';
 import createCoveoSource from '../sources/coveo-source.js';
 
@@ -27,20 +27,21 @@ export default async function createFacetedSearch(block, config) {
     analytics,
   } = config;
   const initialSort = sortPolicy?.initial ?? '';
+  const pageSize = config.pageSize ?? paginationConfig?.pageSize;
   const store = createFilterStore({
     groupIds: groups.map(({ id }) => id),
     defaultSort: sortPolicy?.default ?? '',
     initial: { sort: initialSort },
   });
   const { type: sourceType = 'coveo', ...sourceOptions } = config.source || {};
-  const sourceContext = { groups, initialSort, pageSize: paginationConfig?.pageSize };
+  const sourceContext = { groups, initialSort, pageSize };
   let source;
   if (config.createSource) source = config.createSource(sourceContext);
   else if (sourceType === 'collection') {
     const { default: createCollectionSource } = await import('../sources/collection-source.js');
     source = createCollectionSource({ ...sourceOptions, ...sourceContext });
   } else if (sourceType === 'coveo') {
-    source = createCoveoSource({ ...sourceOptions, groups, initialSort, numberOfResults: paginationConfig?.pageSize });
+    source = createCoveoSource({ ...sourceOptions, groups, initialSort, numberOfResults: pageSize });
   } else throw new Error(`Unsupported search source: ${sourceType}`);
   const resultClasses =
     config.resultClasses || (cards ? { body: 'browse-cards-block', grid: 'browse-cards-block-content' } : {});
@@ -51,13 +52,17 @@ export default async function createFacetedSearch(block, config) {
     prefix,
     withKeyword: config.search !== false,
   });
-  const shell = createSidebarLayout({ ui, prefix, cardColumns: config.cardColumns ?? true });
+  const shell = createSidebarLayout({
+    ui,
+    prefix,
+    cardColumns: config.cardColumns ?? true,
+    withFilters: config.filters !== false,
+  });
   const results = createResults({
     prefix: resultsPrefix,
     labels,
     classes: resultClasses,
-    createLoading:
-      config.createLoading || (cards ? () => cards.createCardLoading(paginationConfig?.pageSize) : undefined),
+    createLoading: config.createLoading || (cards ? () => cards.createCardLoading(pageSize) : undefined),
     onClear: () => store.clear(),
   });
   let destroyed = false;
@@ -117,7 +122,7 @@ export default async function createFacetedSearch(block, config) {
   const coordinator = createRenderCoordinator({
     async prepare({ snapshot, state, signal }) {
       let { items } = snapshot;
-      const context = { snapshot, state, signal };
+      const context = { block, snapshot, state, signal };
       if (config.prepareItems) items = await config.prepareItems(items, state, snapshot, { signal });
       else if (cards) items = await cards.prepareCardItems(items, state, config.cards, snapshot);
       if (cards) return { fragment: await cards.renderCards(items, resultsPrefix, config.renderItem, context), items };
