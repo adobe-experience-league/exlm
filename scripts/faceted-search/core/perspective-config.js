@@ -7,19 +7,28 @@ import { getCoveoFacetItems } from '../components/filters.js';
  * AQ scopes to Perspective; product options come from the perspective index when available.
  */
 export default async function createPerspectiveConfig({ placeholders, filters, sort, pagination, filterLabel }) {
-  const [
-    { BASE_COVEO_ADVANCED_QUERY },
-    { authorOptions, fetchPerspectiveIndex, getBrowseFiltersResultCount, roleOptions },
-  ] = await Promise.all([
+  const { lang: pathLang } = getPathDetails();
+  const lang = pathLang || 'en';
+  const filterUtilsPromise = import('../../../blocks/browse-filters/browse-filter-utils.js');
+  const [constants, filterUtils, perspectiveIndex] = await Promise.all([
     import('../../browse-card/browse-cards-constants.js'),
-    import('../../../blocks/browse-filters/browse-filter-utils.js'),
+    filterUtilsPromise,
+    filterUtilsPromise.then(({ fetchPerspectiveIndex }) =>
+      fetchPerspectiveIndex(lang).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(
+          'faceted-search perspective: failed to load the perspective index; using Coveo product values',
+          error,
+        );
+        return null;
+      }),
+    ),
   ]);
+  const { BASE_COVEO_ADVANCED_QUERY } = constants;
+  const { authorOptions, getBrowseFiltersResultCount, roleOptions } = filterUtils;
 
   let productItems = [];
-  try {
-    const { lang: pathLang } = getPathDetails();
-    const lang = pathLang || 'en';
-    const perspectiveIndex = await fetchPerspectiveIndex(lang);
+  if (perspectiveIndex) {
     const solutions = perspectiveIndex
       .flatMap((entry) => entry?.coveoSolution?.split(/[,;]/) ?? [])
       .map((solution) => solution.trim())
@@ -27,12 +36,6 @@ export default async function createPerspectiveConfig({ placeholders, filters, s
     productItems = Array.from(new Set(solutions))
       .sort((a, b) => a.localeCompare(b, lang, { sensitivity: 'base' }))
       .map((solution) => ({ description: '', id: solution.toLowerCase(), title: solution, value: solution }));
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(
-      'faceted-search perspective: failed to load the perspective index; using Coveo product values',
-      error,
-    );
   }
 
   const pageSize = getBrowseFiltersResultCount();
