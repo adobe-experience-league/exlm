@@ -1,3 +1,5 @@
+@import '../../scripts/faceted-search/faceted-search.css';
+@import '../../scripts/browse-card/browse-card.css';
 @import '../../scripts/browse-card/browse-cards-block.css';
 
 .section.browse-courses-container {
@@ -276,5 +278,63 @@
 
   .browse-courses .browse-card-shimmer {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* faceted-search overrides */
+main .browse-courses .browse-courses-heading {
+  margin: 0 0 var(--spectrum-spacing-400, 24px);
+  color: var(--spectrum-gray-800);
+}
+
+main .browse-courses {
+  --browse-courses-columns: 1;
+}
+
+main .browse-courses .browse-courses-results-grid,
+main .browse-courses .browse-courses-loading .browse-card-shimmer {
+  display: grid;
+  grid-template-columns: repeat(var(--browse-courses-columns), minmax(0, 1fr));
+  gap: var(--spectrum-spacing-300, 24px);
+  margin: 0;
+  min-height: 284px;
+}
+
+main .browse-courses .browse-courses-results-grid > .browse-courses-card-item[hidden] {
+  display: none;
+}
+
+main .browse-courses .browse-courses-status:empty {
+  display: none;
+}
+
+main .browse-courses .browse-courses-status-empty:not([hidden]) {
+  padding: var(--spectrum-spacing-1000, 72px) var(--spectrum-spacing-300, 24px);
+  background-color: var(--spectrum-gray-200);
+  color: var(--spectrum-gray-700);
+  text-align: center;
+}
+
+@media (min-width: 600px) {
+  main .browse-courses {
+    --browse-courses-columns: 2;
+  }
+}
+
+@media (min-width: 900px) {
+  main .browse-courses {
+    --browse-courses-columns: 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  main .browse-courses {
+    --browse-courses-columns: 2;
+  }
+}
+
+@media (min-width: 1200px) {
+  main .browse-courses {
+    --browse-courses-columns: 3;
   }
 }

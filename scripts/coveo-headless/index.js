@@ -168,9 +168,16 @@ export default async function initiateCoveoHeadlessSearch({
   baseAdvancedQuery = '',
   skipGenericSortDropdown = false,
   tabId = '',
+  lockedFacets = {},
   publishGlobals = true,
   onUrlRestore,
 }) {
+  // Facet selections that scope the page and survive URL restore / reset (e.g. { el_contenttype: ['Course'] }).
+  // Needed when the query pipeline ignores aq for a Tab (Courses), so scope has to travel as a facet selection.
+  const lockedFragmentParams = Object.entries(lockedFacets)
+    .filter(([, values]) => values?.length)
+    .map(([field, values]) => `f-${field}=${values.map(encodeURIComponent).join(',')}`);
+  const allFacetFields = Array.from(new Set([...facetFields, ...Object.keys(lockedFacets)]));
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
     import('./libs/browser/headless.esm.js')
@@ -202,7 +209,7 @@ export default async function initiateCoveoHeadlessSearch({
         });
 
         const facets = Object.fromEntries(
-          facetFields.map((field) => [
+          allFacetFields.map((field) => [
             field,
             buildHeadlessFacet(module, headlessSearchEngine, field, {}, facetOverrides),
           ]),
@@ -229,11 +236,15 @@ export default async function initiateCoveoHeadlessSearch({
 
         const fragmentForSynchronization = () => {
           const rawFragment = fragment();
-          if (!tabId) return rawFragment;
+          if (!tabId && !lockedFragmentParams.length) return rawFragment;
 
-          const parameters = rawFragment.split('&').filter((param) => param && !param.startsWith('tab='));
+          const lockedKeys = Object.keys(lockedFacets).map((field) => `f-${field}=`);
+          const parameters = rawFragment
+            .split('&')
+            .filter((param) => param && !param.startsWith('tab=') && !lockedKeys.some((key) => param.startsWith(key)));
 
-          parameters.push(`tab=${encodeURIComponent(tabId)}`);
+          if (tabId) parameters.push(`tab=${encodeURIComponent(tabId)}`);
+          parameters.push(...lockedFragmentParams);
           return parameters.join('&');
         };
         onUrlRestore?.(fragment());
@@ -254,6 +265,7 @@ export default async function initiateCoveoHeadlessSearch({
           const hiddenKeys = [];
           if (hideAqFromUrl) hiddenKeys.push('aq');
           if (tabId) hiddenKeys.push('tab');
+          Object.keys(lockedFacets).forEach((field) => hiddenKeys.push(`f-${field}`));
           const visibleFragment = hiddenKeys.length
             ? rawFragment
                 .split('&')
@@ -542,6 +554,7 @@ export default async function initiateCoveoHeadlessSearch({
             const parameters = [];
             if (baseAdvancedQuery) parameters.push(`aq=${encodeURIComponent(baseAdvancedQuery)}`);
             if (tabId) parameters.push(`tab=${encodeURIComponent(tabId)}`);
+            parameters.push(...lockedFragmentParams);
             urlManager.synchronize(parameters.join('&'));
           },
           submitSearchHandler,
