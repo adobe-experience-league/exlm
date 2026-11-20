@@ -496,7 +496,7 @@
   },
   {
     "id": "column",
-    "components": ["columns-text-no-h1", "image", "button", "title"]
+    "components": ["text", "image", "button", "title"]
   },
   {
     "id": "text",
