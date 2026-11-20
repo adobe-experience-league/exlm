@@ -20,8 +20,7 @@ export default async function createPerspectiveConfig({ placeholders, filters, s
     const { lang } = getPathDetails();
     const perspectiveIndex = await fetchPerspectiveIndex(lang || 'en');
     const solutions = perspectiveIndex
-      .reduce((acc, curr) => (curr?.coveoSolution ? `${acc},${curr.coveoSolution}` : acc), '')
-      .split(/[,;]/)
+      .flatMap((entry) => entry?.coveoSolution?.split(/[,;]/) ?? [])
       .map((solution) => solution.trim())
       .filter((solution) => solution && !solution.includes('|'));
     productItems = Array.from(new Set(solutions))
