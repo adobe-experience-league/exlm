@@ -24,14 +24,25 @@ function matchesSanitizedFilter(a, b) {
   return stripPipes(a) === stripPipes(b);
 }
 
-/** Map selected products onto Coveo values (pipe-insensitive). false = retry later. */
-function remapProductFilters(store, snapshot) {
-  const selected = store.get().filters.el_product || [];
+/**
+ * Map selected facet values onto Coveo options (pipe-insensitive for products).
+ * Drops legacy values with no Coveo match. false = retry later.
+ */
+function remapLegacyFilters(store, snapshot, groupId, { pipeInsensitive = false } = {}) {
+  const selected = store.get().filters[groupId] || [];
   if (!selected.length) return true;
-  const facetValues = (snapshot.facets?.el_product || []).map((value) => value.value);
+  const facetValues = (snapshot.facets?.[groupId] || []).map((value) => value.value);
   if (!facetValues.length) return false;
-  const mapped = selected.map((legacy) => facetValues.find((value) => matchesSanitizedFilter(value, legacy)) || legacy);
-  if (mapped.some((value, index) => value !== selected[index])) store.setGroup('el_product', mapped);
+  const mapped = selected
+    .map((legacy) =>
+      pipeInsensitive
+        ? facetValues.find((value) => matchesSanitizedFilter(value, legacy))
+        : facetValues.find((value) => value === legacy),
+    )
+    .filter(Boolean);
+  if (mapped.length !== selected.length || mapped.some((value, index) => value !== selected[index])) {
+    store.setGroup(groupId, mapped);
+  }
   return true;
 }
 
@@ -78,7 +89,7 @@ function createStatusView(placeholders) {
       if (!countEl || coveoTotal == null) return;
       const display = selectedStatuses.size > 0 ? items().filter((card) => !card.hidden).length : coveoTotal;
       const value = createTag('strong', { class: 'fs-results-count-value' });
-      value.textContent = new Intl.NumberFormat().format(display);
+      value.textContent = new Intl.NumberFormat(document.documentElement.lang || undefined).format(display);
       countEl.replaceChildren(value, document.createTextNode(` ${resultsSuffix}`));
     }
 
@@ -174,7 +185,6 @@ async function enrichModuleCount(wrapper, card) {
   const statusRow = wrapper.querySelector('.browse-card-status-row');
   if (!statusRow || statusRow.querySelector('.browse-card-module-count')) return;
 
-  if (!wrapper.isConnected) return;
   const scratch = createTag('div');
   await buildCard(scratch, card);
   if (!wrapper.isConnected) return;
@@ -220,7 +230,7 @@ export default async function createCourseConfig({
 }) {
   const { default: BrowseCardShimmer } = await import('../../browse-card/browse-card-shimmer.js');
   const pageSize = pagination ? 12 : NUMBER_OF_RESULTS;
-  let productRemapDone = false;
+  let legacyRemapDone = false;
 
   return {
     groups: [
@@ -311,7 +321,10 @@ export default async function createCourseConfig({
     },
     ...(signedIn && { createView: createStatusView(placeholders) }),
     afterRender({ store, snapshot }) {
-      if (!productRemapDone) productRemapDone = remapProductFilters(store, snapshot);
+      if (legacyRemapDone) return;
+      const productsDone = remapLegacyFilters(store, snapshot, 'el_product', { pipeInsensitive: true });
+      const levelsDone = remapLegacyFilters(store, snapshot, 'el_level');
+      legacyRemapDone = productsDone && levelsDone;
     },
     scrollToResults: true,
   };
