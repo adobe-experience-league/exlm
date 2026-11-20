@@ -143,19 +143,10 @@ export default async function createFacetedSearch(block, config) {
         results.showEmpty(state.keyword);
       } else {
         results.showItems(fragment);
+        view?.afterRender?.();
       }
-      view?.afterRender?.({ snapshot });
       results.grid.dataset.searchresponseid = snapshot.responseId;
-      await config.afterRender?.({
-        block,
-        body: results.body,
-        grid: results.grid,
-        items,
-        state,
-        snapshot,
-        signal,
-        store,
-      });
+      await config.afterRender?.({ block, body: results.body, grid: results.grid, items, state, snapshot, signal });
     },
     onError: reportError,
   });
@@ -318,7 +309,7 @@ export default async function createFacetedSearch(block, config) {
     }
     if (destroyed) return instance;
     if (config.createView || cards) {
-      const viewOptions = { block, body: results.body, controls: shell.controls, grid: results.grid, store };
+      const viewOptions = { block, body: results.body, controls: shell.controls, grid: results.grid };
       view = config.createView
         ? await config.createView(viewOptions)
         : await cards.createCardView({ ...viewOptions, prefix: resultsPrefix, ...config.cards });
