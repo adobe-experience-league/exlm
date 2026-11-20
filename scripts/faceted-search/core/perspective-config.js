@@ -17,14 +17,15 @@ export default async function createPerspectiveConfig({ placeholders, filters, s
 
   let productItems = [];
   try {
-    const { lang } = getPathDetails();
-    const perspectiveIndex = await fetchPerspectiveIndex(lang || 'en');
+    const { lang: pathLang } = getPathDetails();
+    const lang = pathLang || 'en';
+    const perspectiveIndex = await fetchPerspectiveIndex(lang);
     const solutions = perspectiveIndex
       .flatMap((entry) => entry?.coveoSolution?.split(/[,;]/) ?? [])
       .map((solution) => solution.trim())
       .filter((solution) => solution && !solution.includes('|'));
     productItems = Array.from(new Set(solutions))
-      .sort((a, b) => a.localeCompare(b, lang || 'en', { sensitivity: 'base' }))
+      .sort((a, b) => a.localeCompare(b, lang, { sensitivity: 'base' }))
       .map((solution) => ({ description: '', id: solution.toLowerCase(), title: solution, value: solution }));
   } catch (error) {
     // eslint-disable-next-line no-console
