@@ -2,13 +2,10 @@ import { createTag } from '../../scripts.js';
 import { createCourseSortPolicy, readCourseSort } from '../components/sort-control.js';
 import { alphabetical, getCoveoFacetItems } from '../components/filters.js';
 
-/**
- * Coveo Search API `tab` / UA `originLevel2` for the Courses Hub interface only.
- * @see EXLM-6193
- */
+/** Courses Hub Coveo tab / originLevel2 (EXLM-6193). */
 export const COURSES_SEARCH_TAB = 'Courses';
 const COURSE_CONTENT_TYPE = 'Course';
-/** Courses are not paginated; one request returns the whole catalog (Coveo's maximum page size). */
+/** Full catalog page size (Coveo max). */
 const NUMBER_OF_RESULTS = 1000;
 const LEVEL_PRIORITY = ['Beginner', 'Intermediate', 'Experienced'];
 
@@ -17,17 +14,14 @@ function rankLevel(value) {
   return index < 0 ? LEVEL_PRIORITY.length : index;
 }
 
-/** Legacy product links may differ from Coveo only by `|`. */
+/** Pipe-insensitive product match for legacy links. */
 function matchesSanitizedFilter(a, b) {
   if (a === b) return true;
   const stripPipes = (s) => s?.replace(/\|/g, '');
   return stripPipes(a) === stripPipes(b);
 }
 
-/**
- * Map selected facet values onto Coveo options (pipe-insensitive for products).
- * Drops legacy values with no Coveo match. false = retry later.
- */
+/** Remap store filters onto Coveo values; false = facets not ready. */
 function remapLegacyFilters(store, snapshot, groupId, { pipeInsensitive = false } = {}) {
   const selected = store.get().filters[groupId] || [];
   if (!selected.length) return true;
@@ -46,7 +40,7 @@ function remapLegacyFilters(store, snapshot, groupId, { pipeInsensitive = false 
   return true;
 }
 
-/** Product uses shared Coveo facet helper; Level keeps Beginner → Experienced order. */
+/** Level facet: Beginner → Experienced; else shared Coveo helper. */
 function getCourseFacetItems(group, values, state, placeholders) {
   if (group.id !== 'el_level') return getCoveoFacetItems(group, values, state);
   const selected = new Set(state.filters[group.id]);
@@ -60,7 +54,7 @@ function getCourseFacetItems(group, values, state, placeholders) {
     .sort((a, b) => rankLevel(a.value) - rankLevel(b.value) || alphabetical(a, b));
 }
 
-/** Signed-in Status chrome (profile, not Coveo). Composes card view; toggles card `hidden`. */
+/** Signed-in Status filter view (client-side). */
 function createStatusView(placeholders) {
   const selectedStatuses = new Set();
   const noResultsText = placeholders.courseNoResultsText || 'No courses found for the selected filters.';
@@ -74,7 +68,6 @@ function createStatusView(placeholders) {
     const cardView = await cards.createCardView({ ...viewOptions, prefix: 'browse-courses', type: 'course' });
     const label = placeholders.filterCourseStatusLabel || 'Status';
     const container = createTag('form', { class: 'browse-courses-status' });
-    // Live region stays mounted; toggle textContent so SR announcements fire.
     const emptyMessage = createTag('div', {
       class: 'browse-courses-status-empty',
       role: 'status',
@@ -219,7 +212,7 @@ async function enrichWithCourseStatus(cards) {
   }
 }
 
-/** Match browse-courses.css column counts (incl. 1024 sidebar). */
+/** Shimmer columns match browse-courses.css (incl. 1024). */
 function getShimmerCount() {
   const width = window.innerWidth;
   if (width >= 1200) return 3;
@@ -229,10 +222,7 @@ function getShimmerCount() {
   return 1;
 }
 
-/**
- * Builds the faceted-search preset for Courses (Coveo Headless + Courses tab).
- * The Courses tab's query pipeline ignores aq/cq, so scope uses lockedFacets.
- */
+/** Course faceted-search preset (lockedFacets + Courses tab). */
 export default async function createCourseConfig({
   placeholders,
   filters,
@@ -244,7 +234,7 @@ export default async function createCourseConfig({
   const { default: BrowseCardShimmer } = await import('../../browse-card/browse-card-shimmer.js');
   const pageSize = pagination ? 12 : NUMBER_OF_RESULTS;
   let legacyRemapDone = false;
-  let pendingModuleCounts = []; // filled in renderItem; drained in afterRender after attach
+  let pendingModuleCounts = [];
 
   return {
     groups: [
@@ -288,7 +278,6 @@ export default async function createCourseConfig({
         el_product: { numberOfValues: 500, options: { filterFacetCount: true, sortCriteria: 'alphanumeric' } },
       },
       hideAqFromUrl: true,
-      // Kept for analytics/debug; Courses tab ignores aq — lockedFacets carries the real scope.
       baseAdvancedQuery: `@el_contenttype=="${COURSE_CONTENT_TYPE}"`,
       lockedFacets: { el_contenttype: [COURSE_CONTENT_TYPE] },
       tabId: COURSES_SEARCH_TAB,

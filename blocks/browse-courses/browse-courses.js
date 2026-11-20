@@ -1,8 +1,4 @@
-/**
- * Browse Courses Block
- * Thin contentType wrapper around createFacetedSearch (`course` preset).
- * Legacy `?product=` / `?level=` query params are migrated into the faceted hash before init.
- */
+/** Thin `course` faceted-search wrapper; migrates legacy `?product=`/`?level=` into the hash. */
 
 import { createTag, xssSanitizeQueryParamValue } from '../../scripts/scripts.js';
 import { createFacetedSearch } from '../../scripts/faceted-search/faceted-search.js';
@@ -10,10 +6,7 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const LEGACY_URL_PARAMS = { product: 'el_product', level: 'el_level' };
 
-/**
- * The block used to filter through `?product=` / `?level=`. Convert shared links into the faceted-search
- * hash (`#f-el_product=...`) before the source initializes so they keep working.
- */
+/** Migrate legacy query filters into `#f-…` before faceted-search init. */
 function migrateLegacyUrlParams() {
   if (window.location.hash) return;
   const params = new URLSearchParams(window.location.search);
@@ -39,10 +32,7 @@ function migrateLegacyUrlParams() {
 
 const HEADING_TYPES = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 
-/**
- * Authored rows are [heading, filterLabel] or [heading, headingType, filterLabel].
- * `headingType` is optional (UE select); when present it is an `h1`–`h6` cell.
- */
+/** Authored rows: [heading, filterLabel] or [heading, headingType, filterLabel]. */
 function readAuthoredContent(block) {
   const cells = [...block.children].map((row) => row.firstElementChild);
   const [headingCell, second, third] = cells;
@@ -66,7 +56,6 @@ export default async function decorate(block) {
   const { heading, filterLabel } = readAuthoredContent(block);
   const signedIn = await isSignedInUser();
   migrateLegacyUrlParams();
-  // Await init: createFacetedSearch replaces children after async config load.
   await createFacetedSearch(block, {
     contentType: 'course',
     filters: true,
