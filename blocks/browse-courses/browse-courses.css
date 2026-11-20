@@ -299,7 +299,7 @@ main .browse-courses.browse-courses-loading .browse-card-shimmer {
   margin: 0;
 }
 
-/* One course-card row while shimmering — avoids CLS; not applied when status hides all cards. */
+/* Reserve one course-card row during shimmer (CLS); loading-only so status-empty has no gap. */
 main .browse-courses.browse-courses-loading .browse-courses-results-grid,
 main .browse-courses.browse-courses-loading .browse-card-shimmer {
   min-height: 284px;

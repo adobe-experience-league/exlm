@@ -66,7 +66,7 @@ export default async function decorate(block) {
   const { heading, filterLabel } = readAuthoredContent(block);
   const signedIn = await isSignedInUser();
   migrateLegacyUrlParams();
-  // Await init first — createFacetedSearch replaces block children after async config load.
+  // Await init: createFacetedSearch replaces children after async config load.
   await createFacetedSearch(block, {
     contentType: 'course',
     filters: true,

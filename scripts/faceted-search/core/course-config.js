@@ -60,11 +60,7 @@ function getCourseFacetItems(group, values, state, placeholders) {
     .sort((a, b) => rankLevel(a.value) - rankLevel(b.value) || alphabetical(a, b));
 }
 
-/**
- * Status filter chrome for signed-in users. Status comes from profile enrichment, not Coveo.
- * Mounted into the shared toolbar; toggles `hidden` on rendered cards only.
- * Composes the shared card view so signed-in users keep the same card lifecycle hooks.
- */
+/** Signed-in Status chrome (profile, not Coveo). Composes card view; toggles card `hidden`. */
 function createStatusView(placeholders) {
   const selectedStatuses = new Set();
   const noResultsText = placeholders.courseNoResultsText || 'No courses found for the selected filters.';
@@ -75,14 +71,10 @@ function createStatusView(placeholders) {
       import('../../browse-card/browse-cards-constants.js'),
       import('../components/cards.js'),
     ]);
-    const cardView = await cards.createCardView({
-      ...viewOptions,
-      prefix: 'browse-courses',
-      type: 'course',
-    });
+    const cardView = await cards.createCardView({ ...viewOptions, prefix: 'browse-courses', type: 'course' });
     const label = placeholders.filterCourseStatusLabel || 'Status';
     const container = createTag('form', { class: 'browse-courses-status' });
-    // Keep the live region in the a11y tree; toggle text (not hidden) so SR announcements fire.
+    // Live region stays mounted; toggle textContent so SR announcements fire.
     const emptyMessage = createTag('div', {
       class: 'browse-courses-status-empty',
       role: 'status',
@@ -252,8 +244,7 @@ export default async function createCourseConfig({
   const { default: BrowseCardShimmer } = await import('../../browse-card/browse-card-shimmer.js');
   const pageSize = pagination ? 12 : NUMBER_OF_RESULTS;
   let legacyRemapDone = false;
-  /** Module-count fetches start after cards attach (controller commits the fragment first). */
-  let pendingModuleCounts = [];
+  let pendingModuleCounts = []; // filled in renderItem; drained in afterRender after attach
 
   return {
     groups: [
