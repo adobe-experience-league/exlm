@@ -1,11 +1,13 @@
 /**
  * Browse Courses Block
- * Displays a filterable grid of courses with product and status filters
- * Enriches course data with user progress when signed in
+ * Displays searchable and sortable course results with product and level filters.
+ * Enriches course data with user progress when signed in.
  *
  * Features:
  * - Product filtering (triggers API fetch)
- * - Status filtering (client-side, no API call)
+ * - Level filtering (triggers API fetch)
+ * - Keyword search and Relevance/Popularity sorting
+ * - Course status filtering (client-side, no API call)
  * - URL parameter support for shareable filtered views
  * - Course progress tracking (Not Started, In Progress, Completed)
  * - Responsive shimmer loading states
@@ -23,7 +25,8 @@ import BrowseCardShimmer from '../../scripts/browse-card/browse-card-shimmer.js'
 import Dropdown from '../../scripts/dropdown/dropdown.js';
 import { decorateIcons } from '../../scripts/lib-franklin.js';
 import { CONTENT_TYPES } from '../../scripts/data-service/coveo/coveo-exl-pipeline-constants.js';
-import { COURSE_STATUS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { COURSE_STATUS, COVEO_SORT_OPTIONS } from '../../scripts/browse-card/browse-cards-constants.js';
+import { createSortControl } from '../../scripts/faceted-search/faceted-search.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 /**
@@ -67,6 +70,8 @@ const CSS_CLASSES = {
 const URL_PARAMS = {
   FILTERS: 'product',
   LEVEL: 'level',
+  KEYWORD: 'q',
+  SORT: 'sort',
 };
 
 const LEVEL_PRIORITY = {
@@ -86,34 +91,137 @@ function matchesSanitizedFilter(a, b) {
   return stripPipes(a) === stripPipes(b);
 }
 
-/**
- * Creates the header section with title, dropdown filter, and clear filter button
- * Uses module-level placeholders for internationalization
- * @param {HTMLElement} headingElement - The heading element from block children
- * @param {HTMLElement} filterLabelElement - The filter label element from block children
- * @returns {HTMLElement} The constructed header div element
- */
-function createHeader(headingElement, filterLabelElement) {
-  const clearFilterText = placeholders?.filterClearLabel || 'Clear filters';
-
+/** Creates the course search heading. */
+function createHeader(headingElement) {
   const headerDiv = htmlToElement(`
     <div class="${CSS_CLASSES.HEADER}">
       <div class="${CSS_CLASSES.TITLE}">
         ${headingElement?.innerHTML || ''}
       </div>
-      <div class="browse-filter-controls">
-        <form class="${CSS_CLASSES.DROPDOWN}">
-          <label>${filterLabelElement?.innerHTML || ''}</label>
-        </form>
-         <a href="#" class="${CSS_CLASSES.CLEAR_FILTER}" aria-label="${clearFilterText}">
-            ${clearFilterText}
-          </a>
-      </div>
-      <div class="${CSS_CLASSES.TAGS}"></div>
     </div>
   `);
 
   return headerDiv;
+}
+
+function createSearchLayout(block, headerDiv, filterLabelElement, sortControl, searchPlaceholders) {
+  block.replaceChildren(headerDiv);
+  const filtersLabel =
+    filterLabelElement?.textContent?.trim() || searchPlaceholders.eventSearchFiltersLabel || 'Filters';
+
+  const layout = createTag('div', { class: 'fs-layout fs-layout-cards browse-courses-layout' });
+  const filtersColumn = createTag('aside', { class: 'fs-filters-column' });
+  const filterPanelId = `browse-courses-filters-${crypto.randomUUID()}`;
+  const toggle = createTag('button', {
+    class: 'fs-mobile-filter-toggle',
+    type: 'button',
+    'aria-expanded': 'false',
+    'aria-controls': filterPanelId,
+  });
+  toggle.append(
+    createTag('span', { class: 'icon icon-atomic-search-filter', 'aria-hidden': 'true' }),
+    createTag('span', { class: 'fs-mobile-filter-toggle-label' }, filtersLabel),
+    createTag('span', { class: 'fs-mobile-filter-toggle-count' }),
+    createTag('span', { class: 'icon icon-chevron', 'aria-hidden': 'true' }),
+  );
+  decorateIcons(toggle);
+
+  const filterPanel = createTag('div', { class: 'fs-filters-panel', id: filterPanelId });
+  const filters = createTag('div', { class: 'fs-filters' });
+  const filterHeader = createTag('div', { class: 'fs-filters-header' });
+  filterHeader.append(
+    createTag('h2', { class: 'fs-filters-heading' }, filtersLabel),
+    createTag(
+      'button',
+      { class: `${CSS_CLASSES.CLEAR_FILTER} fs-clear-filters`, type: 'button' },
+      searchPlaceholders.filterClearLabel || 'Clear filters',
+    ),
+  );
+  const filterGroups = createTag('div', { class: 'fs-filter-groups' });
+  const dropdownForm = createTag('form', { class: CSS_CLASSES.DROPDOWN });
+  dropdownForm.setAttribute('aria-label', filtersLabel || 'Course filters');
+  filterGroups.append(dropdownForm);
+  filters.append(filterHeader, filterGroups);
+  filterPanel.append(filters);
+  filtersColumn.append(toggle, filterPanel);
+
+  const resultsColumn = createTag('section', { class: 'fs-results-column' });
+  const searchForm = createTag('form', { class: 'fs-keyword' });
+  searchForm.append(
+    createTag('span', { class: 'icon icon-search-gray', 'aria-hidden': 'true' }),
+    createTag('input', {
+      class: 'fs-keyword-input',
+      type: 'search',
+      placeholder:
+        searchPlaceholders.courseSearchKeywordPlaceholder || searchPlaceholders.searchPlaceholder || 'Search courses',
+      'aria-label':
+        searchPlaceholders.courseSearchKeywordPlaceholder || searchPlaceholders.searchPlaceholder || 'Search courses',
+    }),
+    createTag(
+      'button',
+      {
+        class: 'fs-keyword-clear',
+        type: 'button',
+        'aria-label':
+          searchPlaceholders.courseSearchClearLabel || searchPlaceholders.clearSearchLabel || 'Clear search',
+      },
+      '×',
+    ),
+    createTag(
+      'button',
+      {
+        class: 'fs-keyword-submit',
+        type: 'submit',
+        'aria-label': searchPlaceholders.courseSearchSubmitLabel || 'Search courses',
+      },
+      createTag('span', { class: 'icon icon-search-gray', 'aria-hidden': 'true' }),
+    ),
+  );
+  decorateIcons(searchForm);
+
+  const tags = createTag('div', { class: CSS_CLASSES.TAGS });
+  const toolbar = createTag('div', { class: 'fs-toolbar' });
+  const resultCount = createTag('div', {
+    class: 'fs-results-count',
+    role: 'status',
+    'aria-live': 'polite',
+    'aria-atomic': 'true',
+  });
+  const controls = createTag('div', { class: 'fs-toolbar-controls' });
+  const statusContainer = createTag('div', { class: 'status-dropdown-container' });
+  controls.append(sortControl.el, statusContainer);
+  toolbar.append(resultCount, controls);
+
+  const contentDiv = createTag('div', { class: CSS_CLASSES.CONTENT });
+  resultsColumn.append(searchForm, tags, toolbar, contentDiv);
+  layout.append(filtersColumn, resultsColumn);
+  block.append(layout);
+
+  const setOpen = (open) => {
+    layout.classList.toggle('is-filters-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+  };
+  toggle.addEventListener('click', () => setOpen(!layout.classList.contains('is-filters-open')));
+  layout.addEventListener(
+    'keydown',
+    (event) => {
+      if (event.key !== 'Escape' || !layout.classList.contains('is-filters-open')) return;
+      setOpen(false);
+      toggle.focus();
+    },
+    true,
+  );
+
+  return {
+    contentDiv,
+    dropdownForm,
+    input: searchForm.querySelector('input'),
+    searchForm,
+    clearSearchButton: searchForm.querySelector('.fs-keyword-clear'),
+    resultCount,
+    statusContainer,
+    toggleCount: toggle.querySelector('.fs-mobile-filter-toggle-count'),
+  };
 }
 
 /**
@@ -179,6 +287,28 @@ function updateUrlParams(selectedFilters) {
  */
 function updateLevelUrlParams(selectedLevels) {
   pushUrlParam(URL_PARAMS.LEVEL, selectedLevels);
+}
+
+function updateSearchUrlParams(state) {
+  const url = new URL(window.location);
+  if (state.currentKeyword) url.searchParams.set(URL_PARAMS.KEYWORD, state.currentKeyword);
+  else url.searchParams.delete(URL_PARAMS.KEYWORD);
+  if (state.currentSort !== COVEO_SORT_OPTIONS.RELEVANCE) url.searchParams.set(URL_PARAMS.SORT, state.currentSort);
+  else url.searchParams.delete(URL_PARAMS.SORT);
+  if (url.href !== window.location.href) window.history.pushState({}, '', url.toString());
+}
+
+function getKeywordFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return xssSanitizeQueryParamValue(urlParams.get(URL_PARAMS.KEYWORD) || '');
+}
+
+function getSortFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const sort = urlParams.get(URL_PARAMS.SORT);
+  return [COVEO_SORT_OPTIONS.RELEVANCE, COVEO_SORT_OPTIONS.MOST_POPULAR].includes(sort)
+    ? sort
+    : COVEO_SORT_OPTIONS.RELEVANCE;
 }
 
 /**
@@ -372,6 +502,16 @@ async function renderCards(block, courseData, shimmer) {
   const contentDiv = block.querySelector(`.${CSS_CLASSES.CONTENT}`);
   if (!contentDiv) return;
 
+  const resultCount = block.querySelector('.fs-results-count');
+  if (resultCount) {
+    const count = createTag('strong', { class: 'fs-results-count-value' });
+    count.textContent = new Intl.NumberFormat().format(courseData?.length || 0);
+    resultCount.replaceChildren(
+      count,
+      document.createTextNode(` ${placeholders.courseSearchResultsLabel || 'courses'}`),
+    );
+  }
+
   try {
     shimmer.removeShimmer();
 
@@ -433,9 +573,11 @@ async function fetchCourseData(selectedFilters = [], selectedLevels = [], state 
     contentType: CONTENT_TYPES.COURSE.MAPPING_KEY.toLowerCase().split(','),
     ...(selectedFilters.length > 0 && { product: selectedFilters }),
     ...(selectedLevels.length > 0 && { level: selectedLevels, el_level_all: state?.allLevels }),
+    ...(state?.currentKeyword && { q: state.currentKeyword }),
     el_product_all: state?.allProducts,
     noOfResults: numberOfResults,
     tab: COURSES_SEARCH_TAB,
+    sortCriteria: state?.currentSort || COVEO_SORT_OPTIONS.RELEVANCE,
   };
 
   // Fetch browse cards data (automatically enriched by BrowseCardsDelegate for signed-in users)
@@ -593,7 +735,7 @@ function createDropdownContainer(dropdownForm, containerClass) {
 /**
  * Updates the clear filter button state (enabled/disabled) based on active filters
  * @param {HTMLElement} block - The main block element
- * @param {Object} state - Mutable state object containing currentStatusFilters, currentLevelFilters, and currentProductFilters
+ * @param {Object} state - Current product, level, status, keyword, and sort state
  */
 function updateClearFilterButtonState(block, state) {
   const clearFilterButton = block.querySelector(`.${CSS_CLASSES.CLEAR_FILTER}`);
@@ -609,7 +751,8 @@ function updateClearFilterButtonState(block, state) {
   const hasLevelFilters = state.currentLevelFilters?.length > 0;
 
   // Disable button if no filters are active
-  const hasActiveFilters = hasProductFilters || hasStatusFilters || hasLevelFilters;
+  const hasSearchState = Boolean(state.currentKeyword) || state.currentSort !== COVEO_SORT_OPTIONS.RELEVANCE;
+  const hasActiveFilters = hasProductFilters || hasStatusFilters || hasLevelFilters || hasSearchState;
 
   if (hasActiveFilters) {
     clearFilterButton.removeAttribute('disabled');
@@ -618,6 +761,10 @@ function updateClearFilterButtonState(block, state) {
     clearFilterButton.setAttribute('disabled', 'true');
     clearFilterButton.classList.add('disabled');
   }
+
+  const activeCount = (state.currentProductFilters?.length || 0) + (state.currentLevelFilters?.length || 0);
+  const countBadge = block.querySelector('.fs-mobile-filter-toggle-count');
+  if (countBadge) countBadge.textContent = activeCount ? `(${activeCount})` : '';
 }
 
 /**
@@ -700,11 +847,8 @@ function updateStatusDropdown(block, courseData, shimmer, state) {
   // Analyze current data for available statuses
   const statusList = createStatusFilterOptions(courseData);
 
-  const dropdownForm = block.querySelector(SELECTORS.DROPDOWN);
-  if (!dropdownForm) return null;
-
-  // Get or create dedicated container for status dropdown
-  const statusContainer = createDropdownContainer(dropdownForm, 'status-dropdown-container');
+  const statusContainer = block.querySelector('.status-dropdown-container');
+  if (!statusContainer) return null;
 
   // If no status options, clear container and return null
   if (statusList.length === 0) {
@@ -1215,12 +1359,20 @@ function renderCoursesOnFilterChange(block, courseData, shimmer, state) {
   return null;
 }
 
+function renderCoursesAfterSearchChange(block, courseData, shimmer, state) {
+  const filtersChanged = renderCoursesOnFilterChange(block, courseData, shimmer, state);
+  if (filtersChanged) {
+    fetchCourseData(state.currentProductFilters, state.currentLevelFilters, state).then((updatedCourseData) => {
+      renderCoursesOnFilterChange(block, updatedCourseData, shimmer, state);
+    });
+  }
+}
+
 /**
- * Sets up clear filter button click handler
- * Resets all filters (product, status, and level) and shows all courses
+ * Sets up the clear button to reset filters, keyword search, and sort.
  * @param {HTMLElement} block - The main block element
  * @param {BrowseCardShimmer} shimmer - The shimmer loading instance
- * @param {Object} state - Mutable state object containing courseData, currentStatusFilters, currentLevelFilters, statusDropdown, levelDropdown, isSignedIn, and productDropdown
+ * @param {Object} state - Mutable course, filter, keyword, sort, and UI state
  */
 function setupClearFilterHandler(block, shimmer, state) {
   const clearFilterButton = block.querySelector(`.${CSS_CLASSES.CLEAR_FILTER}`);
@@ -1238,6 +1390,11 @@ function setupClearFilterHandler(block, shimmer, state) {
       state.currentStatusFilters = [];
       state.currentLevelFilters = [];
       state.currentProductFilters = [];
+      state.currentKeyword = '';
+      state.currentSort = COVEO_SORT_OPTIONS.RELEVANCE;
+      state.searchInput.value = '';
+      state.clearSearchButton.classList.remove('is-visible');
+      state.sortControl.setSelected(COVEO_SORT_OPTIONS.RELEVANCE);
 
       // Clear product dropdown using the reusable reset() method
       if (state.productDropdown) {
@@ -1257,6 +1414,7 @@ function setupClearFilterHandler(block, shimmer, state) {
       // Clear URL parameters
       updateUrlParams([]);
       updateLevelUrlParams([]);
+      updateSearchUrlParams(state);
 
       // Clear filter tags display
       updateTags(block, [], []);
@@ -1307,7 +1465,7 @@ function setupClearFilterHandler(block, shimmer, state) {
 
 /**
  * Main decoration function for the browse-courses block
- * Initializes the course browsing interface with product, level, and status filters
+ * Initializes the course search interface with product and level filters, keyword search, and sorting.
  * @param {HTMLElement} block - The block element to decorate
  * @description
  * Status dropdown is only shown for signed-in users with course progress data.
@@ -1323,16 +1481,30 @@ export default async function decorate(block) {
 
   // Extract heading and filter label elements
   const [headingElement, filterLabelElement] = [...block.children].map((row) => row.firstElementChild);
+  let state;
+  let buildCardsShimmer;
 
-  // Create and append header with filters
-  block.textContent = '';
-  const headerDiv = createHeader(headingElement, filterLabelElement);
-  block.appendChild(headerDiv);
-
-  // Create content container for course cards
-  const contentDiv = document.createElement('div');
-  contentDiv.classList.add(CSS_CLASSES.CONTENT);
-
+  const sortControl = createSortControl({
+    label: placeholders.filterSortLabel || placeholders.eventSearchFilterSortLabel || 'Sort by:',
+    onChange: (value) => {
+      if (!state || value === state.currentSort) return;
+      state.currentSort = value;
+      updateSearchUrlParams(state);
+      buildCardsShimmer.updateCount(getResponsiveShimmerCount());
+      addShimmerWrapper(block, buildCardsShimmer);
+      fetchCourseData(state.currentProductFilters, state.currentLevelFilters, state).then((courseData) => {
+        renderCoursesAfterSearchChange(block, courseData, buildCardsShimmer, state);
+        updateClearFilterButtonState(block, state);
+      });
+    },
+  });
+  sortControl.setOptions(
+    [
+      { value: COVEO_SORT_OPTIONS.RELEVANCE, label: placeholders.filterSortRelevanceLabel || 'Relevance' },
+      { value: COVEO_SORT_OPTIONS.MOST_POPULAR, label: placeholders.filterSortPopularityLabel || 'Popularity' },
+    ],
+    COVEO_SORT_OPTIONS.RELEVANCE,
+  );
   // Check if user is signed in (required for status dropdown)
   const isUserSignedIn = await isSignedInUser();
 
@@ -1343,11 +1515,16 @@ export default async function decorate(block) {
   const products = facetDetails.el_product || [];
   const levels = facetDetails.el_level || [];
 
-  // Append content container to block first
-  block.appendChild(contentDiv);
+  const layoutControls = createSearchLayout(
+    block,
+    createHeader(headingElement),
+    filterLabelElement,
+    sortControl,
+    placeholders,
+  );
 
   // Initialize and show shimmer loading state
-  const buildCardsShimmer = new BrowseCardShimmer(getResponsiveShimmerCount());
+  buildCardsShimmer = new BrowseCardShimmer(getResponsiveShimmerCount());
   addShimmerWrapper(block, buildCardsShimmer);
 
   // Fetch and render initial course data based on URL filters
@@ -1356,23 +1533,59 @@ export default async function decorate(block) {
   const urlLevelFilters = getLevelFiltersFromUrl();
 
   // Create mutable state object to share between handlers
-  const state = {
+  state = {
     courseData: [],
     currentStatusFilters: [],
     currentLevelFilters: urlLevelFilters,
     currentProductFilters: urlFilters,
+    currentKeyword: getKeywordFromUrl(),
+    currentSort: getSortFromUrl(),
     statusDropdown: null,
     levelDropdown: null,
     productDropdown: null,
     isSignedIn: isUserSignedIn,
     allLevels: levels,
     allProducts: products,
+    searchInput: layoutControls.input,
+    clearSearchButton: layoutControls.clearSearchButton,
+    sortControl,
   };
+  layoutControls.input.value = state.currentKeyword;
+  layoutControls.clearSearchButton.classList.toggle('is-visible', Boolean(state.currentKeyword));
+  sortControl.setSelected(state.currentSort);
+
+  const searchCourses = () => {
+    const keyword = xssSanitizeQueryParamValue(layoutControls.input.value.trim());
+    layoutControls.input.value = keyword;
+    layoutControls.clearSearchButton.classList.toggle('is-visible', Boolean(keyword));
+    if (keyword === state.currentKeyword) return;
+    state.currentKeyword = keyword;
+    updateSearchUrlParams(state);
+    buildCardsShimmer.updateCount(getResponsiveShimmerCount());
+    addShimmerWrapper(block, buildCardsShimmer);
+    fetchCourseData(state.currentProductFilters, state.currentLevelFilters, state).then((courseData) => {
+      renderCoursesAfterSearchChange(block, courseData, buildCardsShimmer, state);
+      updateClearFilterButtonState(block, state);
+    });
+  };
+  layoutControls.searchForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    searchCourses();
+  });
+  layoutControls.input.addEventListener('input', () => {
+    layoutControls.clearSearchButton.classList.toggle('is-visible', Boolean(layoutControls.input.value));
+    if (!layoutControls.input.value) searchCourses();
+  });
+  layoutControls.clearSearchButton.addEventListener('click', () => {
+    layoutControls.input.value = '';
+    searchCourses();
+    layoutControls.input.focus();
+  });
 
   // Setup event handlers first (before data loads)
   setupClearFilterHandler(block, buildCardsShimmer, state);
 
-  // Fetch data non-blocking (include level filters from URL)
+  // Fetch data non-blocking (include URL filters, query, and sort)
   fetchCourseData(urlFilters, state.currentLevelFilters, state).then((courseData) => {
     state.courseData = courseData;
 
@@ -1411,24 +1624,7 @@ export default async function decorate(block) {
 
     // Initialize status filter dropdown - ONLY for signed-in users
     if (isUserSignedIn) {
-      const statusList = createStatusFilterOptions(courseData);
-
-      // Only create dropdown if there are status options
-      if (statusList.length > 0) {
-        const statusDropdownForm = block.querySelector(SELECTORS.DROPDOWN);
-        const statusContainer = createDropdownContainer(statusDropdownForm, 'status-dropdown-container');
-
-        state.statusDropdown = new Dropdown(
-          statusContainer,
-          placeholders?.filterCourseStatusLabel || 'Status',
-          statusList,
-          DROPDOWN_TYPE,
-          'status-dropdown',
-        );
-
-        // Setup status dropdown handler after creation
-        setupStatusDropdownHandler(state.statusDropdown, block, buildCardsShimmer, state);
-      }
+      state.statusDropdown = updateStatusDropdown(block, courseData, buildCardsShimmer, state);
     }
 
     renderCards(block, courseData, buildCardsShimmer);
@@ -1438,6 +1634,7 @@ export default async function decorate(block) {
     preselectDropdownFiltersFromUrl(block, state, 'level');
     updateUrlParams(urlFilters);
     updateLevelUrlParams(state.currentLevelFilters);
+    updateSearchUrlParams(state);
     updateTags(block, urlFilters, state.currentLevelFilters);
 
     // Initialize clear button state based on current filters
