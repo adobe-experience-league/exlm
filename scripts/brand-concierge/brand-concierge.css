@@ -621,8 +621,32 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
   --exlm-font-size-content: var(--spectrum-body-size-m);
 }
 
+.bc-dialog {
+  background: #fff;
+}
+
 .bc-dialog .exl-dialog-body {
   overflow: hidden;
+  background: #fff;
+}
+
+.bc-dialog .exl-dialog-header {
+  gap: 0;
+}
+
+.bc-dialog .bc-dialog-header-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.bc-dialog .bc-dialog-body-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  margin-inline: auto;
 }
 
 #brand-concierge-mount .brand-concierge-flex-wrapper {
@@ -670,7 +694,7 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
   background: transparent !important;
 }
 
-#brand-concierge-mount .chat-interface::after {
+.bc-dialog .exl-dialog-body::after {
   content: '';
   position: absolute;
   inset: auto 0 0;
@@ -701,6 +725,16 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
 
   /* Pass clicks through the gradient fade; keep input + disclaimer interactive. */
   pointer-events: none !important;
+}
+
+@media (width >= 1200px) {
+  .bc-dialog.exl-dialog-expanded > .exl-dialog-header > .bc-dialog-header-content,
+  .bc-dialog.exl-dialog-expanded > .exl-dialog-body > .bc-dialog-body-content {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+  }
 }
 
 .bc-dialog.exl-dialog-expanded #brand-concierge-mount .input-section {

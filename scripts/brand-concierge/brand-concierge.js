@@ -1208,6 +1208,19 @@ function createMountPoint() {
 
   const { element: dialog } = drawerHandle;
   dialog.classList.add('bc-dialog');
+  const header = dialog.querySelector('.exl-dialog-header');
+  const body = dialog.querySelector('.exl-dialog-body');
+  if (header && body) {
+    const headerContent = document.createElement('div');
+    headerContent.className = 'bc-dialog-header-content';
+    headerContent.append(...header.childNodes);
+    header.append(headerContent);
+
+    const bodyContent = document.createElement('div');
+    bodyContent.className = 'bc-dialog-body-content';
+    bodyContent.append(mount);
+    body.append(bodyContent);
+  }
   installKeyboardScrollHandler(dialog, mount);
 
   trigger.addEventListener('click', () => {
