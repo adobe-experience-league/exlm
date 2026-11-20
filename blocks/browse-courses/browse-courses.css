@@ -313,8 +313,11 @@ main .browse-courses .browse-courses-status:empty {
   display: none;
 }
 
+/* Keep the live region in the a11y tree when empty (no display:none). */
 main .browse-courses .browse-courses-status-empty:empty {
-  display: none;
+  margin: 0;
+  padding: 0;
+  background: none;
 }
 
 main .browse-courses .browse-courses-status-empty:not(:empty) {

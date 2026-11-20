@@ -6,10 +6,18 @@ import { isSignedInUser } from '../../scripts/auth/profile.js';
 
 const LEGACY_URL_PARAMS = { product: 'el_product', level: 'el_level' };
 
+/** True when the hash is already query-like (`f-…` / `key=value`), not a bare `#anchor`. */
+function isFilterHash(hash) {
+  const raw = hash.replace(/^#/, '');
+  return !raw || /[=&]/.test(raw) || raw.startsWith('f-');
+}
+
 /** Migrate legacy query filters into `#f-…` before faceted-search init. */
 function migrateLegacyUrlParams() {
   const params = new URLSearchParams(window.location.search);
-  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const rawHash = window.location.hash.replace(/^#/, '');
+  const keepAnchor = rawHash && !isFilterHash(window.location.hash) ? rawHash : '';
+  const hashParams = new URLSearchParams(keepAnchor ? '' : rawHash);
   let changed = false;
   Object.entries(LEGACY_URL_PARAMS).forEach(([param, facet]) => {
     if (!params.has(param)) return;
@@ -26,7 +34,9 @@ function migrateLegacyUrlParams() {
   });
   if (!changed) return;
   const search = params.toString();
-  const fragment = hashParams.toString();
+  const filterFragment = hashParams.toString();
+  // Prefer migrated filters; bare anchors are not mergeable with `f-` keys via URLSearchParams.
+  const fragment = filterFragment || keepAnchor;
   window.history.replaceState(
     null,
     document.title,
@@ -60,16 +70,19 @@ export default async function decorate(block) {
   const { heading, filterLabel } = readAuthoredContent(block);
   const signedIn = await isSignedInUser();
   migrateLegacyUrlParams();
-  await createFacetedSearch(block, {
-    contentType: 'course',
-    filters: true,
-    sort: true,
-    pagination: false,
-    filterLabel,
-    signedIn,
-  });
-  if (heading) {
-    heading.classList.add('browse-courses-heading');
-    block.prepend(heading);
+  try {
+    await createFacetedSearch(block, {
+      contentType: 'course',
+      filters: true,
+      sort: true,
+      pagination: false,
+      filterLabel,
+      signedIn,
+    });
+  } finally {
+    if (heading) {
+      heading.classList.add('browse-courses-heading');
+      block.prepend(heading);
+    }
   }
 }

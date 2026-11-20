@@ -179,7 +179,8 @@ async function enrichModuleCount(wrapper, card) {
   const courseMeta = await getCurrentCourseMeta(card.viewLink);
   if (!wrapper.isConnected || !Array.isArray(courseMeta?.modules) || hasModuleCount(card)) return;
 
-  // eslint-disable-next-line no-param-reassign
+  // Mutate the card model so later re-renders skip a second meta fetch.
+  // eslint-disable-next-line no-param-reassign -- cache module count on the shared card object
   card.el_course_module_count = String(courseMeta.modules.length);
   const statusRow = wrapper.querySelector('.browse-card-status-row');
   if (!statusRow || statusRow.querySelector('.browse-card-module-count')) return;
@@ -281,12 +282,13 @@ export default async function createCourseConfig({
       const shimmer = new BrowseCardShimmer(getShimmerCount(), 'course');
       const addShimmer = shimmer.addShimmer.bind(shimmer);
       const removeShimmer = shimmer.removeShimmer.bind(shimmer);
+      let host;
       shimmer.addShimmer = (target) => {
-        target?.closest('.browse-courses')?.classList.add('browse-courses-loading');
+        host = target?.closest('.browse-courses');
+        host?.classList.add('browse-courses-loading');
         return addShimmer(target);
       };
       shimmer.removeShimmer = () => {
-        const host = shimmer.shimmerContainer?.closest('.browse-courses');
         const result = removeShimmer();
         host?.classList.remove('browse-courses-loading');
         return result;
@@ -298,10 +300,7 @@ export default async function createCourseConfig({
         '../../browse-card/browse-cards-coveo-data-adaptor.js'
       );
       let cards = await BrowseCardsCoveoDataAdaptor.mapResultsToCardsData(results);
-      cards.forEach((card) => {
-        // eslint-disable-next-line no-param-reassign
-        card.originLevel2 = COURSES_SEARCH_TAB;
-      });
+      cards = cards.map((card) => ({ ...card, originLevel2: COURSES_SEARCH_TAB }));
       if (signedIn) cards = await enrichWithCourseStatus(cards);
       return cards;
     },
@@ -309,10 +308,7 @@ export default async function createCourseConfig({
       const { buildCard } = await import('../../browse-card/browse-card.js');
       await buildCard(wrapper, card);
       const status = card.meta?.courseInfo?.courseStatus;
-      if (status) {
-        // eslint-disable-next-line no-param-reassign
-        wrapper.dataset.courseStatus = status;
-      }
+      if (status) wrapper.setAttribute('data-course-status', status);
       if (!hasModuleCount(card) && card.viewLink) pendingModuleCounts.push({ wrapper, card });
     },
     ...(signedIn && { createView: createStatusView(placeholders) }),
