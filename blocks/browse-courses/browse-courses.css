@@ -297,6 +297,11 @@ main .browse-courses.browse-courses-loading .browse-card-shimmer {
   grid-template-columns: repeat(var(--browse-courses-columns), minmax(0, 1fr));
   gap: var(--spectrum-spacing-300, 24px);
   margin: 0;
+}
+
+/* One course-card row while shimmering — avoids CLS; not applied when status hides all cards. */
+main .browse-courses.browse-courses-loading .browse-courses-results-grid,
+main .browse-courses.browse-courses-loading .browse-card-shimmer {
   min-height: 284px;
 }
 
@@ -308,7 +313,11 @@ main .browse-courses .browse-courses-status:empty {
   display: none;
 }
 
-main .browse-courses .browse-courses-status-empty:not([hidden]) {
+main .browse-courses .browse-courses-status-empty:empty {
+  display: none;
+}
+
+main .browse-courses .browse-courses-status-empty:not(:empty) {
   padding: var(--spectrum-spacing-1000, 72px) var(--spectrum-spacing-300, 24px);
   background-color: var(--spectrum-gray-200);
   color: var(--spectrum-gray-700);

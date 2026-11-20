@@ -63,19 +63,31 @@ function getCourseFacetItems(group, values, state, placeholders) {
 /**
  * Status filter chrome for signed-in users. Status comes from profile enrichment, not Coveo.
  * Mounted into the shared toolbar; toggles `hidden` on rendered cards only.
+ * Composes the shared card view so signed-in users keep the same card lifecycle hooks.
  */
 function createStatusView(placeholders) {
   const selectedStatuses = new Set();
-  const resultsSuffix = placeholders.courseResultsCountSuffix || 'courses';
-  return async ({ block, body, controls, store }) => {
-    const [{ default: Dropdown }, { COURSE_STATUS }] = await Promise.all([
+  const noResultsText = placeholders.courseNoResultsText || 'No courses found for the selected filters.';
+  return async (viewOptions) => {
+    const { block, body, controls, store } = viewOptions;
+    const [{ default: Dropdown }, { COURSE_STATUS }, cards] = await Promise.all([
       import('../../dropdown/dropdown.js'),
       import('../../browse-card/browse-cards-constants.js'),
+      import('../components/cards.js'),
     ]);
+    const cardView = await cards.createCardView({
+      ...viewOptions,
+      prefix: 'browse-courses',
+      type: 'course',
+    });
     const label = placeholders.filterCourseStatusLabel || 'Status';
     const container = createTag('form', { class: 'browse-courses-status' });
-    const emptyMessage = createTag('div', { class: 'browse-courses-status-empty', role: 'status', hidden: '' });
-    emptyMessage.textContent = placeholders.courseNoResultsText || 'No courses found for the selected filters.';
+    // Keep the live region in the a11y tree; toggle text (not hidden) so SR announcements fire.
+    const emptyMessage = createTag('div', {
+      class: 'browse-courses-status-empty',
+      role: 'status',
+      'aria-live': 'polite',
+    });
     controls.prepend(container);
     body.append(emptyMessage);
 
@@ -88,18 +100,25 @@ function createStatusView(placeholders) {
       const countEl = block.querySelector('.fs-results-count');
       if (!countEl || coveoTotal == null) return;
       const display = selectedStatuses.size > 0 ? items().filter((card) => !card.hidden).length : coveoTotal;
+      const formatted = new Intl.NumberFormat(document.documentElement.lang || undefined).format(display);
+      const valueEl = countEl.querySelector('.fs-results-count-value');
+      if (valueEl) {
+        valueEl.textContent = formatted;
+        return;
+      }
       const value = createTag('strong', { class: 'fs-results-count-value' });
-      value.textContent = new Intl.NumberFormat(document.documentElement.lang || undefined).format(display);
-      countEl.replaceChildren(value, document.createTextNode(` ${resultsSuffix}`));
+      value.textContent = formatted;
+      countEl.replaceChildren(value, document.createTextNode(` ${placeholders.courseResultsCountSuffix || 'courses'}`));
     }
 
     function applyStatus() {
-      const cards = items();
-      cards.forEach((card) => {
+      const cardsInGrid = items();
+      cardsInGrid.forEach((card) => {
         const hide = selectedStatuses.size > 0 && !selectedStatuses.has(card.dataset.courseStatus);
         card.hidden = hide;
       });
-      emptyMessage.hidden = !cards.length || cards.some((card) => !card.hidden);
+      const showEmpty = cardsInGrid.length > 0 && cardsInGrid.every((card) => card.hidden);
+      emptyMessage.textContent = showEmpty ? noResultsText : '';
       syncResultCount();
     }
 
@@ -153,6 +172,7 @@ function createStatusView(placeholders) {
 
     return {
       afterRender({ snapshot } = {}) {
+        cardView.afterRender?.({ snapshot });
         if (typeof snapshot?.total === 'number') coveoTotal = snapshot.total;
         syncOptions();
         applyStatus();
@@ -163,6 +183,7 @@ function createStatusView(placeholders) {
         dropdown?.remove();
         container.remove();
         emptyMessage.remove();
+        cardView.destroy?.();
       },
     };
   };
@@ -231,6 +252,8 @@ export default async function createCourseConfig({
   const { default: BrowseCardShimmer } = await import('../../browse-card/browse-card-shimmer.js');
   const pageSize = pagination ? 12 : NUMBER_OF_RESULTS;
   let legacyRemapDone = false;
+  /** Module-count fetches start after cards attach (controller commits the fragment first). */
+  let pendingModuleCounts = [];
 
   return {
     groups: [
@@ -317,10 +340,15 @@ export default async function createCourseConfig({
         // eslint-disable-next-line no-param-reassign
         wrapper.dataset.courseStatus = status;
       }
-      if (!hasModuleCount(card) && card.viewLink) enrichModuleCount(wrapper, card).catch(() => undefined);
+      if (!hasModuleCount(card) && card.viewLink) pendingModuleCounts.push({ wrapper, card });
     },
     ...(signedIn && { createView: createStatusView(placeholders) }),
     afterRender({ store, snapshot }) {
+      const enrichments = pendingModuleCounts;
+      pendingModuleCounts = [];
+      enrichments.forEach(({ wrapper, card }) => {
+        enrichModuleCount(wrapper, card).catch(() => undefined);
+      });
       if (legacyRemapDone) return;
       const productsDone = remapLegacyFilters(store, snapshot, 'el_product', { pipeInsensitive: true });
       const levelsDone = remapLegacyFilters(store, snapshot, 'el_level');
