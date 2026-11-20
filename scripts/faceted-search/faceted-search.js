@@ -20,6 +20,13 @@ export {
 } from './components/sort-control.js';
 export { default as createCollectionSource } from './sources/collection-source.js';
 export async function createFacetedSearch(block, config) {
-  const resolved = Object.hasOwn(config, 'contentType') ? await createContentConfig(config) : config;
+  const isContentPreset = Object.hasOwn(config, 'contentType');
+  const resolved = isContentPreset ? await createContentConfig(config) : config;
+  if (isContentPreset) {
+    const heading =
+      block.querySelector(':scope > .fs-layout .fs-heading') ||
+      block.querySelector(':scope > div:not(.fs-layout) > div');
+    resolved.heading = heading?.textContent.trim() || '';
+  }
   return createSearch(block, resolved);
 }

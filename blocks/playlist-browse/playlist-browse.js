@@ -5,7 +5,7 @@ export default async function decorate(block) {
     contentType: 'playlist',
     filters: true,
     sort: false,
-    viewSwitcher: false,
+    viewSwitcher: true,
     pagination: true,
   });
 }

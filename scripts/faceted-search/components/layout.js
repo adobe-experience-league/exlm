@@ -4,6 +4,7 @@ import { decorateIcons } from '../../lib-franklin.js';
 export default function createSidebarLayout({
   ui,
   prefix = 'fs',
+  heading = '',
   collapsibleOnMobile = true,
   withFilters = true,
   cardColumns = true, // false: don't apply the 3-per-row card grid (blocks with their own results layout)
@@ -53,6 +54,11 @@ export default function createSidebarLayout({
 
   aside.append(panel);
   const results = createTag('section', { class: `${prefix}-results-column` });
+  if (heading) {
+    const title = createTag('h2', { class: `${prefix}-heading browse-cards-block-title` });
+    title.textContent = heading;
+    results.append(title);
+  }
   // toolbar: results count on the left, `controls` (sort, view switcher, ...) on the right
   const toolbar = createTag('div', { class: `${prefix}-toolbar` });
   const controls = createTag('div', { class: `${prefix}-toolbar-controls` });

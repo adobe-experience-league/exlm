@@ -27,3 +27,39 @@
 .playlist-browse .playlist-browse-results-body.list .playlist-browse-cards {
   grid-template-columns: 1fr;
 }
+
+@media (min-width: 900px) {
+  .playlist-browse .playlist-browse-results-body.list .playlist-browse-cards {
+    min-height: 0;
+    align-content: start;
+  }
+
+  .playlist-browse .playlist-browse-results-body.list .playlist-card {
+    display: grid;
+    grid-template-columns: minmax(180px, 24%) minmax(0, 1fr) minmax(140px, 20%);
+    min-height: 198px;
+    height: auto;
+  }
+
+  .playlist-browse .playlist-browse-results-body.list .playlist-card .browse-card-figure {
+    height: auto;
+    min-height: 198px;
+    max-height: none;
+    border-radius: 15px 0 0 15px;
+  }
+
+  .playlist-browse .playlist-browse-results-body.list .playlist-card .browse-card-content {
+    min-width: 0;
+    padding: 24px 16px;
+  }
+
+  .playlist-browse .playlist-browse-results-body.list .playlist-card .browse-card-footer {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    padding: 24px 16px;
+    border-left: 1px solid var(--spectrum-gray-200);
+    border-radius: 0 15px 15px 0;
+  }
+}

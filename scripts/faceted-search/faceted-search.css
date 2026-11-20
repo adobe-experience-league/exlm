@@ -19,6 +19,11 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+.fs-layout .fs-heading {
+  margin: 0 0 var(--spectrum-spacing-400, 24px);
+  overflow-wrap: anywhere;
+}
+
 .fs-layout .fs-filters-column {
   height: 100%;
   background: var(--background-color, #fff);
