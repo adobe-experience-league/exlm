@@ -55,6 +55,7 @@ export default async function createFacetedSearch(block, config) {
   const shell = createSidebarLayout({
     ui,
     prefix,
+    heading: config.heading,
     cardColumns: config.cardColumns ?? true,
     withFilters: config.filters !== false,
   });

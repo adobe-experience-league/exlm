@@ -208,7 +208,7 @@ export function getCardHeaderAndPosition(card, element) {
   let cardHeader = '';
   const currentBlock = card.closest('.block');
   const headerEl = currentBlock?.querySelector(
-    '.browse-cards-block-title, .rec-block-header, .inprogress-courses-header-wrapper',
+    '.browse-cards-block-title, .fs-heading, .rec-block-header, .inprogress-courses-header-wrapper',
   );
   if (headerEl) {
     const cloned = headerEl.cloneNode(true);

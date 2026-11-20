@@ -19,6 +19,16 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+.fs-layout .fs-heading {
+  margin: 0 0 var(--spectrum-spacing-400, 24px);
+  font-family: var(--heading-font-family);
+  font-size: var(--exlm-font-size-h2);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--exlm-line-height-h2);
+  color: var(--non-spectrum-grey);
+  overflow-wrap: anywhere;
+}
+
 .fs-layout .fs-filters-column {
   height: 100%;
   background: var(--background-color, #fff);

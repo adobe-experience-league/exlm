@@ -8903,7 +8903,16 @@
   },
   {
     "id": "playlist-browse",
-    "fields": []
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Browse all heading",
+        "description": "Optional heading above search, for example Browse all playlists."
+      }
+    ]
   },
   {
     "id": "playlist-embed",
