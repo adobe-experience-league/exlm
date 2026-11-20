@@ -141,6 +141,34 @@ export function createPerspectiveSortPolicy(placeholders) {
   };
 }
 
+export function readCourseSort(criterion) {
+  if (criterion === '@el_view_count descending') return 'popularity';
+  if (criterion === 'relevancy') return 'relevance';
+  return null;
+}
+
+export function createCourseSortPolicy(placeholders) {
+  const options = [
+    { value: 'relevance', label: placeholders.filterSortRelevanceLabel || 'Relevance' },
+    { value: 'popularity', label: placeholders.filterSortPopularityLabel || 'Popularity' },
+  ];
+  return {
+    initial: 'relevance',
+    default: 'relevance',
+    resolve(state) {
+      const value = options.some((option) => option.value === state.sort) ? state.sort : 'relevance';
+      return {
+        value,
+        options,
+        key: value,
+        criterion(criteria) {
+          return value === 'popularity' ? criteria.field('el_view_count', 'descending') : criteria.relevance();
+        },
+      };
+    },
+  };
+}
+
 /** Standard client-side sort options. '' (the default) keeps the source order. */
 export function getDefaultSortOptions(placeholders = {}) {
   return [

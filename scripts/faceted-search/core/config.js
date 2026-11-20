@@ -8,7 +8,7 @@ import { createCollectionSortPolicy, createEventSortPolicy, readEventSort } from
 import { alphabetical, getEventFacetItems, getPlaylistFacetItems } from '../components/filters.js';
 import { renderPlaylistCard } from '../components/cards.js';
 
-const SUPPORTED_CONTENT_TYPES = ['event', 'playlist', 'perspective'];
+const SUPPORTED_CONTENT_TYPES = ['event', 'playlist', 'perspective', 'course'];
 
 export default async function createContentConfig({
   contentType,
@@ -17,6 +17,7 @@ export default async function createContentConfig({
   viewSwitcher = false,
   pagination = false,
   filterLabel,
+  signedIn = false,
 }) {
   if (!SUPPORTED_CONTENT_TYPES.includes(contentType)) {
     throw new Error(`Faceted-search configuration is not implemented for content type: ${contentType}`);
@@ -36,6 +37,11 @@ export default async function createContentConfig({
   if (contentType === 'perspective') {
     const { default: createPerspectiveConfig } = await import('./perspective-config.js');
     return createPerspectiveConfig({ placeholders, filters, sort, pagination, filterLabel });
+  }
+
+  if (contentType === 'course') {
+    const { default: createCourseConfig } = await import('./course-config.js');
+    return createCourseConfig({ placeholders, filters, sort, pagination, filterLabel, signedIn });
   }
 
   if (contentType === 'playlist') {
