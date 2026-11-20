@@ -103,6 +103,72 @@ export function createEventSortPolicy(placeholders, contentTypes, hash = window.
   };
 }
 
+export function readPerspectiveSort(criterion) {
+  if (criterion === '@el_view_count descending') return 'popularity';
+  if (criterion === 'date descending') return 'newest';
+  if (criterion === 'date ascending') return 'oldest';
+  if (criterion === 'relevancy') return 'relevance';
+  return null;
+}
+
+export function createPerspectiveSortPolicy(placeholders) {
+  const labels = {
+    relevance: placeholders.filterSortRelevanceLabel || 'Relevance',
+    popularity: placeholders.filterSortPopularityLabel || 'Popularity',
+    newest: placeholders.filterSortNewestLabel || 'Newest',
+    oldest: placeholders.filterSortOldestLabel || 'Oldest',
+  };
+  const order = ['relevance', 'popularity', 'newest', 'oldest'];
+  const options = order.map((value) => ({ value, label: labels[value] }));
+  const initial = 'newest';
+  return {
+    initial,
+    default: initial,
+    resolve(state) {
+      const value = order.includes(state.sort) ? state.sort : initial;
+      return {
+        value,
+        options,
+        key: value,
+        criterion(criteria) {
+          if (value === 'popularity') return criteria.field('el_view_count', 'descending');
+          if (value === 'newest') return criteria.date('descending');
+          if (value === 'oldest') return criteria.date('ascending');
+          return criteria.relevance();
+        },
+      };
+    },
+  };
+}
+
+export function readCourseSort(criterion) {
+  if (criterion === '@el_view_count descending') return 'popularity';
+  if (criterion === 'relevancy') return 'relevance';
+  return null;
+}
+
+export function createCourseSortPolicy(placeholders) {
+  const options = [
+    { value: 'relevance', label: placeholders.filterSortRelevanceLabel || 'Relevance' },
+    { value: 'popularity', label: placeholders.filterSortPopularityLabel || 'Popularity' },
+  ];
+  return {
+    initial: 'relevance',
+    default: 'relevance',
+    resolve(state) {
+      const value = options.some((option) => option.value === state.sort) ? state.sort : 'relevance';
+      return {
+        value,
+        options,
+        key: value,
+        criterion(criteria) {
+          return value === 'popularity' ? criteria.field('el_view_count', 'descending') : criteria.relevance();
+        },
+      };
+    },
+  };
+}
+
 /** Standard client-side sort options. '' (the default) keeps the source order. */
 export function getDefaultSortOptions(placeholders = {}) {
   return [

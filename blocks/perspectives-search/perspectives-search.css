@@ -1,0 +1,102 @@
+@import '../../scripts/faceted-search/faceted-search.css';
+@import '../../scripts/browse-card/browse-card.css';
+
+/*
+ * perspectives-search: Perspective cards only.
+ * Filters, keyword box, active tags, count, sort and pagination come from faceted-search.css;
+ * card appearance comes from browse-card.css. This block owns the results grid.
+ */
+
+main .perspectives-search {
+  --perspectives-columns: 1;
+
+  max-width: var(--default-max-width);
+  margin: 0 auto;
+}
+
+main .perspectives-search .perspectives-search-heading {
+  margin: 0 0 var(--spectrum-spacing-400, 24px);
+  color: var(--spectrum-gray-800);
+}
+
+main .perspectives-search .fs-toolbar {
+  margin-bottom: var(--spectrum-spacing-400, 24px);
+}
+
+main .perspectives-search .perspectives-search-results-grid,
+main .perspectives-search .perspectives-search-loading .browse-card-shimmer {
+  display: grid;
+  grid-template-columns: repeat(var(--perspectives-columns), minmax(0, 1fr));
+  gap: var(--spectrum-spacing-300, 24px);
+  margin: 0;
+}
+
+main .perspectives-search .perspectives-search-results-grid {
+  min-height: 400px;
+  padding-bottom: 2px;
+}
+
+main .perspectives-search .perspectives-search-results-grid > .perspectives-search-card-item {
+  min-width: 0;
+}
+
+main .perspectives-search .perspectives-search-card-item > a {
+  display: block;
+  height: 100%;
+  margin: 0;
+}
+
+main .perspectives-search .perspectives-search-results-grid .browse-card .user-actions .action-tooltip {
+  left: 100%;
+  transform: translateX(-20%);
+
+  &::after {
+    left: 10%;
+  }
+}
+
+main .perspectives-search .perspectives-search-loading .browse-card-shimmer {
+  height: auto;
+}
+
+main .perspectives-search .perspectives-search-no-results:not([hidden]) {
+  padding: var(--spectrum-spacing-1000, 72px) var(--spectrum-spacing-300, 24px);
+  background-color: var(--spectrum-gray-200);
+  text-align: center;
+}
+
+@media (min-width: 600px) {
+  main .perspectives-search {
+    --perspectives-columns: 2;
+  }
+
+  main .perspectives-search .perspectives-search-results-grid .browse-card .user-actions .action-tooltip {
+    left: 50%;
+    transform: translateX(-50%);
+
+    &::after {
+      left: 50%;
+    }
+  }
+}
+
+/* Card grid columns: <600 1, 600–899 2, 900–1023 3, 1024–1199 2, ≥1200 3.
+ * 1024px matches `.fs-layout` sidebar breakpoint in faceted-search.css so two columns
+ * fit beside the desktop filter panel (same pattern as events-search). */
+@media (min-width: 900px) {
+  main .perspectives-search {
+    --perspectives-columns: 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  main .perspectives-search {
+    --perspectives-columns: 2;
+  }
+}
+
+@media (min-width: 1200px) {
+  main .perspectives-search {
+    --perspectives-columns: 3;
+  }
+}

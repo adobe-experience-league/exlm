@@ -35,6 +35,20 @@ export function getPlaylistFacetItems(group, values) {
     );
 }
 
+/** Shared Coveo facet presentation for authored/static group items or dynamic product/role/author values. */
+export function getCoveoFacetItems(group, values, state) {
+  const selected = new Set(state.filters[group.id]);
+  if (group.items?.length) {
+    return group.items
+      .map((item) => ({ ...item, count: values.find((value) => value.value === item.value)?.count ?? 0 }))
+      .filter((item) => selected.has(item.value) || item.count > 0);
+  }
+  return values
+    .filter((value) => selected.has(value.value) || value.count > 0)
+    .map((value) => ({ ...value, title: value.value.split('|').join(' | ') }))
+    .sort(alphabetical);
+}
+
 export default function createFacetedSearchUI({
   store,
   groups,
