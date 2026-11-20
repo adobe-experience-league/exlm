@@ -90,8 +90,9 @@ export default async function createPerspectiveConfig({ placeholders, filters, s
       hideAqFromUrl: true,
       baseAdvancedQuery: advancedQuery,
     },
-    getFacetItems: (group, values, state) => getCoveoFacetItems(group, values, state, placeholders),
+    getFacetItems: (group, values, state) => getCoveoFacetItems(group, values, state),
     cards: { type: 'perspective' },
+    // Boolean form is supported by the controller (same as events); see createFacetedSearch scrollToResults.
     scrollToResults: true,
   };
 }

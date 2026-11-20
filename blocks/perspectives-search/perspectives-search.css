@@ -80,6 +80,9 @@ main .perspectives-search .perspectives-search-no-results:not([hidden]) {
   }
 }
 
+/* Card grid columns: <600 1, 600–899 2, 900–1023 3, 1024–1199 2, ≥1200 3.
+ * 1024px matches `.fs-layout` sidebar breakpoint in faceted-search.css so two columns
+ * fit beside the desktop filter panel (same pattern as events-search). */
 @media (min-width: 900px) {
   main .perspectives-search {
     --perspectives-columns: 3;

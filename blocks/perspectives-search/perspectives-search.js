@@ -13,14 +13,17 @@ function readAuthoredContent(block) {
   const secondText = second?.textContent.trim() || '';
   const headingType = HEADING_TYPES.has(secondText.toLowerCase()) ? secondText.toLowerCase() : 'h2';
   const filterLabelCell = HEADING_TYPES.has(secondText.toLowerCase()) ? third : second;
+  const filterLabel = filterLabelCell?.textContent.trim() || '';
 
   const headingText = headingCell?.textContent.trim() || '';
+  if (!headingText) return { heading: null, filterLabel };
+
   let heading = headingCell?.querySelector('h1, h2, h3, h4, h5, h6') || null;
-  if (!heading?.textContent.trim() && headingText) {
+  if (!heading?.textContent.trim()) {
     heading = createTag(headingType);
     heading.textContent = headingText;
   }
-  return { heading, filterLabel: filterLabelCell?.textContent.trim() || '' };
+  return { heading, filterLabel };
 }
 
 export default async function decorate(block) {
