@@ -55,7 +55,7 @@ export default function createSidebarLayout({
   aside.append(panel);
   const results = createTag('section', { class: `${prefix}-results-column` });
   if (heading) {
-    const title = createTag('h2', { class: `${prefix}-heading browse-cards-block-title` });
+    const title = createTag('h2', { class: `${prefix}-heading` });
     title.textContent = heading;
     results.append(title);
   }
