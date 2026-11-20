@@ -28,8 +28,8 @@ function readAuthoredContent(block) {
 
 export default async function decorate(block) {
   const { heading, filterLabel } = readAuthoredContent(block);
-  // createFacetedSearch replaces the block's children synchronously, so keep the authored heading and re-add it.
-  const search = createFacetedSearch(block, {
+  // Await init first — createFacetedSearch replaces block children after async config load.
+  await createFacetedSearch(block, {
     contentType: 'perspective',
     filters: true,
     sort: true,
@@ -40,5 +40,4 @@ export default async function decorate(block) {
     heading.classList.add('perspectives-search-heading');
     block.prepend(heading);
   }
-  await search;
 }
