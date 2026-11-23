@@ -84,7 +84,7 @@ async function fetchToc(tocID) {
  */
 function getProductName() {
   const productNames = [getMetadata('product'), getMetadata('product_v2'), getMetadata('solution')];
-  const productName = productNames.find((name) => name.trim());
+  const productName = productNames.find((name) => name?.trim());
   return productName ? productName.split(',')[0].trim() : '';
 }
 
