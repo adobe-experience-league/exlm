@@ -83,8 +83,9 @@ async function fetchToc(tocID) {
  * @returns {string} product name from metadata
  */
 function getProductName() {
-  const productNames = getMetadata('product_v2') || getMetadata('solution');
-  return productNames.includes(',') ? productNames.split(',')[0].trim() : productNames;
+  const productNames = [getMetadata('product'), getMetadata('product_v2'), getMetadata('solution')];
+  const productName = productNames.find((name) => name?.trim());
+  return productName ? productName.split(',')[0].trim() : '';
 }
 
 // The TOC additional UI elements
@@ -118,7 +119,7 @@ const tocActions = (placeholders) => `
 function buildProductHeader(placeholders) {
   const productName = getProductName();
   const solutionInfo = getSolutionByName(productName);
-  return htmlToElement(`
+  const productHeader = htmlToElement(`
     <div class="toc-header is-sticky">
       <div class="toc-header-content">
         <span class="icon icon-${solutionInfo.class}"></span>
@@ -127,6 +128,8 @@ function buildProductHeader(placeholders) {
       ${tocActions(placeholders)}
     </div>
   `);
+  productHeader.querySelector('h3').textContent = productName || solutionInfo.name;
+  return productHeader;
 }
 
 function buildTocMobileDropdown() {
