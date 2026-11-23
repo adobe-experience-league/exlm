@@ -68,8 +68,10 @@ matches titles and descriptions and persists in the `q` query parameter. It now 
 shared sidebar/mobile filter layout and pagination controls. Existing repeated `solution`, `role` and `level` query
 parameters remain supported; `page` also supports shareable pagination and Back/Forward navigation.
 
-Course and perspective presets will be added with their respective migrations; unsupported content types throw an explicit
-error. The lower-level configuration API remains available for custom sources and renderers.
+The `perspective` preset (EXLM-6250) uses Coveo Headless with AQ scoped to Perspective, Product/Role/Author Type
+filters, newest-first sort, and pagination — no list/grid switcher. Course presets land with EXLM-5958. Unsupported
+content types throw an explicit error. The lower-level configuration API remains available for custom sources and
+renderers.
 
 Within faceted search, `components/cards.js` owns both card preparation/rendering and the result grid's loading, empty and
 error states. It loads the browse-card painter and view switcher only when needed. `components/sort-control.js` contains
