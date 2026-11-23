@@ -1,27 +1,27 @@
 import { loadCSS } from '../../lib-franklin.js';
-import { createTag } from '../../scripts.js';
+import { createTag, htmlToElement } from '../../scripts.js';
 import BrowseCardShimmer from '../../browse-card/browse-card-shimmer.js';
 import isFeatureEnabled from '../../utils/feature-flag-utils.js';
 import { groupUpcomingThenOnDemand, shouldGroupEvents } from './sort-control.js';
 import { filterCourseCardsByStatus } from './filters.js';
 
 export function createResults({ resultsPrefix = 'fs', labels = {}, createLoading, onClear, classes = {} }) {
-  const body = createTag('div', {
-    class: `fs-results-body ${resultsPrefix}-results-body ${classes.body || ''}`.trim(),
-  });
-  const empty = createTag('div', {
-    class: `fs-no-results ${resultsPrefix}-no-results`,
-    hidden: '',
-    role: 'status',
-    'aria-live': 'polite',
-  });
-  const grid = createTag('div', {
-    class: `fs-results-grid ${resultsPrefix}-results-grid ${classes.grid || ''}`.trim(),
-  });
-  const error = createTag('div', { class: 'fs-search-error', hidden: '', role: 'alert' });
+  const body = htmlToElement(`
+    <div class="fs-results-body">
+      <div class="fs-no-results" hidden role="status" aria-live="polite"></div>
+      <div class="fs-results-grid"></div>
+      <div class="fs-search-error" hidden role="alert"></div>
+    </div>`);
+  const empty = body.querySelector('.fs-no-results');
+  const grid = body.querySelector('.fs-results-grid');
+  const error = body.querySelector('.fs-search-error');
+  body.classList.add(`${resultsPrefix}-results-body`);
+  empty.classList.add(`${resultsPrefix}-no-results`);
+  grid.classList.add(`${resultsPrefix}-results-grid`);
+  if (classes.body) body.classList.add(...classes.body.split(/\s+/).filter(Boolean));
+  if (classes.grid) grid.classList.add(...classes.grid.split(/\s+/).filter(Boolean));
   const loading = createLoading?.();
   let isLoading = false;
-  body.append(empty, grid, error);
   return {
     body,
     grid,

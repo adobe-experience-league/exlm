@@ -1,4 +1,4 @@
-import { createTag } from '../../scripts.js';
+import { createTag, htmlToElement } from '../../scripts.js';
 import { decorateIcons } from '../../lib-franklin.js';
 import createSearchBar from './search-bar.js';
 
@@ -100,31 +100,37 @@ export default function createFacetedSearchUI({
   const groupEls = new Map();
 
   /* ---------- filters column ---------- */
-  const filtersEl = createTag('div', { class: c('filters') });
-  filtersEl.innerHTML = `
-    <div class="${c('filters-header')}">
-      <h2 class="${c('filters-heading')}">${placeholders.filtersLabel || 'Filters'}</h2>
-      <button type="button" class="${c('clear-filters')}">${placeholders.filterClearLabel || 'Clear filters'}</button>
-    </div>
-    <div class="${c('filter-groups')}"></div>`;
+  const filtersEl = htmlToElement(`
+    <div class="fs-filters">
+      <div class="fs-filters-header">
+        <h2 class="fs-filters-heading"></h2>
+        <button type="button" class="fs-clear-filters"></button>
+      </div>
+      <div class="fs-filter-groups"></div>
+    </div>`);
+  filtersEl.querySelector('.fs-filters-heading').textContent = placeholders.filtersLabel || 'Filters';
   const groupsRoot = filtersEl.querySelector(`.${c('filter-groups')}`);
   const clearBtn = filtersEl.querySelector(`.${c('clear-filters')}`);
+  clearBtn.textContent = placeholders.filterClearLabel || 'Clear filters';
 
   groups.forEach((group, i) => {
     const regionId = `${instanceId}-${group.id}-options-${i}`;
-    const groupEl = createTag('div', {
-      class: `${c('filter-group')}${expandedByDefault ? ' is-expanded' : ''}`,
-      'data-filter-type': group.id,
-    });
-    groupEl.innerHTML = `
-      <button class="${c(
-        'filter-group-header',
-      )}" type="button" aria-expanded="${expandedByDefault}" aria-controls="${regionId}">
-        <span class="${c('filter-group-title')}">${group.name}</span>
-        <span class="${c('filter-group-count')}"></span>
-        <span class="icon icon-chevron"></span>
-      </button>
-      <div class="${c('filter-options')}" id="${regionId}"></div>`;
+    const groupEl = htmlToElement(`
+      <div class="fs-filter-group">
+        <button class="fs-filter-group-header" type="button">
+          <span class="fs-filter-group-title"></span>
+          <span class="fs-filter-group-count"></span>
+          <span class="icon icon-chevron"></span>
+        </button>
+        <div class="fs-filter-options"></div>
+      </div>`);
+    groupEl.classList.toggle('is-expanded', expandedByDefault);
+    groupEl.dataset.filterType = group.id;
+    const header = groupEl.querySelector('.fs-filter-group-header');
+    header.setAttribute('aria-expanded', String(expandedByDefault));
+    header.setAttribute('aria-controls', regionId);
+    groupEl.querySelector('.fs-filter-group-title').textContent = group.name;
+    groupEl.querySelector('.fs-filter-options').id = regionId;
     groupEl.hidden = true; // shown once it has items
     groupEls.set(group.id, groupEl);
     groupsRoot.append(groupEl);

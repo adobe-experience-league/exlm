@@ -26,6 +26,11 @@ async function setup(page) {
       contentType: 'text/javascript',
       body: `export async function fetchLanguagePlaceholders() { return {}; }
         export function getPathDetails() { return { lang: 'en' }; }
+        export function htmlToElement(html) {
+          const template = document.createElement('template');
+          template.innerHTML = html.trim();
+          return template.content.firstElementChild;
+        }
         export function createTag(tag, attributes = {}, content) {
           const element = document.createElement(tag);
           Object.entries(attributes).forEach(([name, value]) => element.setAttribute(name, value));

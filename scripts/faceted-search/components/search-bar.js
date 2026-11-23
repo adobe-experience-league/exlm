@@ -1,20 +1,22 @@
-import { createTag } from '../../scripts.js';
+import { htmlToElement } from '../../scripts.js';
 import { decorateIcons } from '../../lib-franklin.js';
 
 export default function createSearchBar({ store, placeholders = {}, onInput = () => {} }) {
   const c = (name) => `fs-${name}`;
   const abort = new AbortController();
   const { signal } = abort;
-  const el = createTag('div', { class: c('keyword') });
-  el.innerHTML = `
-    <span class="icon icon-search-gray"></span>
-    <input type="text" class="${c('keyword-input')}" placeholder="${placeholders.searchPlaceholder || 'Search'}"
-           aria-label="${placeholders.searchPlaceholder || 'Search'}" />
-    <span class="icon icon-clear ${c('keyword-clear')}" role="button" tabindex="0"
-          aria-label="${placeholders.clearSearchLabel || 'Clear search'}"></span>`;
-  decorateIcons(el);
+  const el = htmlToElement(`
+    <div class="fs-keyword">
+      <span class="icon icon-search-gray"></span>
+      <input type="text" class="fs-keyword-input">
+      <span class="icon icon-clear fs-keyword-clear" role="button" tabindex="0"></span>
+    </div>`);
   const input = el.querySelector('input');
   const clearIcon = el.querySelector(`.${c('keyword-clear')}`);
+  input.placeholder = placeholders.searchPlaceholder || 'Search';
+  input.setAttribute('aria-label', input.placeholder);
+  clearIcon.setAttribute('aria-label', placeholders.clearSearchLabel || 'Clear search');
+  decorateIcons(el);
   const submit = () => store.setKeyword(input.value);
   input.addEventListener(
     'keydown',

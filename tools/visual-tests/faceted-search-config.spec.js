@@ -587,6 +587,56 @@ test('shared UI always uses fs while result classes retain their content prefix'
   await expect(page.locator('.playlist-browse-card-item')).toHaveText('Commerce course');
 });
 
+test('static UI templates preserve dynamic labels as literal text and attribute values', async ({ page }) => {
+  const label = 'Products "quoted" <b>literal</b> & roles';
+  const rendered = await page.evaluate(async (text) => {
+    const modulePath = '/scripts/faceted-search/faceted-search.js';
+    const { createFilterStore, createFacetedSearchUI, createSidebarLayout, createSortControl } = await import(
+      modulePath
+    );
+    const store = createFilterStore({ groupIds: ['product'] });
+    const ui = createFacetedSearchUI({
+      store,
+      groups: [{ id: 'product', name: text }],
+      placeholders: {
+        filtersLabel: text,
+        filterClearLabel: text,
+        searchPlaceholder: text,
+        clearSearchLabel: text,
+      },
+    });
+    const shell = createSidebarLayout({ ui, heading: text });
+    const sort = createSortControl({ label: text });
+    sort.setOptions([{ value: 'relevance', label: text }], 'relevance');
+    shell.controls.append(sort.el);
+    document.querySelector('main').append(shell.layout);
+    const groupHeader = shell.layout.querySelector('.fs-filter-group-header');
+    return {
+      labels: [
+        shell.layout.querySelector('.fs-heading').textContent,
+        shell.layout.querySelector('.fs-filters-heading').textContent,
+        shell.layout.querySelector('.fs-clear-filters').textContent,
+        shell.layout.querySelector('.fs-filter-group-title').textContent,
+        shell.layout.querySelector('.fs-sort-btn-prefix').textContent,
+        shell.layout.querySelector('.fs-sort-btn-value').textContent,
+      ],
+      placeholder: ui.keywordEl.querySelector('input').placeholder,
+      searchAria: ui.keywordEl.querySelector('input').getAttribute('aria-label'),
+      clearAria: ui.keywordEl.querySelector('.fs-keyword-clear').getAttribute('aria-label'),
+      groupLinked: groupHeader.getAttribute('aria-controls') === shell.layout.querySelector('.fs-filter-options').id,
+      interpretedMarkup: shell.layout.querySelectorAll('b').length,
+    };
+  }, label);
+  expect(rendered).toEqual({
+    labels: Array(6).fill(label),
+    placeholder: label,
+    searchAria: label,
+    clearAria: label,
+    groupLinked: true,
+    interpretedMarkup: 0,
+  });
+});
+
 test('Perspective view switching honors the flag and retains three-column list cards', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.addStyleTag({ url: '/styles/styles.css' });

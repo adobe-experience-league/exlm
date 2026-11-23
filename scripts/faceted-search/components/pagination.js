@@ -1,4 +1,4 @@
-import { createTag } from '../../scripts.js';
+import { htmlToElement } from '../../scripts.js';
 import { normalizePage } from '../state/store.js';
 
 export default function createPagination({ resultsPrefix = 'fs', labels = {}, onChange }) {
@@ -6,26 +6,23 @@ export default function createPagination({ resultsPrefix = 'fs', labels = {}, on
   const { signal } = abort;
   let currentPage = 1;
   let maxPage = 1;
-  const el = createTag('div', { class: `fs-pagination ${resultsPrefix}-pagination` });
-  const previous = createTag('button', {
-    class: 'nav-arrow',
-    type: 'button',
-    'aria-label': labels.previous || 'previous page',
-  });
-  const input = createTag('input', {
-    type: 'text',
-    class: `fs-pg-input ${resultsPrefix}-pg-input`,
-    inputmode: 'numeric',
-    'aria-label': labels.pageInput || 'Enter page number',
-    value: '1',
-  });
-  const text = createTag('span', { class: `fs-pagination-text ${resultsPrefix}-pagination-text` });
-  const next = createTag('button', {
-    class: 'nav-arrow right-nav-arrow',
-    type: 'button',
-    'aria-label': labels.next || 'next page',
-  });
-  el.append(previous, input, text, next);
+  const el = htmlToElement(`
+    <div class="fs-pagination">
+      <button class="nav-arrow" type="button"></button>
+      <input type="text" class="fs-pg-input" inputmode="numeric" value="1">
+      <span class="fs-pagination-text"></span>
+      <button class="nav-arrow right-nav-arrow" type="button"></button>
+    </div>`);
+  el.classList.add(`${resultsPrefix}-pagination`);
+  const previous = el.querySelector('.nav-arrow');
+  const input = el.querySelector('.fs-pg-input');
+  const text = el.querySelector('.fs-pagination-text');
+  const next = el.querySelector('.right-nav-arrow');
+  previous.setAttribute('aria-label', labels.previous || 'previous page');
+  input.classList.add(`${resultsPrefix}-pg-input`);
+  input.setAttribute('aria-label', labels.pageInput || 'Enter page number');
+  text.classList.add(`${resultsPrefix}-pagination-text`);
+  next.setAttribute('aria-label', labels.next || 'next page');
   const select = (value) => {
     const page = normalizePage(value, maxPage);
     input.value = String(page ?? currentPage);
