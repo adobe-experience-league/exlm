@@ -268,10 +268,18 @@ async function installNetworkStubs(page, blockSlug) {
 
   if (COVEO_MOCKED_BLOCKS.includes(blockSlug)) {
     const har = loadHar(blockSlug);
+    let searchResponseSequence = 0;
     // Replay recorded Coveo responses: live search results drift over time. Refresh with:
     //   node tools/visual-tests/record-coveo-har.js <block>
     const replay = (urlPart) => async (route) => {
       const response = harResponse(har, urlPart);
+      if (response && urlPart === '/rest/search/v2') {
+        const body = JSON.parse(response.body);
+        // Headless consumers use response identity to wait for a newly completed search.
+        searchResponseSequence += 1;
+        body.searchUid = `00000000-0000-4000-8000-${String(searchResponseSequence).padStart(12, '0')}`;
+        response.body = JSON.stringify(body);
+      }
       if (response) await route.fulfill(response);
       else await route.abort('blockedbyclient');
     };

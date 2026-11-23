@@ -39,6 +39,45 @@ The action is the entry point for all HTML delivered to https://aem.live service
 | `npm run format`  | Format code                            |
 | `npm run lint`    | Run JS/CSS linters                     |
 
+## Faceted-search block configuration
+
+Blocks can call `createFacetedSearch` from `scripts/faceted-search/faceted-search.js` with a content type and optional
+feature flags:
+
+```js
+await createFacetedSearch(block, {
+  contentType: 'event',
+  filters: true,
+  sort: true,
+  viewSwitcher: true,
+  pagination: true,
+});
+```
+
+All four flags default to `false`. Faceted search resolves labels, filter definitions, source settings, card behavior and
+analytics internally by content type in `scripts/faceted-search/core/config.js`. `filters` controls the filter panel; source facets and URL
+restoration remain available. Result counts remain enabled; keyword search is selected by the content preset. Without filters,
+results use the full layout width. For playlists, omitting pagination or setting it to `false` renders all matching cards
+at once; setting it to `true` enables 12-item pages. Events retain their configured source result limit without pagination.
+
+The `event` preset uses Coveo. The `playlist` preset uses the localized playlists JSON index with English fallback, local
+Product/Role/Experience Level filtering and 12-item pages. Cards use the shared browse-card renderer and
+`browse-card playlist-card` styles, including the standard playlist badge, metadata, actions and click analytics.
+Playlist keyword search is always enabled; filters, pagination, sorting and view switching use the block's feature flags. Keyword search
+matches titles and descriptions and persists in the `q` query parameter. It now uses the
+shared sidebar/mobile filter layout and pagination controls. Existing repeated `solution`, `role` and `level` query
+parameters remain supported; `page` also supports shareable pagination and Back/Forward navigation.
+
+The `perspective` preset (EXLM-6250) uses Coveo Headless with AQ scoped to Perspective, Product/Role/Author Type
+filters, newest-first sort, and pagination — no list/grid switcher. Course presets land with EXLM-5958. Unsupported
+content types throw an explicit error. The lower-level configuration API remains available for custom sources and
+renderers.
+
+Within faceted search, `components/cards.js` owns both card preparation/rendering and the result grid's loading, empty and
+error states. It loads the browse-card painter and view switcher only when needed. `components/sort-control.js` contains
+sorting controls, event sort rules and event grouping; `components/filters.js` contains filter UI and facet-value
+presentation. Content-specific analytics callbacks are configured in `core/config.js`.
+
 ## Copilot PR review
 
 [Copilot PR Review](.github/workflows/copilot-review.yaml) reviews non-draft PRs automatically, including fork PRs.

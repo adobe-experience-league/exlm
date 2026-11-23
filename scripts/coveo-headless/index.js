@@ -135,11 +135,10 @@ function buildHeadlessFacet(module, searchEngine, field, defaults = {}, override
 }
 
 /**
- * Builds a standalone sort controller + criterion builders for events-search that need
- * their own conditional sort options instead of the generic dropdown.
+ * Builds a standalone sort controller and criterion builders without mounting a dropdown.
  * @param {Object} searchEngine - the headless search engine (e.g. window.headlessSearchEngine).
  */
-export async function buildEventsSearchSortController(searchEngine) {
+export async function buildHeadlessSortController(searchEngine) {
   // eslint-disable-next-line import/no-relative-packages
   const module = await import('./libs/browser/headless.esm.js');
   const controller = module.buildSort(searchEngine, {
@@ -155,6 +154,8 @@ export async function buildEventsSearchSortController(searchEngine) {
   };
 }
 
+export const buildEventsSearchSortController = buildHeadlessSortController;
+
 export default async function initiateCoveoHeadlessSearch({
   handleSearchEngineSubscription,
   renderPageNumbers,
@@ -162,17 +163,28 @@ export default async function initiateCoveoHeadlessSearch({
   renderSearchQuerySummary,
   handleSearchBoxSubscription,
   facetOverrides = {},
+  facetFields = ['el_contenttype', 'el_role', 'el_level', 'el_product', 'author_type', 'el_event_series'],
   hideAqFromUrl = false,
   baseAdvancedQuery = '',
   skipGenericSortDropdown = false,
   tabId = '',
+  lockedFacets = {},
+  publishGlobals = true,
+  onUrlRestore,
 }) {
+  // Facet selections that scope the page and survive URL restore / reset (e.g. { el_contenttype: ['Course'] }).
+  // Needed when the query pipeline ignores aq for a Tab (Courses), so scope has to travel as a facet selection.
+  const lockedFragmentParams = Object.entries(lockedFacets)
+    .filter(([, values]) => values?.length)
+    .map(([field, values]) => `f-${field}=${values.map(encodeURIComponent).join(',')}`);
+  const allFacetFields = Array.from(new Set([...facetFields, ...Object.keys(lockedFacets)]));
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line import/no-relative-packages
     import('./libs/browser/headless.esm.js')
       .then(async (module) => {
         const headlessSearchEngine = await buildHeadlessSearchEngine(module);
         const statusControllers = module.buildSearchStatus(headlessSearchEngine);
+        const subscriptions = [];
 
         configureSearchHeadlessEngine({
           module,
@@ -196,40 +208,11 @@ export default async function initiateCoveoHeadlessSearch({
           },
         });
 
-        const headlessTypeFacet = buildHeadlessFacet(
-          module,
-          headlessSearchEngine,
-          'el_contenttype',
-          {},
-          facetOverrides,
-        );
-
-        const headlessRoleFacet = buildHeadlessFacet(module, headlessSearchEngine, 'el_role', {}, facetOverrides);
-
-        const headlessExperienceFacet = buildHeadlessFacet(
-          module,
-          headlessSearchEngine,
-          'el_level',
-          {},
-          facetOverrides,
-        );
-
-        const headlessProductFacet = buildHeadlessFacet(module, headlessSearchEngine, 'el_product', {}, facetOverrides);
-
-        const headlessAuthorTypeFacet = buildHeadlessFacet(
-          module,
-          headlessSearchEngine,
-          'author_type',
-          {},
-          facetOverrides,
-        );
-
-        const headlessEventSeriesFacet = buildHeadlessFacet(
-          module,
-          headlessSearchEngine,
-          'el_event_series',
-          {},
-          facetOverrides,
+        const facets = Object.fromEntries(
+          allFacetFields.map((field) => [
+            field,
+            buildHeadlessFacet(module, headlessSearchEngine, field, {}, facetOverrides),
+          ]),
         );
 
         const headlessPager = module.buildPager(headlessSearchEngine, {
@@ -253,13 +236,18 @@ export default async function initiateCoveoHeadlessSearch({
 
         const fragmentForSynchronization = () => {
           const rawFragment = fragment();
-          if (!tabId) return rawFragment;
+          if (!tabId && !lockedFragmentParams.length) return rawFragment;
 
-          const parameters = rawFragment.split('&').filter((param) => param && !param.startsWith('tab='));
+          const lockedKeys = Object.keys(lockedFacets).map((field) => `f-${field}=`);
+          const parameters = rawFragment
+            .split('&')
+            .filter((param) => param && !param.startsWith('tab=') && !lockedKeys.some((key) => param.startsWith(key)));
 
-          parameters.push(`tab=${encodeURIComponent(tabId)}`);
+          if (tabId) parameters.push(`tab=${encodeURIComponent(tabId)}`);
+          parameters.push(...lockedFragmentParams);
           return parameters.join('&');
         };
+        onUrlRestore?.(fragment());
         const urlManager = module.buildUrlManager(headlessSearchEngine, {
           initialState: { fragment: fragmentForSynchronization() },
         });
@@ -277,6 +265,7 @@ export default async function initiateCoveoHeadlessSearch({
           const hiddenKeys = [];
           if (hideAqFromUrl) hiddenKeys.push('aq');
           if (tabId) hiddenKeys.push('tab');
+          Object.keys(lockedFacets).forEach((field) => hiddenKeys.push(`f-${field}`));
           const visibleFragment = hiddenKeys.length
             ? rawFragment
                 .split('&')
@@ -290,29 +279,37 @@ export default async function initiateCoveoHeadlessSearch({
           return window.location.hash || window.location.pathname + window.location.search;
         }
 
-        urlManager.subscribe(() => {
-          const hash = visibleHash();
-          if (hash === currentVisibleUrl()) return;
-          if (!statusControllers.state.firstSearchExecuted) {
-            window.history.replaceState(null, document.title, hash);
-            return;
-          }
-          window.history.pushState(null, document.title, hash);
-        });
+        subscriptions.push(
+          urlManager.subscribe(() => {
+            const hash = visibleHash();
+            if (hash === currentVisibleUrl()) return;
+            if (!statusControllers.state.firstSearchExecuted) {
+              window.history.replaceState(null, document.title, hash);
+              return;
+            }
+            window.history.pushState(null, document.title, hash);
+          }),
+        );
 
-        headlessSearchEngine.subscribe(handleSearchEngineSubscription);
+        if (handleSearchEngineSubscription) {
+          subscriptions.push(headlessSearchEngine.subscribe(handleSearchEngineSubscription));
+        }
 
-        headlessPager.subscribe(() => {
-          if (renderPageNumbers) {
-            renderPageNumbers();
-          }
-        });
+        subscriptions.push(
+          headlessPager.subscribe(() => {
+            if (renderPageNumbers) {
+              renderPageNumbers();
+            }
+          }),
+        );
 
-        headlessQuerySummary.subscribe(() => {
-          if (renderSearchQuerySummary) {
-            renderSearchQuerySummary();
-          }
-        });
+        subscriptions.push(
+          headlessQuerySummary.subscribe(() => {
+            if (renderSearchQuerySummary) {
+              renderSearchQuerySummary();
+            }
+          }),
+        );
 
         function rerunSearch() {
           const logSubmit = logSearchboxSubmit;
@@ -334,6 +331,7 @@ export default async function initiateCoveoHeadlessSearch({
         reapplyBaseAdvancedQuery();
 
         function onHashChange() {
+          onUrlRestore?.(fragment());
           urlManager.synchronize(fragmentForSynchronization());
           reapplyBaseAdvancedQuery({ rerunSearch: true });
         }
@@ -408,24 +406,28 @@ export default async function initiateCoveoHeadlessSearch({
           }
         };
 
-        window.headlessSearchBox = headlessSearchBox;
-        window.headlessSearchEngine = headlessSearchEngine;
-        window.headlessTypeFacet = headlessTypeFacet;
-        window.headlessRoleFacet = headlessRoleFacet;
-        window.headlessExperienceFacet = headlessExperienceFacet;
-        window.headlessProductFacet = headlessProductFacet;
-        window.headlessAuthorTypeFacet = headlessAuthorTypeFacet;
-        window.headlessEventSeriesFacet = headlessEventSeriesFacet;
-        window.headlessStatusControllers = statusControllers;
-        window.headlessPager = headlessPager;
-        window.headlessResultsPerPage = headlessResultsPerPage;
-        window.headlessQuerySummary = headlessQuerySummary;
-        window.headlessContext = headlessContext;
-        window.headlessQueryActionCreators = headlessQueryActionCreators;
-        window.headlessSearchActionCreators = headlessSearchActionCreators;
-        window.logSearchboxSubmit = logSearchboxSubmit;
+        if (publishGlobals) {
+          window.headlessSearchBox = headlessSearchBox;
+          window.headlessSearchEngine = headlessSearchEngine;
+          window.headlessTypeFacet = facets.el_contenttype;
+          window.headlessRoleFacet = facets.el_role;
+          window.headlessExperienceFacet = facets.el_level;
+          window.headlessProductFacet = facets.el_product;
+          window.headlessAuthorTypeFacet = facets.author_type;
+          window.headlessEventSeriesFacet = facets.el_event_series;
+          window.headlessStatusControllers = statusControllers;
+          window.headlessPager = headlessPager;
+          window.headlessResultsPerPage = headlessResultsPerPage;
+          window.headlessQuerySummary = headlessQuerySummary;
+          window.headlessContext = headlessContext;
+          window.headlessQueryActionCreators = headlessQueryActionCreators;
+          window.headlessSearchActionCreators = headlessSearchActionCreators;
+          window.logSearchboxSubmit = logSearchboxSubmit;
+        }
 
-        headlessSearchBox.subscribe(handleSearchBoxSubscription);
+        if (handleSearchBoxSubscription) {
+          subscriptions.push(headlessSearchBox.subscribe(handleSearchBoxSubscription));
+        }
 
         /* TODO: Sorting segments to be extracted & restructured and incorporate them into the browse filters, as this file serves coveo engine methods */
         // events-search opts out (skipGenericSortDropdown) to render its own conditional sort dropdown.
@@ -537,11 +539,22 @@ export default async function initiateCoveoHeadlessSearch({
         const readyEvent = new CustomEvent(COVEO_SEARCH_CUSTOM_EVENTS.READY);
         document.dispatchEvent(readyEvent);
         resolve({
+          engine: headlessSearchEngine,
+          searchBox: headlessSearchBox,
+          status: statusControllers,
+          pager: headlessPager,
+          facets,
+          executeSearch: rerunSearch,
+          destroy: () => {
+            subscriptions.forEach((unsubscribe) => unsubscribe());
+            window.removeEventListener('hashchange', onHashChange);
+          },
           resetSearchHandler: () => {
             // Reset user choices without losing the page's fixed query scope.
             const parameters = [];
             if (baseAdvancedQuery) parameters.push(`aq=${encodeURIComponent(baseAdvancedQuery)}`);
             if (tabId) parameters.push(`tab=${encodeURIComponent(tabId)}`);
+            parameters.push(...lockedFragmentParams);
             urlManager.synchronize(parameters.join('&'));
           },
           submitSearchHandler,
