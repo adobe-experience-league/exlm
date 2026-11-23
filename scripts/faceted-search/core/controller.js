@@ -1,10 +1,9 @@
-import { createTag } from '../../scripts.js';
 import { createFilterStore, matchesSearchIntent } from '../state/store.js';
 import createFacetedSearchUI from '../components/filters.js';
 import createSidebarLayout from '../components/layout.js';
 import { createSortControl } from '../components/sort-control.js';
 import createPagination from '../components/pagination.js';
-import { createResults } from '../components/cards.js';
+import { createResults, renderCards } from '../components/cards.js';
 import createRenderCoordinator from './render-coordinator.js';
 import createCoveoSource from '../sources/coveo-source.js';
 
@@ -20,8 +19,7 @@ export default async function createFacetedSearch(block, config) {
   const {
     groups,
     labels = {},
-    prefix = 'fs',
-    resultsPrefix = prefix,
+    resultsPrefix = 'fs',
     sort: sortPolicy,
     pagination: paginationConfig,
     analytics,
@@ -41,7 +39,7 @@ export default async function createFacetedSearch(block, config) {
     const { default: createCollectionSource } = await import('../sources/collection-source.js');
     source = createCollectionSource({ ...sourceOptions, ...sourceContext });
   } else if (sourceType === 'coveo') {
-    source = createCoveoSource({ ...sourceOptions, groups, initialSort, numberOfResults: pageSize });
+    source = createCoveoSource({ ...sourceOptions, groups, initialSort, sortPolicy, numberOfResults: pageSize });
   } else throw new Error(`Unsupported search source: ${sourceType}`);
   const resultClasses =
     config.resultClasses || (cards ? { body: 'browse-cards-block', grid: 'browse-cards-block-content' } : {});
@@ -49,18 +47,17 @@ export default async function createFacetedSearch(block, config) {
     store,
     groups,
     placeholders: labels,
-    prefix,
     withKeyword: config.search !== false,
   });
   const shell = createSidebarLayout({
     ui,
-    prefix,
     heading: config.heading,
+    headingType: config.headingType,
     cardColumns: config.cardColumns ?? true,
     withFilters: config.filters !== false,
   });
   const results = createResults({
-    prefix: resultsPrefix,
+    resultsPrefix,
     labels,
     classes: resultClasses,
     createLoading: config.createLoading || (cards ? () => cards.createCardLoading(pageSize) : undefined),
@@ -78,11 +75,11 @@ export default async function createFacetedSearch(block, config) {
   const itemKeys = new Map();
   const cleanups = [];
   const sort = sortPolicy
-    ? createSortControl({ prefix, label: labels.sort || 'Sort:', onChange: (value) => store.setSort(value) })
+    ? createSortControl({ label: labels.sort || 'Sort:', onChange: (value) => store.setSort(value) })
     : null;
   const pagination = paginationConfig
     ? createPagination({
-        prefix: resultsPrefix,
+        resultsPrefix,
         labels: paginationConfig.labels,
         onChange: (page) => store.setPage(page),
       })
@@ -126,16 +123,7 @@ export default async function createFacetedSearch(block, config) {
       const context = { block, snapshot, state, signal };
       if (config.prepareItems) items = await config.prepareItems(items, state, snapshot, { signal });
       else if (cards) items = await cards.prepareCardItems(items, state, config.cards, snapshot);
-      if (cards) return { fragment: await cards.renderCards(items, resultsPrefix, config.renderItem, context), items };
-      const fragment = document.createDocumentFragment();
-      await Promise.all(
-        items.map(async (item, index) => {
-          const wrapper = createTag('div', { class: `${resultsPrefix}-card-item` });
-          fragment.append(wrapper);
-          await config.renderItem(wrapper, item, index, context);
-        }),
-      );
-      return { fragment, items };
+      return { fragment: await renderCards(items, resultsPrefix, config.renderItem, context), items };
     },
     async commit({ fragment, items }, { snapshot, state, signal }) {
       if (!items.length) {
@@ -217,8 +205,10 @@ export default async function createFacetedSearch(block, config) {
       return;
     }
     if (selection && (selection.value !== snapshot.state.sort || selection.key !== snapshot.sortKey)) {
-      source.apply(state, 'sort', selection);
-      return;
+      if (!source.synchronizeSort?.(selection)) {
+        source.apply(state, 'sort', selection);
+        return;
+      }
     }
     block.classList.toggle('has-no-results', !snapshot.total);
     groups.forEach((group) => {
@@ -319,10 +309,19 @@ export default async function createFacetedSearch(block, config) {
     }
     if (destroyed) return instance;
     if (config.createView || cards) {
-      const viewOptions = { block, body: results.body, controls: shell.controls, grid: results.grid, store };
-      view = config.createView
-        ? await config.createView(viewOptions)
-        : await cards.createCardView({ ...viewOptions, prefix: resultsPrefix, ...config.cards });
+      const viewOptions = {
+        block,
+        body: results.body,
+        controls: shell.controls,
+        grid: results.grid,
+        store,
+        results,
+        ui,
+        labels,
+        resultsPrefix,
+        ...config.cards,
+      };
+      view = config.createView ? await config.createView(viewOptions) : await cards.createCardView(viewOptions);
       if (destroyed) {
         view?.destroy?.();
         return instance;

@@ -1,8 +1,8 @@
 import { createTag } from '../../scripts.js';
 import { decorateIcons } from '../../lib-franklin.js';
 
-export default function createSearchBar({ store, prefix = 'fs', placeholders = {}, onInput = () => {} }) {
-  const c = (name) => `${prefix}-${name}`;
+export default function createSearchBar({ store, placeholders = {}, onInput = () => {} }) {
+  const c = (name) => `fs-${name}`;
   const abort = new AbortController();
   const { signal } = abort;
   const el = createTag('div', { class: c('keyword') });

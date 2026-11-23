@@ -1,3 +1,42 @@
+import { xssSanitizeQueryParamValue } from '../../scripts.js';
+
+function isFilterHash(hash) {
+  const raw = hash.replace(/^#/, '');
+  return !raw || /[=&]/.test(raw) || raw.startsWith('f-');
+}
+
+/** Preserve old course links before Headless reads the search hash. */
+export function migrateLegacyCourseUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const rawHash = window.location.hash.replace(/^#/, '');
+  const keepAnchor = rawHash && !isFilterHash(window.location.hash) ? rawHash : '';
+  const hashParams = new URLSearchParams(keepAnchor ? '' : rawHash);
+  let changed = false;
+  Object.entries({ product: 'el_product', level: 'el_level' }).forEach(([param, facet]) => {
+    if (!params.has(param)) return;
+    const raw = params.get(param) || '';
+    params.delete(param);
+    changed = true;
+    const key = `f-${facet}`;
+    if (hashParams.has(key)) return;
+    const values = raw
+      .split(',')
+      .map((value) => xssSanitizeQueryParamValue(value.trim()))
+      .filter(Boolean);
+    if (values.length) hashParams.set(key, values.join(','));
+  });
+  if (!changed) return;
+  const search = params.toString();
+  const filterFragment = hashParams.toString();
+  // Filter state takes precedence over a bare anchor when both cannot be retained.
+  const fragment = filterFragment || keepAnchor;
+  window.history.replaceState(
+    null,
+    document.title,
+    `${window.location.pathname}${search ? `?${search}` : ''}${fragment ? `#${fragment}` : ''}`,
+  );
+}
+
 export function readFiltersFromUrl(groupIds, { format = 'repeat', sanitize = (v) => v } = {}) {
   const params = new URL(window.location.href).searchParams;
   return Object.fromEntries(

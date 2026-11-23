@@ -13,31 +13,7 @@
   margin: 0 auto;
 }
 
-.playlist-browse .playlist-browse-card-item {
-  min-width: 0;
-}
-
-.playlist-browse .playlist-browse-no-results:not([hidden]) {
-  background-color: var(--spectrum-gray-200);
-  color: var(--non-spectrum-grey);
-  font-size: var(--spectrum-font-size-200);
-  padding: 72px 16px;
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 3em;
-}
-
-.playlist-browse .playlist-browse-results-body.list .playlist-browse-cards {
-  grid-template-columns: 1fr;
-}
-
 @media (min-width: 900px) {
-  .playlist-browse .playlist-browse-results-body.list .playlist-browse-cards {
-    min-height: 0;
-    align-content: start;
-  }
-
   .playlist-browse .playlist-browse-results-body.list .playlist-card {
     display: grid;
     grid-template-columns: minmax(180px, 24%) minmax(0, 1fr) minmax(140px, 20%);

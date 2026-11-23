@@ -1,5 +1,7 @@
 /* ---------- Layout ---------- */
 .fs-layout {
+  --fs-card-columns: 1;
+
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--spectrum-spacing-400, 32px);
@@ -22,9 +24,7 @@
 .fs-layout .fs-heading {
   margin: 0 0 var(--spectrum-spacing-400, 24px);
   font-family: var(--heading-font-family);
-  font-size: var(--exlm-font-size-h2);
   font-weight: var(--font-weight-bold);
-  line-height: var(--exlm-line-height-h2);
   color: var(--non-spectrum-grey);
   overflow-wrap: anywhere;
 }
@@ -157,10 +157,6 @@
   transform: rotate(180deg);
 }
 
-.fs-layout .fs-filter-group.is-expanded .fs-filter-group-header .icon-chevron {
-  transform: rotate(180deg);
-}
-
 .fs-layout .fs-filter-options {
   display: none;
   padding: var(--spectrum-spacing-300, 14px) 0;
@@ -216,57 +212,9 @@
   font-weight: 400;
 }
 
-/* ---------- Filter shimmer loading states ---------- */
-.fs-layout .fs-filter-options-shimmer {
-  display: grid;
-  gap: var(--spectrum-spacing-100, 8px);
-  min-height: calc(5 * (16px + 2 * var(--spectrum-spacing-75, 4px)));
-}
-
-.fs-layout .fs-filter-option-shimmer {
-  height: 16px;
-  width: 100%;
-  max-width: 18rem;
-  border-radius: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--spectrum-gray-200, #e1e1e1) 0%,
-    var(--spectrum-gray-100, #f0f0f0) 50%,
-    var(--spectrum-gray-200, #e1e1e1) 100%
-  );
-  background-size: 200% 100%;
-  animation: fs-filter-shimmer-wave 1.2s ease-in-out infinite;
-}
-
-.fs-layout .fs-filter-count-shimmer {
-  display: inline-block;
-  width: 2.5rem;
-  height: 0.85em;
-  margin-inline-start: 0.15rem;
-  vertical-align: baseline;
-  border-radius: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--spectrum-gray-200, #e1e1e1) 0%,
-    var(--spectrum-gray-100, #f0f0f0) 50%,
-    var(--spectrum-gray-200, #e1e1e1) 100%
-  );
-  background-size: 200% 100%;
-  animation: fs-filter-shimmer-wave 1.2s ease-in-out infinite;
-}
-
-.fs-layout .fs-filter-group.is-filter-loading .fs-filter-option-count:not(.fs-filter-count-shimmer) {
+/* ---------- Filter loading states ---------- */
+.fs-layout .fs-filter-group.is-filter-loading .fs-filter-option-count {
   opacity: 0.45;
-}
-
-@keyframes fs-filter-shimmer-wave {
-  0% {
-    background-position: 200% 0;
-  }
-
-  100% {
-    background-position: -200% 0;
-  }
 }
 
 .fs-layout .fs-filters.is-filter-loading {
@@ -391,6 +339,8 @@
   gap: var(--spectrum-spacing-100, 16px);
   min-width: 0;
   margin-left: auto;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .fs-layout .fs-view-switcher {
@@ -571,19 +521,23 @@
 }
 
 /* ---------- Cards grid ---------- */
-.fs-layout.fs-layout-cards .fs-results-column .browse-cards-block-content,
-.fs-layout.fs-layout-cards .fs-results-column .playlist-browse-cards,
-.fs-layout.fs-layout-cards .fs-results-column .browse-card-shimmer,
-.fs-layout .fs-results-grid {
+.fs-layout .fs-results-column .fs-results-grid,
+.fs-layout .fs-results-body .browse-card-shimmer {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(var(--fs-card-columns), minmax(0, 1fr));
   gap: var(--spectrum-spacing-300, 24px);
   width: 100%;
   margin: 0;
 }
 
-.fs-layout.fs-layout-cards .fs-results-column .browse-cards-block-content > *,
-.fs-layout.fs-layout-cards .fs-results-column .playlist-browse-cards > .playlist-browse-card,
+.fs-layout .fs-results-column .fs-results-grid {
+  margin: var(--fs-results-margin, 0);
+}
+
+.fs-layout .fs-results-body .browse-card-shimmer {
+  height: auto;
+}
+
 .fs-layout .fs-results-grid > .fs-card-item {
   width: auto;
   max-width: none;
@@ -592,10 +546,47 @@
   margin: 0;
 }
 
-.fs-layout.fs-layout-cards .fs-results-column .course-no-results,
-.fs-layout.fs-layout-cards .fs-results-column .playlist-no-results,
+.fs-layout .fs-results-body .browse-card-shimmer > .browse-card-shimmer-wrapper {
+  min-width: 0;
+}
+
+.fs-layout .fs-results-column .fs-results-body.list .fs-results-grid,
+.fs-layout .fs-results-column .fs-results-body.list .browse-card-shimmer {
+  grid-template-columns: 1fr;
+  min-height: 0;
+  align-content: start;
+}
+
 .fs-layout .fs-no-results {
   grid-column: 1 / -1;
+}
+
+/* ---------- Empty results ---------- */
+.fs-layout .fs-no-results:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spectrum-spacing-300);
+  background-color: var(--spectrum-gray-200);
+  padding: var(--spectrum-spacing-1000) var(--spectrum-spacing-300);
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: var(--spectrum-spacing-300) 0 0;
+}
+
+.fs-layout .fs-no-results-message {
+  color: var(--non-spectrum-grey);
+  font-size: var(--spectrum-font-size-200);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.fs-layout .fs-no-results-clear {
+  color: var(--link-color);
+  font-size: var(--spectrum-font-size-200);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 /* ---------- Mobile filter toggle ---------- */
@@ -644,6 +635,10 @@
 
 /* ---------- Media Queries ---------- */
 @media (min-width: 600px) {
+  .fs-layout {
+    --fs-card-columns: 2;
+  }
+
   .fs-layout .fs-mobile-filter-toggle {
     padding: var(--spectrum-spacing-400, 16px) var(--spectrum-spacing-800, 32px);
   }
@@ -659,28 +654,19 @@
   .fs-layout .fs-results-column {
     margin: 0 var(--spectrum-spacing-800, 32px);
   }
-
-  .fs-layout.fs-layout-cards .fs-results-column .browse-cards-block-content,
-  .fs-layout.fs-layout-cards .fs-results-column .playlist-browse-cards,
-  .fs-layout.fs-layout-cards .fs-results-column .browse-card-shimmer,
-  .fs-layout .fs-results-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (min-width: 900px) {
+  .fs-layout {
+    --fs-card-columns: 3;
+  }
+
   .fs-layout .fs-toolbar {
     gap: var(--spectrum-spacing-400, 16px);
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-
-  .fs-layout.fs-layout-cards .fs-results-column .browse-cards-block-content,
-  .fs-layout.fs-layout-cards .fs-results-column .playlist-browse-cards,
-  .fs-layout.fs-layout-cards .fs-results-column .browse-card-shimmer,
-  .fs-layout .fs-results-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex-wrap: wrap;
   }
 
   .fs-layout .fs-view-switcher {
@@ -693,14 +679,9 @@
 }
 
 @media (min-width: 1024px) {
-  .fs-layout.fs-layout-cards .fs-results-column .browse-cards-block-content,
-  .fs-layout.fs-layout-cards .fs-results-column .playlist-browse-cards,
-  .fs-layout.fs-layout-cards .fs-results-column .browse-card-shimmer,
-  .fs-layout .fs-results-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .fs-layout {
+    --fs-card-columns: 2;
+
     grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
     align-items: start;
   }
@@ -744,11 +725,78 @@
 }
 
 @media (min-width: 1200px) {
-  .fs-layout.fs-layout-cards .fs-results-column .browse-cards-block-content,
-  .fs-layout.fs-layout-cards .fs-results-column .playlist-browse-cards,
-  .fs-layout.fs-layout-cards .fs-results-column .browse-card-shimmer,
-  .fs-layout .fs-results-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .fs-layout {
+    --fs-card-columns: 3;
+  }
+}
+
+@media (min-width: 900px) {
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) {
+    flex-flow: row nowrap;
+    min-height: 0;
+    height: auto;
+  }
+
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) .browse-card-figure {
+    flex: 0 0 23.34%;
+    align-self: stretch;
+    height: auto;
+    max-height: none;
+    border-radius: var(--spectrum-spacing-300) 0 0 var(--spectrum-spacing-300);
+  }
+
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) .browse-card-content {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: var(--spectrum-spacing-500);
+  }
+
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) .browse-card-description-text,
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) .browse-card-description-text * {
+    margin-bottom: 0;
+    max-height: none;
+    -webkit-line-clamp: 2;
+  }
+
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) .browse-card-footer {
+    flex: 0 0 max(18.52%, 13rem);
+    width: max(18.52%, 13rem);
+    min-width: 13rem;
+    max-width: max(18.52%, 13rem);
+    padding: var(--spectrum-spacing-500);
+    position: relative;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-radius: 0 var(--spectrum-spacing-300) var(--spectrum-spacing-300) 0;
+  }
+
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) .browse-card-footer::before {
+    content: '';
+    position: absolute;
+    top: var(--spectrum-spacing-500);
+    bottom: var(--spectrum-spacing-500);
+    left: 0;
+    width: 1px;
+    background-color: var(--non-spectrum-divider-gray);
+  }
+
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) .browse-card-options {
+    align-self: flex-start;
+  }
+
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) .browse-card-cta-element {
+    margin: var(--spectrum-spacing-300) 0 0;
+    width: 100%;
+    height: var(--spectrum-spacing-500);
+    justify-content: center;
+    background-color: var(--spectrum-blue-900);
+    color: var(--spectrum-gray-50);
+    border-radius: var(--spectrum-spacing-300);
+  }
+
+  .fs-layout .browse-cards-block.list .browse-card:is(.course-card, .perspective-card) .browse-card-cta-element .icon {
+    display: none;
   }
 }
 
@@ -834,5 +882,3 @@
   font-family: var(--body-font-family);
   text-align: center;
 }
-
-/* No results */

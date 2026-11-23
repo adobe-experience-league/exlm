@@ -212,8 +212,8 @@ export function createCollectionSortPolicy({
  * "Sort: <current> v" dropdown. Options are [{ value, label }].
  * onChange(value) fires only on a user selection.
  */
-export function createSortControl({ prefix = 'fs', label = 'Sort:', onChange = () => {} } = {}) {
-  const c = (name) => `${prefix}-${name}`;
+export function createSortControl({ label = 'Sort:', onChange = () => {} } = {}) {
+  const c = (name) => `fs-${name}`;
   let options = [];
   let selected = '';
   let abortOpen = null;

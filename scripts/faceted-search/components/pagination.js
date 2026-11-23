@@ -1,12 +1,12 @@
 import { createTag } from '../../scripts.js';
 import { normalizePage } from '../state/store.js';
 
-export default function createPagination({ prefix = 'fs', labels = {}, onChange }) {
+export default function createPagination({ resultsPrefix = 'fs', labels = {}, onChange }) {
   const abort = new AbortController();
   const { signal } = abort;
   let currentPage = 1;
   let maxPage = 1;
-  const el = createTag('div', { class: `fs-pagination ${prefix}-pagination` });
+  const el = createTag('div', { class: `fs-pagination ${resultsPrefix}-pagination` });
   const previous = createTag('button', {
     class: 'nav-arrow',
     type: 'button',
@@ -14,12 +14,12 @@ export default function createPagination({ prefix = 'fs', labels = {}, onChange 
   });
   const input = createTag('input', {
     type: 'text',
-    class: `fs-pg-input ${prefix}-pg-input`,
+    class: `fs-pg-input ${resultsPrefix}-pg-input`,
     inputmode: 'numeric',
     'aria-label': labels.pageInput || 'Enter page number',
     value: '1',
   });
-  const text = createTag('span', { class: `fs-pagination-text ${prefix}-pagination-text` });
+  const text = createTag('span', { class: `fs-pagination-text ${resultsPrefix}-pagination-text` });
   const next = createTag('button', {
     class: 'nav-arrow right-nav-arrow',
     type: 'button',
@@ -58,7 +58,7 @@ export default function createPagination({ prefix = 'fs', labels = {}, onChange 
       next.disabled = page >= maxPage;
       previous.classList.toggle('nav-arrow-hidden', previous.disabled);
       next.classList.toggle('nav-arrow-hidden', next.disabled);
-      el.classList.toggle(`${prefix}-pagination-hidden`, maxPage <= 1);
+      el.classList.toggle(`${resultsPrefix}-pagination-hidden`, maxPage <= 1);
       el.classList.toggle('fs-pagination-hidden', maxPage <= 1);
     },
     destroy: () => abort.abort(),

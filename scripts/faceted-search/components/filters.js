@@ -6,19 +6,6 @@ export function alphabetical(a, b) {
   return a.title.localeCompare(b.title, document.documentElement.lang || 'en', { sensitivity: 'base' });
 }
 
-export function getEventFacetItems(group, values, state) {
-  const selected = new Set(state.filters[group.id]);
-  if (group.items) {
-    return group.items
-      .map((item) => ({ ...item, count: values.find((value) => value.value === item.value)?.count ?? 0 }))
-      .filter((item) => selected.has(item.value) || item.count > 0);
-  }
-  return values
-    .filter((value) => selected.has(value.value) || value.count > 0)
-    .map((value) => ({ ...value, title: value.value.split('|').join(' | ') }))
-    .sort(alphabetical);
-}
-
 export function getPlaylistFacetItems(group, values) {
   return values
     .filter((item) => item.count > 0 || item.selected)
@@ -38,7 +25,7 @@ export function getPlaylistFacetItems(group, values) {
 /** Shared Coveo facet presentation for authored/static group items or dynamic product/role/author values. */
 export function getCoveoFacetItems(group, values, state) {
   const selected = new Set(state.filters[group.id]);
-  if (group.items?.length) {
+  if (group.items) {
     return group.items
       .map((item) => ({ ...item, count: values.find((value) => value.value === item.value)?.count ?? 0 }))
       .filter((item) => selected.has(item.value) || item.count > 0);
@@ -49,17 +36,66 @@ export function getCoveoFacetItems(group, values, state) {
     .sort(alphabetical);
 }
 
+export function getCourseFacetItems(group, values, state, placeholders) {
+  if (group.id !== 'el_level') return getCoveoFacetItems(group, values, state);
+  const priority = ['Beginner', 'Intermediate', 'Experienced'];
+  const rank = (value) => {
+    const index = priority.findIndex((level) => level.toLowerCase() === String(value).toLowerCase());
+    return index < 0 ? priority.length : index;
+  };
+  const selected = new Set(state.filters[group.id]);
+  return values
+    .filter((value) => selected.has(value.value) || value.count > 0)
+    .map((value) => ({
+      ...value,
+      title: placeholders[`filterExpLevel${value.value}Title`] || value.value,
+      description: placeholders[`filterExpLevel${value.value}Description`] || '',
+    }))
+    .sort((a, b) => rank(a.value) - rank(b.value) || alphabetical(a, b));
+}
+
+/** Remap store filters onto Coveo values; false = facets not ready. */
+function remapLegacyFilters(store, snapshot, groupId, { pipeInsensitive = false } = {}) {
+  const selected = store.get().filters[groupId] || [];
+  if (!selected.length) return true;
+  const facetValues = (snapshot.facets?.[groupId] || []).map((value) => value.value);
+  if (!facetValues.length) return false;
+  const stripPipes = (value) => value?.replace(/\|/g, '');
+  const mapped = selected
+    .map((legacy) =>
+      facetValues.find((value) => (pipeInsensitive ? stripPipes(value) === stripPipes(legacy) : value === legacy)),
+    )
+    .filter(Boolean);
+  if (mapped.length !== selected.length || mapped.some((value, index) => value !== selected[index])) {
+    store.setGroup(groupId, mapped);
+  }
+  return true;
+}
+
+export function createCourseLegacyFilterMapper() {
+  let done = false;
+  return ({ store, snapshot }) => {
+    if (done) return;
+    const productsDone = remapLegacyFilters(store, snapshot, 'el_product', { pipeInsensitive: true });
+    const levelsDone = remapLegacyFilters(store, snapshot, 'el_level');
+    done = productsDone && levelsDone;
+  };
+}
+
+export function filterCourseCardsByStatus(cards, selectedStatuses) {
+  return cards.filter((card) => !selectedStatuses.size || selectedStatuses.has(card.dataset.courseStatus));
+}
+
 export default function createFacetedSearchUI({
   store,
   groups,
   placeholders = {},
-  prefix = 'fs',
   withKeyword = true,
   expandedByDefault = false,
   closeIcon = 'icon-close',
 }) {
-  const c = (name) => `${prefix}-${name}`;
-  const instanceId = `${prefix}-${crypto.randomUUID()}`;
+  const c = (name) => `fs-${name}`;
+  const instanceId = `fs-${crypto.randomUUID()}`;
   const itemsByGroup = new Map(groups.map((g) => [g.id, []]));
   const groupEls = new Map();
 
@@ -76,7 +112,7 @@ export default function createFacetedSearchUI({
 
   groups.forEach((group, i) => {
     const regionId = `${instanceId}-${group.id}-options-${i}`;
-    const groupEl = createTag('section', {
+    const groupEl = createTag('div', {
       class: `${c('filter-group')}${expandedByDefault ? ' is-expanded' : ''}`,
       'data-filter-type': group.id,
     });
@@ -98,16 +134,17 @@ export default function createFacetedSearchUI({
   /* ---------- keyword ---------- */
   let keywordEl = null;
   let input = null;
+  let additionalFiltersActive = false;
   function updateClearFiltersButton() {
     const { tags, keyword } = store.get();
-    const hasAny = Boolean(tags.length || keyword || input?.value.trim());
+    const hasAny = Boolean(tags.length || keyword || input?.value.trim() || additionalFiltersActive);
     clearBtn.classList.toggle('is-active', hasAny);
     clearBtn.disabled = !hasAny;
   }
 
   let searchBar = null;
   if (withKeyword) {
-    searchBar = createSearchBar({ store, prefix, placeholders, onInput: updateClearFiltersButton });
+    searchBar = createSearchBar({ store, placeholders, onInput: updateClearFiltersButton });
     keywordEl = searchBar.el;
     input = searchBar.input;
   }
@@ -250,6 +287,10 @@ export default function createFacetedSearchUI({
     countEl,
     setResultCount,
     store,
+    setAdditionalFiltersActive(active) {
+      additionalFiltersActive = active;
+      updateClearFiltersButton();
+    },
     /** Run fn after every UI refresh (used for the mobile toggle's active-filter count). */
     onRefresh(fn) {
       refreshListeners.add(fn);
