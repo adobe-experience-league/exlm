@@ -46,6 +46,21 @@
           }
         },
         {
+          "title": "Text (No H1)",
+          "id": "columns-text-no-h1",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/text/v1/text",
+                "template": {
+                  "text": "<p>Placeholder text</p>",
+                  "filter": "columns-text-no-h1"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Title",
           "id": "title",
           "plugins": {
@@ -53,6 +68,21 @@
               "page": {
                 "resourceType": "core/franklin/components/title/v1/title",
                 "template": {}
+              }
+            }
+          }
+        },
+        {
+          "title": "Title (No H1)",
+          "id": "columns-title",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/title/v1/title",
+                "template": {
+                  "model": "columns-title",
+                  "type": "h2"
+                }
               }
             }
           }

@@ -2,35 +2,6 @@
 //
 // this script should execute after script.js by editor-support.js
 
-const columnsTextFilter = 'columns-text-no-h1';
-const textEditable = `[data-aue-type="richtext"][data-aue-resource]:is([data-aue-filter="text"], [data-aue-filter="${columnsTextFilter}"])`;
-const columnsTitleModel = 'columns-title';
-const preserveH1Model = 'columns-title-preserve-h1';
-const titleEditable = `[data-aue-prop="jcr:title"][data-aue-type="text"][data-aue-resource][data-aue-behavior="component"]:is([data-aue-model="title"], [data-aue-model="${columnsTitleModel}"], [data-aue-model="${preserveH1Model}"])`;
-
-function findEditables(container, selector) {
-  const editables = [...container.querySelectorAll(selector)];
-  if (container.matches?.(selector)) editables.push(container);
-  return editables;
-}
-
-function scopeColumnsAuthoring(container) {
-  findEditables(container, textEditable).forEach((element) => {
-    // Both standard Text and Text previously added with the scoped filter use the same resource type.
-    const filter = element.closest('.columns') ? columnsTextFilter : 'text';
-    if (element.dataset.aueFilter !== filter) element.dataset.aueFilter = filter;
-  });
-  findEditables(container, titleEditable).forEach((element) => {
-    let model = 'title';
-    if (element.closest('.columns')) {
-      // The native Title heading is the model-bearing element. Omit the level field for
-      // rendered H1s so UE cannot submit a fallback for a value absent from the select.
-      model = element.matches('h1') ? preserveH1Model : columnsTitleModel;
-    }
-    if (element.dataset.aueModel !== model) element.dataset.aueModel = model;
-  });
-}
-
 // eslint-disable-next-line import/prefer-default-export
 export function decorateRichtext(container = document) {
   function deleteInstrumentation(element) {
@@ -76,7 +47,6 @@ export function decorateRichtext(container = document) {
       group.append(element, ...siblings);
     }
   }
-  scopeColumnsAuthoring(container);
 }
 
 decorateRichtext();

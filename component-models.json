@@ -1038,6 +1038,7 @@
       {
         "component": "select",
         "name": "type",
+        "value": "h2",
         "label": "Type",
         "valueType": "string",
         "options": [
@@ -1047,18 +1048,6 @@
           { "name": "h5", "value": "h5" },
           { "name": "h6", "value": "h6" }
         ]
-      }
-    ]
-  },
-  {
-    "id": "columns-title-preserve-h1",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "jcr:title",
-        "value": "",
-        "label": "Text"
       }
     ]
   },
