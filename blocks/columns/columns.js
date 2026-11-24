@@ -2,34 +2,21 @@ import { span } from '../../scripts/dom-helpers.js';
 
 const UEAuthorMode = window.hlx?.aemRoot || window.location.href.includes('.html');
 function updateStyles(block) {
-  const errors = [];
   const classes = [...block.classList];
-  const select = (prefix, allowed, fallback, aliases = {}) => {
+  const select = (prefix, allowed, fallback) => {
     let selected;
     classes.forEach((name) => {
-      if (Object.hasOwn(aliases, name)) {
-        if (selected === undefined) selected = aliases[name];
-      } else if (name.startsWith(prefix)) {
+      if (name.startsWith(prefix)) {
         const value = name.slice(prefix.length);
-        if (allowed && !allowed.includes(value)) errors.push(`Invalid ${prefix} selection: ${value}`);
-        else if (selected === undefined) selected = value;
+        if ((!allowed || allowed.includes(value)) && selected === undefined) selected = value;
       }
     });
     return selected === undefined ? fallback : selected;
   };
   const comparison = select('padding-comparison-', ['default', 'balanced', 'most-compact'], null);
   const styles = [];
-  if (comparison && comparison !== 'default') styles.push(`columns-style-${comparison}`);
-  const paddingAliases = {
-    'padding-comparison-default': 'default',
-    'padding-comparison-balanced': 'compact',
-    'padding-comparison-most-compact': 'compact',
-  };
-  const compact = {};
-  ['row', 'column'].forEach((axis) => {
-    compact[axis] = select(`${axis}-padding-`, ['default', 'compact'], 'default', paddingAliases) === 'compact';
-    if (compact[axis]) styles.push(`columns-style-${axis}-compact`);
-  });
+  const compact = comparison !== null && comparison !== 'default';
+  if (compact) styles.push(`columns-style-${comparison}`);
   const width = select('column-width-', ['equal', 'fit-content'], 'equal');
   if (width === 'fit-content') styles.push('columns-style-fit');
   const highlight = (axis) => {
@@ -39,8 +26,6 @@ function updateStyles(block) {
     const foreground = select(`${axis}-text-`, ['black', 'white'], 'black');
     if (foreground === 'white' && background === 'eb1100') {
       styles.push(`columns-style-${axis}-white`);
-    } else if (foreground === 'white') {
-      errors.push(`White text requires #EB1100 for the ${axis} highlight; rendering Black`);
     }
     return true;
   };
@@ -60,18 +45,10 @@ function updateStyles(block) {
     if (currentStyles.length) block.classList.remove(...currentStyles);
     if (styles.length) block.classList.add(...styles);
   }
-  const enhanced = compact.row || compact.column || width === 'fit-content' || rowHighlight || columnHighlight;
+  const enhanced = compact || width === 'fit-content' || rowHighlight || columnHighlight;
   if (block.classList.contains('columns-enhanced') !== enhanced) {
     block.classList.toggle('columns-enhanced', enhanced);
   }
-  const message = errors.join('; ');
-  if (message && message !== block.dataset.columnsStyleErrors) {
-    // eslint-disable-next-line no-console
-    console.warn('Columns style validation:', message, block);
-    block.dispatchEvent(new CustomEvent('columns:style-invalid', { bubbles: true, detail: errors }));
-  }
-  if (message) block.dataset.columnsStyleErrors = message;
-  else delete block.dataset.columnsStyleErrors;
 }
 
 function updateHeaders(block) {
@@ -105,7 +82,11 @@ function updateHeaders(block) {
   }
 }
 
+let mobileLayout = window.innerWidth < 600;
 window.addEventListener('resize', () => {
+  const isMobile = window.innerWidth < 600;
+  if (isMobile === mobileLayout) return;
+  mobileLayout = isMobile;
   document.querySelectorAll('.columns[data-columns-decorated]').forEach(updateHeaders);
 });
 
@@ -118,12 +99,14 @@ export default function decorate(block) {
   const cols = [...(block.firstElementChild?.children || [])];
   block.classList.add(`columns-${cols.length}-cols`);
 
+  // setup image columns
   [...block.children].forEach((row) => {
     [...row.children].forEach((col) => {
       const pic = col.querySelector('picture');
       if (pic) {
         const picWrapper = pic.closest('div');
         if (picWrapper && picWrapper.children.length === 1) {
+          // picture is only content in column
           picWrapper.classList.add('columns-img-col');
         }
       }
@@ -138,12 +121,15 @@ export default function decorate(block) {
         if (
           buttonTypeWrapper &&
           buttonTypeWrapper.children.length === 1 &&
+          // Don't wrap inline links or formatting that shares a cell with other text.
           buttonTypeWrapper.textContent.trim() === buttonType.textContent.trim()
         ) {
+          // when a column has a single button with a type
           const pTag = document.createElement('p');
           buttonType.parentNode.insertBefore(pTag, buttonType);
           pTag.appendChild(buttonType);
           pTag.classList.add('button-container');
+          // when button is primary - strong tag gets generated
           const anchorInsideStrong = pTag.querySelector('strong a');
           // when button is secondary - em tag gets generated
           const anchorInsideEm = pTag.querySelector('em a');
@@ -160,10 +146,7 @@ export default function decorate(block) {
   updateStyles(block);
   updateHeaders(block);
   block.setAttribute('data-columns-decorated', '');
-  new MutationObserver(() => {
-    updateStyles(block);
-    updateHeaders(block);
-  }).observe(block, { attributes: true, attributeFilter: ['class'] });
+  // Remove empty <p> tags
   if (UEAuthorMode) {
     block.querySelectorAll('p').forEach((p) => {
       if (p.innerHTML.trim() === '' || p.innerHTML.trim() === '&nbsp;') {
