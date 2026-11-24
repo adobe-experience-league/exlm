@@ -180,8 +180,9 @@ export default class ProfileMenu extends HTMLElement {
       const communitySection = menuSection(placeholders?.headerCommunityLabel || 'Community', communityPlaceholders);
 
       signoutLink.dataset.id = 'sign-out';
-      signoutLink.addEventListener('click', async () => {
-        this.decoratorOptions.onSignOut();
+      signoutLink.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this.decoratorOptions.onSignOut();
       });
       profileMenuBlock.append(signoutLink);
 

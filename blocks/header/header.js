@@ -11,6 +11,7 @@ import {
   getPathDetails,
   fetchLanguagePlaceholders,
   fetchWithFallback,
+  loadIms,
 } from '../../scripts/scripts.js';
 import { isSignedInUser } from '../../scripts/auth/profile.js';
 import { isPLEligible } from '../../scripts/utils/premium-learning-utils.js';
@@ -999,7 +1000,8 @@ class ExlHeader extends HTMLElement {
     };
 
     const doSignIn = async () => {
-      window.adobeIMS.signIn();
+      await loadIms();
+      window.adobeIMS?.signIn();
     };
 
     this.decoratorOptions = options;
