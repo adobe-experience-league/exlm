@@ -608,6 +608,10 @@ body:has(.bc-dialog[open]) .bc-bottom-ask-bar {
   color: var(--spectrum-gray-800);
 }
 
+dialog.bc-dialog[data-type='drawer'].exl-dialog-expanded {
+  max-width: 1280px;
+}
+
 .bc-dialog #brand-concierge-mount {
   position: relative;
   width: 100%;
