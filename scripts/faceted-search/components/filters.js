@@ -1,22 +1,9 @@
-import { createTag } from '../../scripts.js';
+import { createTag, htmlToElement } from '../../scripts.js';
 import { decorateIcons } from '../../lib-franklin.js';
 import createSearchBar from './search-bar.js';
 
 export function alphabetical(a, b) {
   return a.title.localeCompare(b.title, document.documentElement.lang || 'en', { sensitivity: 'base' });
-}
-
-export function getEventFacetItems(group, values, state) {
-  const selected = new Set(state.filters[group.id]);
-  if (group.items) {
-    return group.items
-      .map((item) => ({ ...item, count: values.find((value) => value.value === item.value)?.count ?? 0 }))
-      .filter((item) => selected.has(item.value) || item.count > 0);
-  }
-  return values
-    .filter((value) => selected.has(value.value) || value.count > 0)
-    .map((value) => ({ ...value, title: value.value.split('|').join(' | ') }))
-    .sort(alphabetical);
 }
 
 export function getPlaylistFacetItems(group, values) {
@@ -38,7 +25,7 @@ export function getPlaylistFacetItems(group, values) {
 /** Shared Coveo facet presentation for authored/static group items or dynamic product/role/author values. */
 export function getCoveoFacetItems(group, values, state) {
   const selected = new Set(state.filters[group.id]);
-  if (group.items?.length) {
+  if (group.items) {
     return group.items
       .map((item) => ({ ...item, count: values.find((value) => value.value === item.value)?.count ?? 0 }))
       .filter((item) => selected.has(item.value) || item.count > 0);
@@ -49,46 +36,101 @@ export function getCoveoFacetItems(group, values, state) {
     .sort(alphabetical);
 }
 
+export function getCourseFacetItems(group, values, state, placeholders) {
+  if (group.id !== 'el_level') return getCoveoFacetItems(group, values, state);
+  const priority = ['Beginner', 'Intermediate', 'Experienced'];
+  const rank = (value) => {
+    const index = priority.findIndex((level) => level.toLowerCase() === String(value).toLowerCase());
+    return index < 0 ? priority.length : index;
+  };
+  const selected = new Set(state.filters[group.id]);
+  return values
+    .filter((value) => selected.has(value.value) || value.count > 0)
+    .map((value) => ({
+      ...value,
+      title: placeholders[`filterExpLevel${value.value}Title`] || value.value,
+      description: placeholders[`filterExpLevel${value.value}Description`] || '',
+    }))
+    .sort((a, b) => rank(a.value) - rank(b.value) || alphabetical(a, b));
+}
+
+/** Remap store filters onto Coveo values; false = facets not ready. */
+function remapLegacyFilters(store, snapshot, groupId, { pipeInsensitive = false } = {}) {
+  const selected = store.get().filters[groupId] || [];
+  if (!selected.length) return true;
+  const facetValues = (snapshot.facets?.[groupId] || []).map((value) => value.value);
+  if (!facetValues.length) return false;
+  const stripPipes = (value) => value?.replace(/\|/g, '');
+  const mapped = selected
+    .map((legacy) =>
+      facetValues.find((value) => (pipeInsensitive ? stripPipes(value) === stripPipes(legacy) : value === legacy)),
+    )
+    .filter(Boolean);
+  if (mapped.length !== selected.length || mapped.some((value, index) => value !== selected[index])) {
+    store.setGroup(groupId, mapped);
+  }
+  return true;
+}
+
+export function createCourseLegacyFilterMapper() {
+  let done = false;
+  return ({ store, snapshot }) => {
+    if (done) return;
+    const productsDone = remapLegacyFilters(store, snapshot, 'el_product', { pipeInsensitive: true });
+    const levelsDone = remapLegacyFilters(store, snapshot, 'el_level');
+    done = productsDone && levelsDone;
+  };
+}
+
+export function filterCourseCardsByStatus(cards, selectedStatuses) {
+  return cards.filter((card) => !selectedStatuses.size || selectedStatuses.has(card.dataset.courseStatus));
+}
+
 export default function createFacetedSearchUI({
   store,
   groups,
   placeholders = {},
-  prefix = 'fs',
   withKeyword = true,
   expandedByDefault = false,
   closeIcon = 'icon-close',
 }) {
-  const c = (name) => `${prefix}-${name}`;
-  const instanceId = `${prefix}-${crypto.randomUUID()}`;
+  const c = (name) => `fs-${name}`;
+  const instanceId = `fs-${crypto.randomUUID()}`;
   const itemsByGroup = new Map(groups.map((g) => [g.id, []]));
   const groupEls = new Map();
 
   /* ---------- filters column ---------- */
-  const filtersEl = createTag('div', { class: c('filters') });
-  filtersEl.innerHTML = `
-    <div class="${c('filters-header')}">
-      <h2 class="${c('filters-heading')}">${placeholders.filtersLabel || 'Filters'}</h2>
-      <button type="button" class="${c('clear-filters')}">${placeholders.filterClearLabel || 'Clear filters'}</button>
-    </div>
-    <div class="${c('filter-groups')}"></div>`;
+  const filtersEl = htmlToElement(`
+    <div class="fs-filters">
+      <div class="fs-filters-header">
+        <h2 class="fs-filters-heading"></h2>
+        <button type="button" class="fs-clear-filters"></button>
+      </div>
+      <div class="fs-filter-groups"></div>
+    </div>`);
+  filtersEl.querySelector('.fs-filters-heading').textContent = placeholders.filtersLabel || 'Filters';
   const groupsRoot = filtersEl.querySelector(`.${c('filter-groups')}`);
   const clearBtn = filtersEl.querySelector(`.${c('clear-filters')}`);
+  clearBtn.textContent = placeholders.filterClearLabel || 'Clear filters';
 
   groups.forEach((group, i) => {
     const regionId = `${instanceId}-${group.id}-options-${i}`;
-    const groupEl = createTag('section', {
-      class: `${c('filter-group')}${expandedByDefault ? ' is-expanded' : ''}`,
-      'data-filter-type': group.id,
-    });
-    groupEl.innerHTML = `
-      <button class="${c(
-        'filter-group-header',
-      )}" type="button" aria-expanded="${expandedByDefault}" aria-controls="${regionId}">
-        <span class="${c('filter-group-title')}">${group.name}</span>
-        <span class="${c('filter-group-count')}"></span>
-        <span class="icon icon-chevron"></span>
-      </button>
-      <div class="${c('filter-options')}" id="${regionId}"></div>`;
+    const groupEl = htmlToElement(`
+      <div class="fs-filter-group">
+        <button class="fs-filter-group-header" type="button">
+          <span class="fs-filter-group-title"></span>
+          <span class="fs-filter-group-count"></span>
+          <span class="icon icon-chevron"></span>
+        </button>
+        <div class="fs-filter-options"></div>
+      </div>`);
+    groupEl.classList.toggle('is-expanded', expandedByDefault);
+    groupEl.dataset.filterType = group.id;
+    const header = groupEl.querySelector('.fs-filter-group-header');
+    header.setAttribute('aria-expanded', String(expandedByDefault));
+    header.setAttribute('aria-controls', regionId);
+    groupEl.querySelector('.fs-filter-group-title').textContent = group.name;
+    groupEl.querySelector('.fs-filter-options').id = regionId;
     groupEl.hidden = true; // shown once it has items
     groupEls.set(group.id, groupEl);
     groupsRoot.append(groupEl);
@@ -98,16 +140,17 @@ export default function createFacetedSearchUI({
   /* ---------- keyword ---------- */
   let keywordEl = null;
   let input = null;
+  let additionalFiltersActive = false;
   function updateClearFiltersButton() {
     const { tags, keyword } = store.get();
-    const hasAny = Boolean(tags.length || keyword || input?.value.trim());
+    const hasAny = Boolean(tags.length || keyword || input?.value.trim() || additionalFiltersActive);
     clearBtn.classList.toggle('is-active', hasAny);
     clearBtn.disabled = !hasAny;
   }
 
   let searchBar = null;
   if (withKeyword) {
-    searchBar = createSearchBar({ store, prefix, placeholders, onInput: updateClearFiltersButton });
+    searchBar = createSearchBar({ store, placeholders, onInput: updateClearFiltersButton });
     keywordEl = searchBar.el;
     input = searchBar.input;
   }
@@ -250,6 +293,10 @@ export default function createFacetedSearchUI({
     countEl,
     setResultCount,
     store,
+    setAdditionalFiltersActive(active) {
+      additionalFiltersActive = active;
+      updateClearFiltersButton();
+    },
     /** Run fn after every UI refresh (used for the mobile toggle's active-filter count). */
     onRefresh(fn) {
       refreshListeners.add(fn);

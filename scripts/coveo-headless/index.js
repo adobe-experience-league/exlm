@@ -156,6 +156,30 @@ export async function buildHeadlessSortController(searchEngine) {
 
 export const buildEventsSearchSortController = buildHeadlessSortController;
 
+/** Update a complete faceted-search state before executing one search. */
+export function buildHeadlessSearchStateController(searchEngine, module) {
+  const facetActions = module.loadFacetSetActions(searchEngine);
+  const facetOptionsActions = module.loadFacetOptionsActions(searchEngine);
+  const queryActions = module.loadQueryActions(searchEngine);
+  const paginationActions = module.loadPaginationActions(searchEngine);
+  const sortActions = module.loadSortCriteriaActions(searchEngine);
+  return {
+    toggleFacetValue(controller, selection) {
+      searchEngine.dispatch(facetActions.toggleSelectFacetValue({ facetId: controller.state.facetId, selection }));
+      searchEngine.dispatch(facetOptionsActions.updateFacetOptions());
+    },
+    setQuery(q) {
+      searchEngine.dispatch(queryActions.updateQuery({ q }));
+    },
+    setPage(page) {
+      searchEngine.dispatch(paginationActions.updatePage(page));
+    },
+    setSort(criterion) {
+      searchEngine.dispatch(sortActions.updateSortCriterion(criterion));
+    },
+  };
+}
+
 export default async function initiateCoveoHeadlessSearch({
   handleSearchEngineSubscription,
   renderPageNumbers,
@@ -171,6 +195,7 @@ export default async function initiateCoveoHeadlessSearch({
   lockedFacets = {},
   publishGlobals = true,
   onUrlRestore,
+  deferInitialSearch = false,
 }) {
   // Facet selections that scope the page and survive URL restore / reset (e.g. { el_contenttype: ['Course'] }).
   // Needed when the query pipeline ignores aq for a Tab (Courses), so scope has to travel as a facet selection.
@@ -236,14 +261,21 @@ export default async function initiateCoveoHeadlessSearch({
 
         const fragmentForSynchronization = () => {
           const rawFragment = fragment();
-          if (!tabId && !lockedFragmentParams.length) return rawFragment;
+          if (!tabId && !lockedFragmentParams.length && !hideAqFromUrl) return rawFragment;
 
           const lockedKeys = Object.keys(lockedFacets).map((field) => `f-${field}=`);
           const parameters = rawFragment
             .split('&')
-            .filter((param) => param && !param.startsWith('tab=') && !lockedKeys.some((key) => param.startsWith(key)));
+            .filter(
+              (param) =>
+                param &&
+                !param.startsWith('tab=') &&
+                !(hideAqFromUrl && param.startsWith('aq=')) &&
+                !lockedKeys.some((key) => param.startsWith(key)),
+            );
 
           if (tabId) parameters.push(`tab=${encodeURIComponent(tabId)}`);
+          if (hideAqFromUrl) parameters.push(`aq=${encodeURIComponent(baseAdvancedQuery)}`);
           parameters.push(...lockedFragmentParams);
           return parameters.join('&');
         };
@@ -279,17 +311,26 @@ export default async function initiateCoveoHeadlessSearch({
           return window.location.hash || window.location.pathname + window.location.search;
         }
 
-        subscriptions.push(
-          urlManager.subscribe(() => {
-            const hash = visibleHash();
-            if (hash === currentVisibleUrl()) return;
-            if (!statusControllers.state.firstSearchExecuted) {
-              window.history.replaceState(null, document.title, hash);
-              return;
-            }
-            window.history.pushState(null, document.title, hash);
-          }),
-        );
+        let batchingState = false;
+        function writeVisibleUrl(replace = !statusControllers.state.firstSearchExecuted) {
+          if (batchingState) return;
+          const hash = visibleHash();
+          if (hash === currentVisibleUrl()) return;
+          if (replace) window.history.replaceState(null, document.title, hash);
+          else window.history.pushState(null, document.title, hash);
+        }
+
+        function batchStateUpdates(update, { replace = !statusControllers.state.firstSearchExecuted } = {}) {
+          batchingState = true;
+          try {
+            return update();
+          } finally {
+            batchingState = false;
+            writeVisibleUrl(replace);
+          }
+        }
+
+        subscriptions.push(urlManager.subscribe(() => writeVisibleUrl()));
 
         if (handleSearchEngineSubscription) {
           subscriptions.push(headlessSearchEngine.subscribe(handleSearchEngineSubscription));
@@ -318,22 +359,11 @@ export default async function initiateCoveoHeadlessSearch({
           );
         }
 
-        // synchronize() restores aq from the (aq-less) URL and searches with it, so reassert the real aq and rerun the search right after.
-        function reapplyBaseAdvancedQuery({ rerunSearch: shouldRerunSearch = false } = {}) {
-          if (!hideAqFromUrl || !baseAdvancedQuery) return;
-          headlessSearchEngine.dispatch(
-            headlessQueryActionCreators.updateAdvancedSearchQueries({ aq: baseAdvancedQuery }),
-          );
-          if (shouldRerunSearch) rerunSearch();
-        }
-
-        urlManager.synchronize(fragmentForSynchronization());
-        reapplyBaseAdvancedQuery();
+        if (!deferInitialSearch) urlManager.synchronize(fragmentForSynchronization());
 
         function onHashChange() {
           onUrlRestore?.(fragment());
-          urlManager.synchronize(fragmentForSynchronization());
-          reapplyBaseAdvancedQuery({ rerunSearch: true });
+          batchStateUpdates(() => urlManager.synchronize(fragmentForSynchronization()), { replace: true });
         }
         window.addEventListener('hashchange', onHashChange);
 
@@ -544,6 +574,8 @@ export default async function initiateCoveoHeadlessSearch({
           status: statusControllers,
           pager: headlessPager,
           facets,
+          stateController: buildHeadlessSearchStateController(headlessSearchEngine, module),
+          batchStateUpdates,
           executeSearch: rerunSearch,
           destroy: () => {
             subscriptions.forEach((unsubscribe) => unsubscribe());

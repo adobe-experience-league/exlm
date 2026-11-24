@@ -1,4 +1,4 @@
-import { createTag } from '../../scripts.js';
+import { createTag, htmlToElement } from '../../scripts.js';
 import { decorateIcons } from '../../lib-franklin.js';
 
 // Headless can publish several intermediate states before URL-restored facets catch up.
@@ -212,25 +212,24 @@ export function createCollectionSortPolicy({
  * "Sort: <current> v" dropdown. Options are [{ value, label }].
  * onChange(value) fires only on a user selection.
  */
-export function createSortControl({ prefix = 'fs', label = 'Sort:', onChange = () => {} } = {}) {
-  const c = (name) => `${prefix}-${name}`;
+export function createSortControl({ label = 'Sort:', onChange = () => {} } = {}) {
+  const c = (name) => `fs-${name}`;
   let options = [];
   let selected = '';
   let abortOpen = null;
 
-  const el = createTag('div', { class: c('sort') });
-  const btn = createTag('button', {
-    class: c('sort-btn'),
-    type: 'button',
-    'aria-haspopup': 'true',
-    'aria-expanded': 'false',
-  });
-  btn.innerHTML = `
-    <span class="${c('sort-btn-prefix')}">${label}</span>
-    <span class="${c('sort-btn-value')}"></span>
-    <span class="icon icon-chevron ${c('sort-chevron')}" aria-hidden="true"></span>`;
-  const menu = createTag('div', { class: c('sort-menu'), hidden: '' });
-  el.append(btn, menu);
+  const el = htmlToElement(`
+    <div class="fs-sort">
+      <button class="fs-sort-btn" type="button" aria-haspopup="true" aria-expanded="false">
+        <span class="fs-sort-btn-prefix"></span>
+        <span class="fs-sort-btn-value"></span>
+        <span class="icon icon-chevron fs-sort-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="fs-sort-menu" hidden></div>
+    </div>`);
+  const btn = el.querySelector('.fs-sort-btn');
+  const menu = el.querySelector('.fs-sort-menu');
+  btn.querySelector('.fs-sort-btn-prefix').textContent = label;
   decorateIcons(btn);
   const valueEl = btn.querySelector(`.${c('sort-btn-value')}`);
 
