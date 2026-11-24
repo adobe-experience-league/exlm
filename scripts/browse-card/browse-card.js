@@ -536,10 +536,12 @@ const getOnDemandEventsDecorator = () => {
  * @param {boolean} [model.failedToLoad=false] - Indicates if the card failed to load, triggering specific styles.
  * @param {string} [model.viewLink] - URL link to view more details about the card content.
  * @param {string} [model.copyLink] - URL link for a copy/share action on the card.
+ * @param {Object} [options] - Rendering options.
+ * @param {boolean} [options.trackCoveoClick=true] - Send click analytics for Coveo-backed results.
  * @returns {Promise<void>} Resolves when the card is fully built and added to the DOM.
  */
 
-export async function buildCard(element, model) {
+export async function buildCard(element, model, { trackCoveoClick = true } = {}) {
   const { thumbnail, product, title, contentType, badgeTitle, inProgressStatus, failedToLoad = false } = model;
 
   // Delegate to PL-specific card builder for premium-learning content types
@@ -835,13 +837,15 @@ export async function buildCard(element, model) {
     }
   });
 
-  element.querySelector('a').addEventListener(
-    'click',
-    () => {
-      sendCoveoClickEvent('browse-card', model);
-    },
-    { once: true },
-  );
+  if (trackCoveoClick) {
+    element.querySelector('a').addEventListener(
+      'click',
+      () => {
+        sendCoveoClickEvent('browse-card', model);
+      },
+      { once: true },
+    );
+  }
 
   // Only apply v2 decorations when feature flag is enabled (content type will be 'Event|Upcoming Event')
   if (needUpcomingEventDec) {
