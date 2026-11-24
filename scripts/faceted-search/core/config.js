@@ -328,7 +328,11 @@ async function createCourseConfig({ placeholders, filters, sort, viewSwitcher, p
   const contentType = 'Course';
   const tabId = 'Courses';
   const pageSize = pagination ? 12 : 1000;
-  const cardHandlers = createCourseCardHandlers({ signedIn, originLevel2: tabId });
+  const cardHandlers = createCourseCardHandlers({
+    signedIn,
+    originLevel2: tabId,
+    pageSize: pagination ? pageSize : undefined,
+  });
   const remapFilters = createCourseLegacyFilterMapper();
   return {
     groups: [

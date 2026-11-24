@@ -84,8 +84,8 @@ export function createResults({ resultsPrefix = 'fs', labels = {}, createLoading
   };
 }
 
-export function createCardLoading(pageSize) {
-  return new BrowseCardShimmer(Number.isFinite(pageSize) ? pageSize : undefined);
+export function createCardLoading(pageSize, contentType) {
+  return new BrowseCardShimmer(Number.isFinite(pageSize) ? pageSize : undefined, contentType);
 }
 
 export async function prepareCardItems(results, state, { type, dataFormat = 'coveo' }, snapshot) {
@@ -144,21 +144,11 @@ async function enrichWithCourseStatus(cards) {
   }
 }
 
-/** Match the course shimmer to the responsive card columns. */
-function getCourseShimmerCount() {
-  const width = window.innerWidth;
-  if (width >= 1200) return 3;
-  if (width >= 1024) return 2;
-  if (width >= 900) return 3;
-  if (width >= 600) return 2;
-  return 1;
-}
-
-export function createCourseCardHandlers({ signedIn, originLevel2 }) {
+export function createCourseCardHandlers({ signedIn, originLevel2, pageSize }) {
   let pendingModuleCounts = [];
   return {
     createLoading() {
-      const shimmer = new BrowseCardShimmer(getCourseShimmerCount(), 'course');
+      const shimmer = createCardLoading(pageSize, 'course');
       const addShimmer = shimmer.addShimmer.bind(shimmer);
       const removeShimmer = shimmer.removeShimmer.bind(shimmer);
       let host;
