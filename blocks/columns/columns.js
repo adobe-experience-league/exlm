@@ -2,12 +2,12 @@ import { span } from '../../scripts/dom-helpers.js';
 
 const UEAuthorMode = window.hlx?.aemRoot || window.location.href.includes('.html');
 const highlightBackgrounds = ['ffeceb', 'ffcbc7', 'eb1100'];
+const paddingPresets = ['default', 'balanced', 'most-compact'];
 
 function resolveStyles(block) {
   const errors = [];
   const classes = [...block.classList];
-  // UE replaces the block with server-rendered HTML. Only persisted class order is available,
-  // not click history; resolve each group from its last valid serialized choice.
+  // Resolve the last valid serialized choice; UE does not expose click history here.
   const select = (prefix, allowed, fallback, aliases = {}) => {
     let selected = fallback;
     classes.forEach((name) => {
@@ -20,8 +20,7 @@ function resolveStyles(block) {
     });
     return selected;
   };
-  const presets = ['default', 'balanced', 'row-dense', 'column-dense', 'most-compact'];
-  const comparison = select('padding-comparison-', presets, null);
+  const comparison = select('padding-comparison-', paddingPresets, null);
   if (comparison && comparison !== 'default') block.dataset.columnsPaddingComparison = comparison;
   else delete block.dataset.columnsPaddingComparison;
   ['row', 'column'].forEach((axis) => {
@@ -30,7 +29,7 @@ function resolveStyles(block) {
       ['default', 'compact'],
       'default',
       Object.fromEntries(
-        presets.map((preset) => [`padding-comparison-${preset}`, preset === 'default' ? 'default' : 'compact']),
+        paddingPresets.map((preset) => [`padding-comparison-${preset}`, preset === 'default' ? 'default' : 'compact']),
       ),
     );
     block.toggleAttribute(`data-columns-compact-${axis}`, padding === 'compact');

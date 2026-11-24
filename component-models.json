@@ -1542,11 +1542,11 @@
             "children": [
               { "name": "Default", "value": "padding-comparison-default" },
               {
-                "name": "Compact option 1: 8px top/bottom and left/right",
+                "name": "Balanced (8px top/bottom and left/right)",
                 "value": "padding-comparison-balanced"
               },
               {
-                "name": "Compact option 2: 4px top/bottom and left/right",
+                "name": "Most compact (4px top/bottom and left/right)",
                 "value": "padding-comparison-most-compact"
               }
             ]
