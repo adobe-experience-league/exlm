@@ -41,14 +41,10 @@ function updateStyles(block) {
     });
   });
   const currentStyles = classes.filter((name) => name.startsWith('columns-style-'));
-  if (currentStyles.join(' ') !== styles.join(' ')) {
-    if (currentStyles.length) block.classList.remove(...currentStyles);
-    if (styles.length) block.classList.add(...styles);
-  }
+  block.classList.remove(...currentStyles);
+  block.classList.add(...styles);
   const enhanced = compact || width === 'fit-content' || rowHighlight || columnHighlight;
-  if (block.classList.contains('columns-enhanced') !== enhanced) {
-    block.classList.toggle('columns-enhanced', enhanced);
-  }
+  block.classList.toggle('columns-enhanced', enhanced);
 }
 
 function updateHeaders(block) {
