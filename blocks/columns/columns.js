@@ -1,81 +1,71 @@
 import { span } from '../../scripts/dom-helpers.js';
 
 const UEAuthorMode = window.hlx?.aemRoot || window.location.href.includes('.html');
-const highlightBackgrounds = ['ffeceb', 'ffcbc7', 'eb1100'];
-const paddingPresets = ['default', 'balanced', 'most-compact'];
-
-function resolveStyles(block) {
+function updateStyles(block) {
   const errors = [];
   const classes = [...block.classList];
-  // Resolve the last valid serialized choice; UE does not expose click history here.
   const select = (prefix, allowed, fallback, aliases = {}) => {
-    let selected = fallback;
+    let selected;
     classes.forEach((name) => {
-      if (Object.hasOwn(aliases, name)) selected = aliases[name];
-      else if (name.startsWith(prefix)) {
+      if (Object.hasOwn(aliases, name)) {
+        if (selected === undefined) selected = aliases[name];
+      } else if (name.startsWith(prefix)) {
         const value = name.slice(prefix.length);
-        if (allowed.includes(value)) selected = value;
-        else errors.push(`Invalid ${prefix} selection: ${value}`);
+        if (allowed && !allowed.includes(value)) errors.push(`Invalid ${prefix} selection: ${value}`);
+        else if (selected === undefined) selected = value;
       }
     });
-    return selected;
+    return selected === undefined ? fallback : selected;
   };
-  const comparison = select('padding-comparison-', paddingPresets, null);
-  if (comparison && comparison !== 'default') block.dataset.columnsPaddingComparison = comparison;
-  else delete block.dataset.columnsPaddingComparison;
+  const comparison = select('padding-comparison-', ['default', 'balanced', 'most-compact'], null);
+  const styles = [];
+  if (comparison && comparison !== 'default') styles.push(`columns-style-${comparison}`);
+  const paddingAliases = {
+    'padding-comparison-default': 'default',
+    'padding-comparison-balanced': 'compact',
+    'padding-comparison-most-compact': 'compact',
+  };
+  const compact = {};
   ['row', 'column'].forEach((axis) => {
-    const padding = select(
-      `${axis}-padding-`,
-      ['default', 'compact'],
-      'default',
-      Object.fromEntries(
-        paddingPresets.map((preset) => [`padding-comparison-${preset}`, preset === 'default' ? 'default' : 'compact']),
-      ),
-    );
-    block.toggleAttribute(`data-columns-compact-${axis}`, padding === 'compact');
+    compact[axis] = select(`${axis}-padding-`, ['default', 'compact'], 'default', paddingAliases) === 'compact';
+    if (compact[axis]) styles.push(`columns-style-${axis}-compact`);
   });
   const width = select('column-width-', ['equal', 'fit-content'], 'equal');
-  block.dataset.columnsWidth = width;
+  if (width === 'fit-content') styles.push('columns-style-fit');
   const highlight = (axis) => {
-    // Backgrounds are authoritative; deprecated On/Off tokens must not trap persisted content.
-    const background = select(`${axis}-bg-`, highlightBackgrounds, null);
-    if (!background) return null;
-    let foreground = select(`${axis}-text-`, ['black', 'white'], 'black');
-    if (foreground === 'white' && background !== 'eb1100') {
+    const background = select(`${axis}-bg-`, null, null);
+    if (!background) return false;
+    styles.push(`columns-style-${axis}-bg-${background}`);
+    const foreground = select(`${axis}-text-`, ['black', 'white'], 'black');
+    if (foreground === 'white' && background === 'eb1100') {
+      styles.push(`columns-style-${axis}-white`);
+    } else if (foreground === 'white') {
       errors.push(`White text requires #EB1100 for the ${axis} highlight; rendering Black`);
-      foreground = 'black';
     }
-    return { background, foreground };
+    return true;
   };
   const rowHighlight = highlight('row');
   const columnHighlight = highlight('column');
-  const precedence = select('highlight-precedence-', ['row', 'column'], null);
+  if (select('highlight-precedence-', ['row', 'column'], 'row') === 'column') {
+    styles.push('columns-style-column-precedence');
+  }
   [...block.children].forEach((row, rowIndex) => {
     [...row.children].forEach((cell, colIndex) => {
-      const rowStyle = rowIndex === 0 ? rowHighlight : null;
-      const columnStyle = colIndex === 0 ? columnHighlight : null;
-      const style = precedence === 'column' ? columnStyle || rowStyle : rowStyle || columnStyle;
-      cell.toggleAttribute('data-columns-highlight', !!style);
-      if (style) {
-        cell.dataset.columnsHighlightBackground = style.background;
-        cell.dataset.columnsHighlightForeground = style.foreground;
-      } else {
-        delete cell.dataset.columnsHighlightBackground;
-        delete cell.dataset.columnsHighlightForeground;
-      }
+      cell.classList.toggle('columns-row-highlight', rowHighlight && rowIndex === 0);
+      cell.classList.toggle('columns-column-highlight', columnHighlight && colIndex === 0);
     });
   });
-  block.toggleAttribute(
-    'data-columns-enhanced',
-    block.hasAttribute('data-columns-compact-row') ||
-      block.hasAttribute('data-columns-compact-column') ||
-      width === 'fit-content' ||
-      !!rowHighlight ||
-      !!columnHighlight,
-  );
+  const currentStyles = classes.filter((name) => name.startsWith('columns-style-'));
+  if (currentStyles.join(' ') !== styles.join(' ')) {
+    if (currentStyles.length) block.classList.remove(...currentStyles);
+    if (styles.length) block.classList.add(...styles);
+  }
+  const enhanced = compact.row || compact.column || width === 'fit-content' || rowHighlight || columnHighlight;
+  if (block.classList.contains('columns-enhanced') !== enhanced) {
+    block.classList.toggle('columns-enhanced', enhanced);
+  }
   const message = errors.join('; ');
   if (message && message !== block.dataset.columnsStyleErrors) {
-    // Guard legacy content and stale values retained when conditional authoring fields are hidden.
     // eslint-disable-next-line no-console
     console.warn('Columns style validation:', message, block);
     block.dispatchEvent(new CustomEvent('columns:style-invalid', { bubbles: true, detail: errors }));
@@ -84,9 +74,6 @@ function resolveStyles(block) {
   else delete block.dataset.columnsStyleErrors;
 }
 
-/**
- * Updates the headers of the columns based on the window width.
- */
 function updateHeaders(block) {
   const headerCells = [...(block.firstElementChild?.children || [])];
   const rows = [...block.children].slice(1);
@@ -98,6 +85,7 @@ function updateHeaders(block) {
           const headerLabel = span({ class: 'header-label' }, headerCells[index]?.textContent || '');
           const cellContent = document.createElement('div');
           cellContent.className = 'cell-content';
+          // Keep the content nodes intact so they can be restored on desktop.
           cellContent.append(...cell.childNodes);
           cell.append(headerLabel, cellContent);
         }
@@ -123,21 +111,19 @@ window.addEventListener('resize', () => {
 
 export default function decorate(block) {
   if (block.hasAttribute('data-columns-decorated')) {
-    resolveStyles(block);
+    updateStyles(block);
     updateHeaders(block);
     return;
   }
   const cols = [...(block.firstElementChild?.children || [])];
   block.classList.add(`columns-${cols.length}-cols`);
 
-  // setup image columns
   [...block.children].forEach((row) => {
     [...row.children].forEach((col) => {
       const pic = col.querySelector('picture');
       if (pic) {
         const picWrapper = pic.closest('div');
         if (picWrapper && picWrapper.children.length === 1) {
-          // picture is only content in column
           picWrapper.classList.add('columns-img-col');
         }
       }
@@ -154,12 +140,10 @@ export default function decorate(block) {
           buttonTypeWrapper.children.length === 1 &&
           buttonTypeWrapper.textContent.trim() === buttonType.textContent.trim()
         ) {
-          // when a column has a single button with a type
           const pTag = document.createElement('p');
           buttonType.parentNode.insertBefore(pTag, buttonType);
           pTag.appendChild(buttonType);
           pTag.classList.add('button-container');
-          // when button is primary - strong tag gets generated
           const anchorInsideStrong = pTag.querySelector('strong a');
           // when button is secondary - em tag gets generated
           const anchorInsideEm = pTag.querySelector('em a');
@@ -173,14 +157,13 @@ export default function decorate(block) {
       }
     });
   });
-  resolveStyles(block);
+  updateStyles(block);
   updateHeaders(block);
   block.setAttribute('data-columns-decorated', '');
   new MutationObserver(() => {
-    resolveStyles(block);
+    updateStyles(block);
     updateHeaders(block);
   }).observe(block, { attributes: true, attributeFilter: ['class'] });
-  // Remove empty <p> tags
   if (UEAuthorMode) {
     block.querySelectorAll('p').forEach((p) => {
       if (p.innerHTML.trim() === '' || p.innerHTML.trim() === '&nbsp;') {

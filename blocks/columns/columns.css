@@ -40,9 +40,19 @@
   width: 96%;
 }
 
-.columns[data-columns-enhanced].b-alt-row > div > div {
+.columns.columns-enhanced.b-alt-row > div > div {
   box-sizing: border-box;
   width: 100%;
+}
+
+.columns.block.columns-enhanced > div > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.columns.block > div > div:is(.columns-row-highlight, .columns-column-highlight) {
+  background-color: var(--columns-highlight-background);
+  color: var(--columns-highlight-foreground);
 }
 
 .columns.block.b-alt-row > div:first-child {
@@ -119,98 +129,111 @@
   }
 }
 
-.columns.block[data-columns-decorated][data-columns-enhanced] > div > div {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.columns.block[data-columns-decorated][data-columns-enhanced] > div > div [data-aue-type^='richtext'] {
+.columns.block.columns-enhanced > div > div [data-aue-type^='richtext'],
+.columns.block.columns-enhanced.b-alt-row > div > div > div[data-aue-type^='richtext'] {
   min-width: 0;
   width: auto;
 }
 
-.columns[data-columns-padding-comparison='balanced'] {
-  --columns-padding-row: 8px;
-  --columns-padding-column: 8px;
+.columns.columns-style-balanced {
+  --columns-padding: 8px;
 }
 
-.columns[data-columns-padding-comparison='most-compact'] {
-  --columns-padding-row: 4px;
-  --columns-padding-column: 4px;
+.columns.columns-style-most-compact {
+  --columns-padding: 4px;
 }
 
-.columns.block[data-columns-decorated][data-columns-compact-row] > div > div {
-  padding-top: var(--columns-padding-row, 8px);
-  padding-bottom: var(--columns-padding-row, 8px);
+.columns.block.columns-enhanced.columns-style-row-compact > div > div {
+  padding-top: var(--columns-padding, 8px);
+  padding-bottom: var(--columns-padding, 8px);
 }
 
-.columns.block[data-columns-decorated][data-columns-compact-row] > div > div [data-aue-type^='richtext'] {
+.columns.block.columns-enhanced.columns-style-row-compact > div > div [data-aue-type^='richtext'] {
   padding-top: 0;
   padding-bottom: 0;
 }
 
-.columns.block[data-columns-decorated][data-columns-compact-column] > div > div {
-  padding-left: var(--columns-padding-column, 8px);
-  padding-right: var(--columns-padding-column, 8px);
+.columns.block.columns-enhanced.columns-style-column-compact > div > div {
+  padding-left: var(--columns-padding, 8px);
+  padding-right: var(--columns-padding, 8px);
 }
 
-.columns.block[data-columns-decorated][data-columns-compact-column] > div > div [data-aue-type^='richtext'] {
+.columns.block.columns-enhanced.columns-style-column-compact > div > div [data-aue-type^='richtext'] {
   padding-left: 0;
   padding-right: 0;
 }
 
-.columns > div > div[data-columns-highlight] {
-  background-color: var(--columns-highlight-background);
+.columns.columns-style-row-bg-ffeceb {
+  --columns-row-background: var(--non-spectrum-very-pale-red);
+}
+
+.columns.columns-style-row-bg-ffcbc7 {
+  --columns-row-background: var(--non-spectrum-light-pink-red);
+}
+
+.columns.columns-style-row-bg-eb1100 {
+  --columns-row-background: var(--non-spectrum-adobe-highlight-red);
+}
+
+.columns.columns-style-column-bg-ffeceb {
+  --columns-column-background: var(--non-spectrum-very-pale-red);
+}
+
+.columns.columns-style-column-bg-ffcbc7 {
+  --columns-column-background: var(--non-spectrum-light-pink-red);
+}
+
+.columns.columns-style-column-bg-eb1100 {
+  --columns-column-background: var(--non-spectrum-adobe-highlight-red);
+}
+
+.columns.columns-style-row-white {
+  --columns-row-foreground: var(--spectrum-gray-50);
+}
+
+.columns.columns-style-column-white {
+  --columns-column-foreground: var(--spectrum-gray-50);
+}
+
+.columns > div > div.columns-column-highlight {
+  --columns-highlight-background: var(--columns-column-background);
+  --columns-highlight-foreground: var(--columns-column-foreground, var(--spectrum-gray-900));
+}
+
+.columns > div > div.columns-row-highlight {
+  --columns-highlight-background: var(--columns-row-background);
+  --columns-highlight-foreground: var(--columns-row-foreground, var(--spectrum-gray-900));
+}
+
+.columns.columns-style-column-precedence > div > div.columns-column-highlight {
+  --columns-highlight-background: var(--columns-column-background);
+  --columns-highlight-foreground: var(--columns-column-foreground, var(--spectrum-gray-900));
+}
+
+.columns
+  > div
+  > div:is(.columns-row-highlight, .columns-column-highlight)
+  :is(p, h1, h2, h3, h4, h5, h6, li, strong, em, code):not(.button *),
+.columns > div > div:is(.columns-row-highlight, .columns-column-highlight) a:not(.button) {
   color: var(--columns-highlight-foreground);
 }
 
-.columns [data-columns-highlight-background='ffeceb'] {
-  --columns-highlight-background: var(--non-spectrum-very-pale-red);
-}
-
-.columns [data-columns-highlight-background='ffcbc7'] {
-  --columns-highlight-background: var(--non-spectrum-light-pink-red);
-}
-
-.columns [data-columns-highlight-background='eb1100'] {
-  --columns-highlight-background: var(--non-spectrum-adobe-highlight-red);
-}
-
-.columns [data-columns-highlight-foreground='black'] {
-  --columns-highlight-foreground: var(--spectrum-gray-900);
-}
-
-.columns [data-columns-highlight-foreground='white'] {
-  --columns-highlight-foreground: var(--spectrum-gray-50);
-}
-
-.columns > div > div[data-columns-highlight] :is(p, h1, h2, h3, h4, h5, h6, li, strong, em, code):not(.button *),
-.columns > div > div[data-columns-highlight] a:not(.button) {
-  color: var(--columns-highlight-foreground);
-}
-
-.columns > div > div[data-columns-highlight] a:not(.button) {
+.columns > div > div:is(.columns-row-highlight, .columns-column-highlight) a:not(.button) {
   text-decoration: underline;
 }
 
-.columns > div > div[data-columns-highlight] a:not(.button):focus-visible {
+.columns > div > div:is(.columns-row-highlight, .columns-column-highlight) a:not(.button):focus-visible {
   outline: 2px solid currentcolor;
   outline-offset: 2px;
 }
 
-.columns > div > div[data-columns-highlight] pre {
+.columns > div > div:is(.columns-row-highlight, .columns-column-highlight) pre {
   background-color: var(--columns-highlight-background);
   color: var(--columns-highlight-foreground);
 }
 
-.columns > div > div[data-columns-highlight] :is(a.button.secondary, button.secondary) {
-  color: var(--columns-highlight-foreground);
-  border-color: currentcolor;
-  background-color: transparent;
-}
-
-.columns[data-columns-enhanced].b-alt-row .header-label,
-.columns[data-columns-enhanced].b-alt-row .cell-content {
+.columns.columns-enhanced.b-alt-row .header-label,
+.columns.columns-enhanced.b-alt-row .cell-content {
   min-width: 0;
   box-sizing: border-box;
 }
@@ -221,63 +244,65 @@
 }
 
 @media (width >= 600px) {
-  .columns[data-columns-enhanced] > div {
+  .columns.columns-enhanced > div {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
-  /* Auto table tracks share intrinsic widths across authored rows without moving UE nodes. */
-  @media (width >= 600px) {
-    .columns.block[data-columns-width='fit-content'] {
-      display: table;
-      width: 100%;
-      table-layout: auto;
-      border-collapse: collapse;
-    }
-
-    .columns.block[data-columns-width='fit-content'] > div {
-      display: table-row;
-    }
-
-    .columns.block[data-columns-width='fit-content'] > div > div {
-      display: table-cell;
-      width: auto;
-      vertical-align: top;
-    }
-
-    .columns.block[data-columns-width='fit-content'] > div:first-child {
-      display: table-row;
-    }
-
-    .columns.block[data-columns-width='fit-content'].align-middle > div > div {
-      vertical-align: middle;
-    }
-
-    .columns.block[data-columns-width='fit-content'] > div > div > [data-aue-type^='richtext'] {
-      display: block;
-      width: auto;
-    }
-
-    .columns.block[data-columns-decorated][data-columns-width='fit-content'] > div > div {
-      overflow-wrap: break-word;
-    }
-
-    .columns.block[data-columns-width='fit-content'] pre {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
+  /* Use table tracks to share intrinsic widths without moving authored cells. */
+  .columns.block.columns-style-fit {
+    display: table;
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
   }
 
-  .columns[data-columns-enhanced].b-alt-row > div > div {
+  .columns.block.columns-style-fit > div {
+    display: table-row;
+  }
+
+  .columns.block.columns-style-fit > div > div {
+    display: table-cell;
+    width: auto;
+    vertical-align: top;
+  }
+
+  .columns.columns-enhanced.b-alt-row > div > div {
     flex-basis: 0;
   }
 
-  .columns[data-columns-enhanced].b-alt-row > div > div > [data-aue-type^='richtext'] {
+  .columns.block.columns-style-fit > div:first-child {
+    display: table-row;
+  }
+
+  .columns.block.columns-style-fit.align-middle > div > div {
+    vertical-align: middle;
+  }
+
+  .columns.columns-enhanced.b-alt-row > div > div > [data-aue-type^='richtext'] {
     display: block;
+  }
+
+  .columns.block.columns-style-fit > div > div > [data-aue-type^='richtext'] {
+    display: block;
+    width: auto;
+  }
+
+  .columns.block.columns-enhanced.columns-style-fit > div > div {
+    overflow-wrap: break-word;
+  }
+
+  .columns.block.columns-style-fit pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .columns.columns-1-cols.columns-enhanced > div:has(> div:only-child) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (width >= 900px) {
-  .columns[data-columns-enhanced] > div {
+  .columns.columns-enhanced > div {
     grid-auto-columns: minmax(0, 1fr);
   }
 }
