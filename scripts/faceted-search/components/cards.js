@@ -332,6 +332,7 @@ export async function renderPlaylistCard(wrapper, item, placeholders = {}) {
     text.textContent = value;
     return text.innerHTML;
   };
+  const linkBase = window.location.origin === 'null' ? window.hlx.codeBasePath : window.location.origin;
   // The shared renderer accepts HTML; collection fields must remain plain text.
   const model = {
     id,
@@ -342,8 +343,8 @@ export async function renderPlaylistCard(wrapper, item, placeholders = {}) {
     thumbnail: image,
     product: product.map(encodeText),
     tags: [{ icon: 'user', text: role }],
-    viewLink: path ? new URL(path, window.location.origin).href : '',
-    copyLink: path ? new URL(path, window.location.origin).href : '',
+    viewLink: path ? new URL(path, linkBase).href : '',
+    copyLink: path ? new URL(path, linkBase).href : '',
     viewLinkText: placeholders.browseCardPlaylistViewLabel || 'View playlist',
   };
   await buildCard(wrapper, model, { trackCoveoClick: false });
