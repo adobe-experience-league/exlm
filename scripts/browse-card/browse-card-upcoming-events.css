@@ -382,7 +382,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     order: 0;
     margin: 0;
     align-self: flex-start;
-    margin-bottom: var(--spectrum-spacing-300);
+    margin-bottom: var(--spectrum-spacing-100);
     display: flex;
     max-width: 100%;
     min-width: 0;
@@ -491,7 +491,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     .browse-card-footer
     .browse-card-cta-element {
     order: 3;
-    margin-block: calc(var(--spectrum-spacing-300) + var(--spectrum-spacing-75));
+    margin-block: var(--spectrum-spacing-100);
     margin-inline: 0;
     background: var(--spectrum-blue-900) 0% 0% no-repeat padding-box;
     border-radius: var(--spectrum-spacing-300);
@@ -653,7 +653,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     .location-type {
     display: flex;
     align-items: center;
-    margin-bottom: var(--spectrum-spacing-300);
+    margin-bottom: var(--spectrum-spacing-100);
     position: unset;
     align-self: flex-start;
     padding: 0;
@@ -790,12 +790,12 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     .browse-card-footer
     .footer-speakers-section
     .speakers-heading {
-    font-size: var(--spectrum-font-size-200);
+    font-size: var(--spectrum-font-size-75);
     font-weight: var(--font-weight-bold);
-    margin-bottom: var(--spectrum-spacing-300);
+    margin: 0 0 var(--spectrum-spacing-100);
     color: #000;
     position: relative;
-    padding-bottom: var(--spectrum-spacing-100);
+    padding-bottom: 0;
   }
 
   :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
@@ -808,7 +808,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     .browse-card-footer
     .footer-speakers-section
     .speakers-heading::after {
-    content: '';
+    content: none;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -828,8 +828,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     .footer-speakers-section
     .speakers-list {
     display: flex;
-    flex-direction: column;
-    gap: calc(var(--spectrum-spacing-300) - var(--spectrum-spacing-50));
+    flex-flow: row wrap;
+    gap: var(--spectrum-spacing-100);
   }
 
   :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
@@ -843,8 +843,9 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     .footer-speakers-section
     .speaker-item {
     display: flex;
-    align-items: flex-start;
-    gap: calc(var(--spectrum-spacing-100) + var(--spectrum-spacing-50));
+    align-items: center;
+    max-width: 100%;
+    gap: var(--spectrum-spacing-100);
   }
 
   :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)
@@ -857,8 +858,8 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     .browse-card-footer
     .footer-speakers-section
     .speaker-img-container {
-    width: calc(var(--spectrum-spacing-700) + var(--spectrum-spacing-50));
-    height: calc(var(--spectrum-spacing-700) + var(--spectrum-spacing-50));
+    width: var(--spectrum-spacing-400);
+    height: var(--spectrum-spacing-400);
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
@@ -893,6 +894,7 @@ body[class^='browse-'] .browse-card.event-upcoming-event-card .browse-card-figur
     .speaker-info {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
   :is(.upcoming-event-v2.list, .events-search .events-search-results-body.list)

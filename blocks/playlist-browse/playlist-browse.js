@@ -3,9 +3,10 @@ import { createFacetedSearch } from '../../scripts/faceted-search/faceted-search
 export default async function decorate(block) {
   await createFacetedSearch(block, {
     contentType: 'playlist',
+    heading: true,
     filters: true,
     sort: false,
-    viewSwitcher: false,
+    viewSwitcher: true,
     pagination: true,
   });
 }

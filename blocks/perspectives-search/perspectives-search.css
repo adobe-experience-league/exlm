@@ -1,0 +1,61 @@
+@import '../../scripts/faceted-search/faceted-search.css';
+@import '../../scripts/browse-card/browse-card.css';
+
+/*
+ * perspectives-search: Perspective cards only.
+ * Filters, keyword box, active tags, count, sort and pagination come from faceted-search.css;
+ * card appearance comes from browse-card.css.
+ */
+
+main .perspectives-search {
+  max-width: var(--default-max-width);
+  margin: 0 auto;
+}
+
+main .perspectives-search .fs-toolbar {
+  margin-bottom: var(--spectrum-spacing-400, 24px);
+  gap: var(--spectrum-spacing-300, 16px);
+}
+
+main .perspectives-search .perspectives-search-results-grid {
+  min-height: 400px;
+  padding-bottom: 2px;
+}
+
+main .perspectives-search .perspectives-search-card-item > a {
+  display: block;
+  height: 100%;
+  margin: 0;
+}
+
+main .perspectives-search .perspectives-search-results-grid .browse-card .user-actions .action-tooltip {
+  left: 100%;
+  transform: translateX(-20%);
+
+  &::after {
+    left: 10%;
+  }
+}
+
+@media (min-width: 600px) {
+  main .perspectives-search .perspectives-search-results-grid .browse-card .user-actions .action-tooltip {
+    left: 50%;
+    transform: translateX(-50%);
+
+    &::after {
+      left: 50%;
+    }
+  }
+}
+
+@media (min-width: 900px) {
+  main .perspectives-search .perspectives-search-results-body.list .perspective-card .browse-card-figure > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: cover;
+    transform: none;
+  }
+}

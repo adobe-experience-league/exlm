@@ -1135,6 +1135,22 @@
           }
         },
         {
+          "title": "Perspectives Search",
+          "id": "perspectives-search",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Perspectives Search",
+                  "model": "perspectives-search",
+                  "headingType": "h2"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Featured Authors",
           "id": "featured-authors",
           "plugins": {
@@ -1855,7 +1871,8 @@
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Playlist Browse",
-                  "model": "playlist-browse"
+                  "model": "playlist-browse",
+                  "headingType": "h2"
                 }
               }
             }

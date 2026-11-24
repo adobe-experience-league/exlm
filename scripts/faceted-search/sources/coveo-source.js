@@ -2,15 +2,15 @@ import { matchesSearchIntent } from '../state/store.js';
 
 export { matchesSearchIntent };
 
-export function reconcileFacetSelection(controller, wanted = []) {
+export function reconcileFacetSelection(controller, wanted = [], toggle = (value) => controller.toggleSelect(value)) {
   const want = new Set(wanted);
   const { values } = controller.state;
   values.forEach((value) => {
-    if ((value.state === 'selected') !== want.has(value.value)) controller.toggleSelect(value);
+    if ((value.state === 'selected') !== want.has(value.value)) toggle(value);
   });
   const known = new Set(values.map((value) => value.value));
   wanted.forEach((value) => {
-    if (!known.has(value)) controller.toggleSelect({ value, state: 'selected' });
+    if (!known.has(value)) toggle({ value, state: 'idle', numberOfResults: 0 });
   });
 }
 
@@ -18,7 +18,13 @@ export function reconcileFacetSelection(controller, wanted = []) {
  * Headless owns applied state and hash synchronization. Intent stays pending until
  * a new, matching response commits, so intermediate controller updates cannot undo a click.
  */
-export default function createCoveoSource({ groups, initialSort = '', readSort = (value) => value, ...options }) {
+export default function createCoveoSource({
+  groups,
+  initialSort = '',
+  sortPolicy,
+  readSort = (value) => value,
+  ...options
+}) {
   let headless;
   let sort;
   let pending = null;
@@ -30,7 +36,6 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
   let sortRestore = null;
   let restoreId = 0;
   let navigationId = 0;
-  const ownedHashes = new Set();
   const listeners = new Set();
   const unsubscribers = [];
 
@@ -61,7 +66,10 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
       pending &&
       !applying &&
       !loading &&
-      (error || (responseId && responseId !== pending.responseId && matchesSearchIntent(pending.state, state)))
+      (error ||
+        (responseId &&
+          responseId !== pending.responseId &&
+          (pending.navigation || matchesSearchIntent(pending.state, state))))
     ) {
       pending = null;
     }
@@ -99,6 +107,16 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
     listeners.forEach((listener) => listener(snapshot));
   };
 
+  function resolveRestoredSort() {
+    if (!sortPolicy) return null;
+    const snapshot = getSnapshot();
+    return sortPolicy.resolve(
+      { ...snapshot.state, keyword: headless.searchBox.state.value.trim() },
+      'response',
+      snapshot,
+    );
+  }
+
   return {
     async init() {
       const { default: initialize, buildHeadlessSortController } = await import('../../coveo-headless/index.js');
@@ -107,9 +125,10 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
         facetFields: groups.map(({ id }) => id),
         publishGlobals: false,
         skipGenericSortDropdown: true,
+        deferInitialSearch: true,
         onUrlRestore(fragment) {
-          if (ownedHashes.has(window.location.hash)) return;
           // Capture before Headless synchronizes; later URL-manager writes can omit sortCriteria.
+          applying = Boolean(headless);
           navigationId += 1;
           restoreId += 1;
           pending = null;
@@ -132,15 +151,21 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
         return;
       }
       lastNativeSort = sort.controller.state.sortCriteria;
+      const initialSelection = resolveRestoredSort();
+      if (initialSelection && !initialSelection.deferred) {
+        lastSortKey = initialSelection.key;
+        selectedSort = initialSelection.value;
+        headless.batchStateUpdates(() => headless.stateController.setSort(initialSelection.criterion(sort.criteria)));
+        lastNativeSort = sort.controller.state.sortCriteria;
+      }
       unsubscribers.push(headless.engine.subscribe(publish));
-      const onHashChange = (event) => {
-        const hash = event.newURL ? new URL(event.newURL).hash : window.location.hash;
-        if (ownedHashes.has(hash)) {
-          ownedHashes.delete(hash);
-          return;
-        }
-        pending = null;
+      const onHashChange = () => {
         lastSortKey = null;
+        pending = {
+          navigation: true,
+          responseId: headless.engine.state.search.searchResponseId,
+        };
+        applying = false;
         publish();
       };
       window.addEventListener('hashchange', onHashChange);
@@ -153,33 +178,36 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
       return () => listeners.delete(listener);
     },
     getSnapshot,
+    synchronizeSort(selection) {
+      if (!sort.controller.isSortedBy(selection.criterion(sort.criteria))) return false;
+      lastSortKey = selection.key;
+      selectedSort = selection.value;
+      return true;
+    },
     apply(state, action, sortSelection) {
       if (action !== 'sort' || !sortSelection) sortRestore = null;
       pending = { state, responseId: headless.engine.state.search.searchResponseId };
       applying = true;
       try {
-        if (action === 'clear') {
-          headless.resetSearchHandler();
-        } else if (action === 'page') {
-          headless.pager.selectPage(state.page);
-        } else {
-          groups.forEach(({ id }) => reconcileFacetSelection(headless.facets[id], state.filters[id]));
-          headless.searchBox.updateText(state.keyword);
-          headless.pager.selectPage(1);
-        }
-        const sortKey = sortSelection?.key;
-        if (sortSelection && (sortKey !== lastSortKey || action === 'sort' || action === 'clear')) {
-          lastSortKey = sortKey;
-          sort.controller.sortBy(sortSelection.criterion(sort.criteria));
-        }
-        selectedSort = state.sort;
-        lastNativeSort = sort.controller.state.sortCriteria;
-        if (action === 'keyword') {
-          const previousHash = window.location.hash;
-          headless.submitSearchHandler();
-          if (window.location.hash !== previousHash) ownedHashes.add(window.location.hash);
-          else headless.executeSearch();
-        } else headless.executeSearch();
+        headless.batchStateUpdates(() => {
+          if (action !== 'page') {
+            groups.forEach(({ id }) =>
+              reconcileFacetSelection(headless.facets[id], state.filters[id], (value) =>
+                headless.stateController.toggleFacetValue(headless.facets[id], value),
+              ),
+            );
+            headless.stateController.setQuery(state.keyword);
+          }
+          headless.stateController.setPage(state.page);
+          const sortKey = sortSelection?.key;
+          if (sortSelection && (sortKey !== lastSortKey || action === 'sort' || action === 'clear')) {
+            lastSortKey = sortKey;
+            headless.stateController.setSort(sortSelection.criterion(sort.criteria));
+          }
+          selectedSort = state.sort;
+          lastNativeSort = sort.controller.state.sortCriteria;
+          headless.executeSearch();
+        });
       } finally {
         applying = false;
         publish();
@@ -189,7 +217,6 @@ export default function createCoveoSource({ groups, initialSort = '', readSort =
       destroyed = true;
       unsubscribers.forEach((unsubscribe) => unsubscribe());
       listeners.clear();
-      ownedHashes.clear();
       headless?.destroy();
     },
   };

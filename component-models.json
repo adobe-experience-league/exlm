@@ -6005,7 +6005,57 @@
   },
   {
     "id": "events-search",
-    "fields": []
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Optional heading above search, for example Browse all events."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h2",
+        "label": "Heading Type",
+        "options": [
+          { "name": "H2", "value": "h2" },
+          { "name": "H3", "value": "h3" },
+          { "name": "H4", "value": "h4" },
+          { "name": "H5", "value": "h5" },
+          { "name": "H6", "value": "h6" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "perspectives-search",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Optional heading above search, for example Browse all perspectives."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h2",
+        "label": "Heading Type",
+        "options": [
+          { "name": "H2", "value": "h2" },
+          { "name": "H3", "value": "h3" },
+          { "name": "H4", "value": "h4" },
+          { "name": "H5", "value": "h5" },
+          { "name": "H6", "value": "h6" }
+        ]
+      }
+    ]
   },
   {
     "id": "featured-authors",
@@ -8903,7 +8953,30 @@
   },
   {
     "id": "playlist-browse",
-    "fields": []
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "description": "Optional heading above search, for example Browse all playlists."
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "headingType",
+        "value": "h2",
+        "label": "Heading Type",
+        "options": [
+          { "name": "H2", "value": "h2" },
+          { "name": "H3", "value": "h3" },
+          { "name": "H4", "value": "h4" },
+          { "name": "H5", "value": "h5" },
+          { "name": "H6", "value": "h6" }
+        ]
+      }
+    ]
   },
   {
     "id": "playlist-embed",
@@ -9591,19 +9664,15 @@
         "name": "heading",
         "value": "",
         "label": "Heading",
-        "description": "Sets the headline for Upcoming events."
+        "description": "Optional heading above search, for example Browse all courses."
       },
       {
         "component": "select",
         "valueType": "string",
         "name": "headingType",
-        "value": "h3",
+        "value": "h2",
         "label": "Heading Type",
         "options": [
-          {
-            "name": "H1",
-            "value": "h1"
-          },
           {
             "name": "H2",
             "value": "h2"
@@ -9625,14 +9694,6 @@
             "value": "h6"
           }
         ]
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "filterLabel",
-        "value": "",
-        "label": "Filter Label",
-        "description": "Sets the text for Products filter label in dropdown."
       }
     ]
   },

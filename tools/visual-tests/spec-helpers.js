@@ -20,10 +20,13 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { expect } from '@playwright/test';
 
+import installOpaqueHistoryGuard from './opaque-history.js';
 import {
   BLOCK_SNAPSHOT_READY_SELECTORS,
   BLOCK_SNAPSHOT_HIDE_SELECTORS,
   BLOCK_SNAPSHOT_EXTRA_WAIT,
+  BLOCK_SNAPSHOT_MIN_CARD_COUNTS,
+  BLOCK_SNAPSHOT_MAX_CARD_COUNTS,
   COVEO_MOCKED_BLOCKS,
   DEFAULT_LOADING_SELECTORS,
   SNAPSHOT_FIXED_TIME,
@@ -448,6 +451,7 @@ export default async function runBlockVisualTest(page, { blockSlug, url, viewpor
   const hideSelectors = BLOCK_SNAPSHOT_HIDE_SELECTORS[blockSlug] || [];
 
   await page.clock.setFixedTime(fixedTimeFor(blockSlug));
+  await installOpaqueHistoryGuard(page);
   await installInitScripts(page);
   await installNetworkStubs(page, blockSlug);
   const waitForNetworkIdle = trackNetwork(page);
@@ -471,6 +475,22 @@ export default async function runBlockVisualTest(page, { blockSlug, url, viewpor
 
   const context = { page, frame, block, blockSelector, loadingSelectors, waitForNetworkIdle };
   await settle(context);
+  const minimumCardCount = BLOCK_SNAPSHOT_MIN_CARD_COUNTS[blockSlug];
+  if (minimumCardCount) {
+    await expect
+      .poll(() => frame.locator(`.${blockSlug}-card-item`).count(), {
+        message: `${blockSlug} should render at least ${minimumCardCount} card`,
+      })
+      .toBeGreaterThanOrEqual(minimumCardCount);
+  }
+  const maximumCardCount = BLOCK_SNAPSHOT_MAX_CARD_COUNTS[blockSlug];
+  if (maximumCardCount) {
+    await expect
+      .poll(() => frame.locator(`.${blockSlug}-card-item`).count(), {
+        message: `${blockSlug} should render at most ${maximumCardCount} cards`,
+      })
+      .toBeLessThanOrEqual(maximumCardCount);
+  }
 
   // Grow (never shrink) the viewport so the whole block is on screen, then let it settle again:
   // the resize can swap responsive image sources and reflow vh-based layouts.

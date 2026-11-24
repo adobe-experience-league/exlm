@@ -1,4 +1,4 @@
-import { createTag } from '../../scripts.js';
+import { createTag, htmlToElement } from '../../scripts.js';
 import { decorateIcons } from '../../lib-franklin.js';
 
 // Headless can publish several intermediate states before URL-restored facets catch up.
@@ -103,6 +103,72 @@ export function createEventSortPolicy(placeholders, contentTypes, hash = window.
   };
 }
 
+export function readPerspectiveSort(criterion) {
+  if (criterion === '@el_view_count descending') return 'popularity';
+  if (criterion === 'date descending') return 'newest';
+  if (criterion === 'date ascending') return 'oldest';
+  if (criterion === 'relevancy') return 'relevance';
+  return null;
+}
+
+export function createPerspectiveSortPolicy(placeholders) {
+  const labels = {
+    relevance: placeholders.filterSortRelevanceLabel || 'Relevance',
+    popularity: placeholders.filterSortPopularityLabel || 'Popularity',
+    newest: placeholders.filterSortNewestLabel || 'Newest',
+    oldest: placeholders.filterSortOldestLabel || 'Oldest',
+  };
+  const order = ['relevance', 'popularity', 'newest', 'oldest'];
+  const options = order.map((value) => ({ value, label: labels[value] }));
+  const initial = 'newest';
+  return {
+    initial,
+    default: initial,
+    resolve(state) {
+      const value = order.includes(state.sort) ? state.sort : initial;
+      return {
+        value,
+        options,
+        key: value,
+        criterion(criteria) {
+          if (value === 'popularity') return criteria.field('el_view_count', 'descending');
+          if (value === 'newest') return criteria.date('descending');
+          if (value === 'oldest') return criteria.date('ascending');
+          return criteria.relevance();
+        },
+      };
+    },
+  };
+}
+
+export function readCourseSort(criterion) {
+  if (criterion === '@el_view_count descending') return 'popularity';
+  if (criterion === 'relevancy') return 'relevance';
+  return null;
+}
+
+export function createCourseSortPolicy(placeholders) {
+  const options = [
+    { value: 'relevance', label: placeholders.filterSortRelevanceLabel || 'Relevance' },
+    { value: 'popularity', label: placeholders.filterSortPopularityLabel || 'Popularity' },
+  ];
+  return {
+    initial: 'relevance',
+    default: 'relevance',
+    resolve(state) {
+      const value = options.some((option) => option.value === state.sort) ? state.sort : 'relevance';
+      return {
+        value,
+        options,
+        key: value,
+        criterion(criteria) {
+          return value === 'popularity' ? criteria.field('el_view_count', 'descending') : criteria.relevance();
+        },
+      };
+    },
+  };
+}
+
 /** Standard client-side sort options. '' (the default) keeps the source order. */
 export function getDefaultSortOptions(placeholders = {}) {
   return [
@@ -146,25 +212,24 @@ export function createCollectionSortPolicy({
  * "Sort: <current> v" dropdown. Options are [{ value, label }].
  * onChange(value) fires only on a user selection.
  */
-export function createSortControl({ prefix = 'fs', label = 'Sort:', onChange = () => {} } = {}) {
-  const c = (name) => `${prefix}-${name}`;
+export function createSortControl({ label = 'Sort:', onChange = () => {} } = {}) {
+  const c = (name) => `fs-${name}`;
   let options = [];
   let selected = '';
   let abortOpen = null;
 
-  const el = createTag('div', { class: c('sort') });
-  const btn = createTag('button', {
-    class: c('sort-btn'),
-    type: 'button',
-    'aria-haspopup': 'true',
-    'aria-expanded': 'false',
-  });
-  btn.innerHTML = `
-    <span class="${c('sort-btn-prefix')}">${label}</span>
-    <span class="${c('sort-btn-value')}"></span>
-    <span class="icon icon-chevron ${c('sort-chevron')}" aria-hidden="true"></span>`;
-  const menu = createTag('div', { class: c('sort-menu'), hidden: '' });
-  el.append(btn, menu);
+  const el = htmlToElement(`
+    <div class="fs-sort">
+      <button class="fs-sort-btn" type="button" aria-haspopup="true" aria-expanded="false">
+        <span class="fs-sort-btn-prefix"></span>
+        <span class="fs-sort-btn-value"></span>
+        <span class="icon icon-chevron fs-sort-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="fs-sort-menu" hidden></div>
+    </div>`);
+  const btn = el.querySelector('.fs-sort-btn');
+  const menu = el.querySelector('.fs-sort-menu');
+  btn.querySelector('.fs-sort-btn-prefix').textContent = label;
   decorateIcons(btn);
   const valueEl = btn.querySelector(`.${c('sort-btn-value')}`);
 

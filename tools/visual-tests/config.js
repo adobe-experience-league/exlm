@@ -39,17 +39,17 @@ export const SIDEKICK_CONFIG = {
 // Blocks that are too dynamic to snapshot reliably and are skipped by generate-visual-tests.js.
 //   atomic-search:  Coveo Atomic web components loaded from Coveo's CDN; layout depends on
 //                   remote scripts and shadow-DOM hydration timing.
-//   browse-courses: renders up to 1000 cards (screenshots >50k px tall) with interactive
-//                   filters; slow and fragile, better covered by functional tests.
-export const EXCLUDED_BLOCKS = ['atomic-search', 'browse-courses'];
+export const EXCLUDED_BLOCKS = ['atomic-search'];
 
 // Blocks that fetch live data from Coveo. Coveo's index changes over time, so screenshotting
 // its real response would make these visual tests flaky. Listed blocks get their Coveo calls
 // replayed from a committed HAR fixture (see record-coveo-har.js) instead of hitting the network.
 export const COVEO_MOCKED_BLOCKS = [
+  'browse-courses',
   'curated-cards',
   'events-search',
   'featured-cards',
+  'perspectives-search',
   'tabbed-cards',
   'upcoming-event-v2',
 ];
@@ -84,6 +84,16 @@ export const DEFAULT_LOADING_SELECTORS = [
 
 // Extra block-specific loading indicators: { hidden: '<selector that must disappear>' }.
 export const BLOCK_SNAPSHOT_READY_SELECTORS = {};
+
+export const BLOCK_SNAPSHOT_MIN_CARD_COUNTS = {
+  'browse-courses': 1,
+  'perspectives-search': 1,
+  'playlist-browse': 1,
+};
+
+export const BLOCK_SNAPSHOT_MAX_CARD_COUNTS = {
+  'browse-courses': 12,
+};
 
 // Elements to make invisible inside the block iframe before the snapshot (e.g. floating widgets).
 export const BLOCK_SNAPSHOT_HIDE_SELECTORS = {};
