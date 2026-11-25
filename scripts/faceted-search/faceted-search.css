@@ -633,6 +633,10 @@
   display: block;
 }
 
+main > .section:is(.browse-courses-container, .playlist-browse-container, .perspectives-search-container) {
+  padding-inline: 0;
+}
+
 /* ---------- Media Queries ---------- */
 @media (min-width: 600px) {
   .fs-layout {
@@ -679,6 +683,10 @@
 }
 
 @media (min-width: 1024px) {
+  main > .section:is(.playlist-browse-container, .perspectives-search-container) {
+    padding-inline: 3.5em;
+  }
+
   .fs-layout {
     --fs-card-columns: 2;
 
