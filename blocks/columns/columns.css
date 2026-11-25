@@ -186,7 +186,8 @@
   --columns-column-foreground: var(--spectrum-gray-50);
 }
 
-.columns > div > div.columns-column-highlight {
+.columns > div > div.columns-column-highlight,
+.columns.columns-style-column-precedence > div > div.columns-column-highlight {
   --columns-highlight-background: var(--columns-column-background);
   --columns-highlight-foreground: var(--columns-column-foreground, var(--spectrum-gray-900));
 }
@@ -194,11 +195,6 @@
 .columns > div > div.columns-row-highlight {
   --columns-highlight-background: var(--columns-row-background);
   --columns-highlight-foreground: var(--columns-row-foreground, var(--spectrum-gray-900));
-}
-
-.columns.columns-style-column-precedence > div > div.columns-column-highlight {
-  --columns-highlight-background: var(--columns-column-background);
-  --columns-highlight-foreground: var(--columns-column-foreground, var(--spectrum-gray-900));
 }
 
 .columns

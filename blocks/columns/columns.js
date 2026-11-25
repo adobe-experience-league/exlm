@@ -1,5 +1,6 @@
 import { span } from '../../scripts/dom-helpers.js';
 
+const MOBILE_BREAKPOINT = 600;
 const UEAuthorMode = window.hlx?.aemRoot || window.location.href.includes('.html');
 function updateStyles(block) {
   const classes = [...block.classList];
@@ -51,7 +52,7 @@ function updateHeaders(block) {
   const headerCells = [...(block.firstElementChild?.children || [])];
   const rows = [...block.children].slice(1);
 
-  if (window.innerWidth < 600 && block.classList.contains('b-alt-row')) {
+  if (window.innerWidth < MOBILE_BREAKPOINT && block.classList.contains('b-alt-row')) {
     rows.forEach((row) => {
       [...row.children].forEach((cell, index) => {
         if (!cell.querySelector(':scope > .header-label')) {
@@ -78,9 +79,9 @@ function updateHeaders(block) {
   }
 }
 
-let mobileLayout = window.innerWidth < 600;
+let mobileLayout = window.innerWidth < MOBILE_BREAKPOINT;
 window.addEventListener('resize', () => {
-  const isMobile = window.innerWidth < 600;
+  const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
   if (isMobile === mobileLayout) return;
   mobileLayout = isMobile;
   document.querySelectorAll('.columns[data-columns-decorated]').forEach(updateHeaders);
