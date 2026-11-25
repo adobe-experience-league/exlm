@@ -257,10 +257,6 @@
     vertical-align: top;
   }
 
-  .columns.columns-enhanced.b-alt-row > div > div {
-    flex-basis: 0;
-  }
-
   .columns.block.columns-style-fit > div:first-child {
     display: table-row;
   }
