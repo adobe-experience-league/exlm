@@ -271,7 +271,6 @@
 
   .columns.block.columns-style-fit > div > div > [data-aue-type^='richtext'] {
     display: block;
-    width: auto;
   }
 
   .columns.block.columns-enhanced.columns-style-fit > div > div {
