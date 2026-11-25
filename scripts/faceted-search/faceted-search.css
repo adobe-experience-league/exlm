@@ -683,10 +683,6 @@ main > .section:is(.browse-courses-container, .playlist-browse-container, .persp
 }
 
 @media (min-width: 1024px) {
-  main > .section:is(.playlist-browse-container, .perspectives-search-container) {
-    padding-inline: 3.5em;
-  }
-
   .fs-layout {
     --fs-card-columns: 2;
 
