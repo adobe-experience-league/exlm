@@ -1,44 +1,99 @@
 import { span } from '../../scripts/dom-helpers.js';
 
-const UEAuthorMode = window.hlx.aemRoot || window.location.href.includes('.html');
-/**
- * Updates the headers of the columns based on the window width.
- */
-function updateHeaders() {
-  const columns = document.querySelector('.columns');
-  const headerCells = columns.querySelector('div:first-child').children;
-  const rows = columns.querySelectorAll('div:not(:first-child)');
+const MOBILE_BREAKPOINT = 600;
+const UEAuthorMode = window.hlx?.aemRoot || window.location.href.includes('.html');
+function updateStyles(block) {
+  const classes = [...block.classList];
+  const select = (prefix, allowed, fallback) => {
+    let selected;
+    classes.forEach((name) => {
+      if (name.startsWith(prefix)) {
+        const value = name.slice(prefix.length);
+        if ((!allowed || allowed.includes(value)) && selected === undefined) selected = value;
+      }
+    });
+    return selected === undefined ? fallback : selected;
+  };
+  const comparison = select('padding-comparison-', ['default', 'balanced', 'most-compact'], null);
+  const styles = [];
+  const compact = comparison !== null && comparison !== 'default';
+  if (compact) styles.push(`columns-style-${comparison}`);
+  const width = select('column-width-', ['equal', 'fit-content'], 'equal');
+  if (width === 'fit-content') styles.push('columns-style-fit');
+  const highlight = (axis) => {
+    const background = select(`${axis}-bg-`, null, null);
+    if (!background) return false;
+    styles.push(`columns-style-${axis}-bg-${background}`);
+    const foreground = select(`${axis}-text-`, ['black', 'white'], 'black');
+    if (foreground === 'white' && background === 'eb1100') {
+      styles.push(`columns-style-${axis}-white`);
+    }
+    return true;
+  };
+  const rowHighlight = highlight('row');
+  const columnHighlight = highlight('column');
+  if (select('highlight-precedence-', ['row', 'column'], 'row') === 'column') {
+    styles.push('columns-style-column-precedence');
+  }
+  [...block.children].forEach((row, rowIndex) => {
+    [...row.children].forEach((cell, colIndex) => {
+      cell.classList.toggle('columns-row-highlight', rowHighlight && rowIndex === 0);
+      cell.classList.toggle('columns-column-highlight', columnHighlight && colIndex === 0);
+    });
+  });
+  const currentStyles = classes.filter((name) => name.startsWith('columns-style-'));
+  block.classList.remove(...currentStyles);
+  block.classList.add(...styles);
+  const enhanced = compact || width === 'fit-content' || rowHighlight || columnHighlight;
+  block.classList.toggle('columns-enhanced', enhanced);
+}
 
-  if (window.innerWidth < 600) {
+function updateHeaders(block) {
+  const headerCells = [...(block.firstElementChild?.children || [])];
+  const rows = [...block.children].slice(1);
+
+  if (window.innerWidth < MOBILE_BREAKPOINT && block.classList.contains('b-alt-row')) {
     rows.forEach((row) => {
-      row.querySelectorAll('div').forEach((cell, index) => {
-        if (!cell.querySelector('.header-label')) {
-          const headerLabel = span({ class: 'header-label' }, headerCells[index].textContent);
-          const cellContent = span({ class: 'cell-content' }, cell.textContent);
-          cell.textContent = '';
-          cell.appendChild(headerLabel);
-          cell.appendChild(cellContent);
+      [...row.children].forEach((cell, index) => {
+        if (!cell.querySelector(':scope > .header-label')) {
+          const headerLabel = span({ class: 'header-label' }, headerCells[index]?.textContent || '');
+          const cellContent = document.createElement('div');
+          cellContent.className = 'cell-content';
+          // Keep the content nodes intact so they can be restored on desktop.
+          cellContent.append(...cell.childNodes);
+          cell.append(headerLabel, cellContent);
         }
       });
     });
   } else {
-    // Remove the header labels if they exist and restore cell content
     rows.forEach((row) => {
-      row.querySelectorAll('div').forEach((cell) => {
-        const headerLabel = cell.querySelector('.header-label');
-        const cellContent = cell.querySelector('.cell-content');
+      [...row.children].forEach((cell) => {
+        const headerLabel = cell.querySelector(':scope > .header-label');
+        const cellContent = cell.querySelector(':scope > .cell-content');
         if (headerLabel && cellContent) {
-          cell.textContent = cellContent.textContent;
+          headerLabel.remove();
+          cellContent.replaceWith(...cellContent.childNodes);
         }
       });
     });
   }
 }
 
-window.addEventListener('resize', updateHeaders);
+let mobileLayout = window.innerWidth < MOBILE_BREAKPOINT;
+window.addEventListener('resize', () => {
+  const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+  if (isMobile === mobileLayout) return;
+  mobileLayout = isMobile;
+  document.querySelectorAll('.columns[data-columns-decorated]').forEach(updateHeaders);
+});
 
 export default function decorate(block) {
-  const cols = [...block.firstElementChild.children];
+  if (block.hasAttribute('data-columns-decorated')) {
+    updateStyles(block);
+    updateHeaders(block);
+    return;
+  }
+  const cols = [...(block.firstElementChild?.children || [])];
   block.classList.add(`columns-${cols.length}-cols`);
 
   // setup image columns
@@ -60,7 +115,12 @@ export default function decorate(block) {
       const buttonType = col.querySelector('strong:first-of-type, em:first-of-type, a:first-of-type');
       if (buttonType) {
         const buttonTypeWrapper = buttonType.closest('div');
-        if (buttonTypeWrapper && buttonTypeWrapper.children.length === 1) {
+        if (
+          buttonTypeWrapper &&
+          buttonTypeWrapper.children.length === 1 &&
+          // Don't wrap inline links or formatting that shares a cell with other text.
+          buttonTypeWrapper.textContent.trim() === buttonType.textContent.trim()
+        ) {
           // when a column has a single button with a type
           const pTag = document.createElement('p');
           buttonType.parentNode.insertBefore(pTag, buttonType);
@@ -80,7 +140,9 @@ export default function decorate(block) {
       }
     });
   });
-  updateHeaders();
+  updateStyles(block);
+  updateHeaders(block);
+  block.setAttribute('data-columns-decorated', '');
   // Remove empty <p> tags
   if (UEAuthorMode) {
     block.querySelectorAll('p').forEach((p) => {

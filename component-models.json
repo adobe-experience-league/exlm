@@ -1026,6 +1026,32 @@
     ]
   },
   {
+    "id": "columns-title",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "value": "",
+        "label": "Text"
+      },
+      {
+        "component": "select",
+        "name": "type",
+        "value": "h2",
+        "label": "Type",
+        "valueType": "string",
+        "options": [
+          { "name": "h2", "value": "h2" },
+          { "name": "h3", "value": "h3" },
+          { "name": "h4", "value": "h4" },
+          { "name": "h5", "value": "h5" },
+          { "name": "h6", "value": "h6" }
+        ]
+      }
+    ]
+  },
+  {
     "id": "image",
     "fields": [
       {
@@ -1502,14 +1528,72 @@
         "valueType": "string",
         "name": "classes",
         "label": "Style Type",
+        "description": "Choose one option per group. Select a background color to highlight the first row or column. For accessibility, white text applies only on Adobe red. Row colors take precedence unless Column is selected.",
         "options": [
           {
-            "name": "Border w/ alternating rows",
-            "value": "b-alt-row"
+            "name": "Style Options",
+            "children": [
+              { "name": "Border w/ alternating rows", "value": "b-alt-row" },
+              { "name": "Align to middle", "value": "align-middle" }
+            ]
           },
           {
-            "name": "Align to middle",
-            "value": "align-middle"
+            "name": "Padding (values per side)",
+            "children": [
+              { "name": "Default", "value": "padding-comparison-default" },
+              {
+                "name": "Balanced (8px top/bottom and left/right)",
+                "value": "padding-comparison-balanced"
+              },
+              {
+                "name": "Most compact (4px top/bottom and left/right)",
+                "value": "padding-comparison-most-compact"
+              }
+            ]
+          },
+          {
+            "name": "Column width",
+            "children": [
+              { "name": "Equal", "value": "column-width-equal" },
+              { "name": "Fit to content", "value": "column-width-fit-content" }
+            ]
+          },
+          {
+            "name": "First row background",
+            "children": [
+              { "name": "Very pale red", "value": "row-bg-ffeceb" },
+              { "name": "Light pink-red", "value": "row-bg-ffcbc7" },
+              { "name": "Adobe red", "value": "row-bg-eb1100" }
+            ]
+          },
+          {
+            "name": "First row text",
+            "children": [
+              { "name": "Black (default)", "value": "row-text-black" },
+              { "name": "White (only on Adobe red)", "value": "row-text-white" }
+            ]
+          },
+          {
+            "name": "First column background",
+            "children": [
+              { "name": "Very pale red", "value": "column-bg-ffeceb" },
+              { "name": "Light pink-red", "value": "column-bg-ffcbc7" },
+              { "name": "Adobe red", "value": "column-bg-eb1100" }
+            ]
+          },
+          {
+            "name": "First column text",
+            "children": [
+              { "name": "Black (default)", "value": "column-text-black" },
+              { "name": "White (only on Adobe red)", "value": "column-text-white" }
+            ]
+          },
+          {
+            "name": "Highlight precedence (used only when both backgrounds are selected)",
+            "children": [
+              { "name": "Row (default)", "value": "highlight-precedence-row" },
+              { "name": "Column", "value": "highlight-precedence-column" }
+            ]
           }
         ]
       }
