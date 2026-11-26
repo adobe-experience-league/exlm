@@ -633,6 +633,10 @@
   display: block;
 }
 
+main > .section:is(.browse-courses-container, .playlist-browse-container, .perspectives-search-container) {
+  padding-inline: 0;
+}
+
 /* ---------- Media Queries ---------- */
 @media (min-width: 600px) {
   .fs-layout {
