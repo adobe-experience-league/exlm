@@ -18,10 +18,6 @@ main .events-search-container {
   position: relative;
 }
 
-main .events-search-wrapper {
-  max-width: none;
-}
-
 main .events-search {
   --fs-results-margin: 16px 0 40px;
 

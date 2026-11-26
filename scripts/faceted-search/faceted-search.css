@@ -352,7 +352,8 @@
   position: relative;
 }
 
-.fs-layout .fs-sort[hidden] {
+.fs-layout .fs-sort[hidden],
+.fs-layout:has(.fs-no-results:not([hidden])) .fs-sort {
   display: none;
 }
 
@@ -635,6 +636,13 @@
 
 main > .section:is(.browse-courses-container, .playlist-browse-container, .perspectives-search-container) {
   padding-inline: 0;
+}
+
+main .events-search-wrapper,
+main .browse-courses-wrapper,
+main .playlist-browse-wrapper,
+main .perspectives-search-wrapper {
+  max-width: none;
 }
 
 /* ---------- Media Queries ---------- */

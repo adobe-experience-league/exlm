@@ -6,7 +6,7 @@ export default async function decorate(block) {
     heading: true,
     filters: true,
     sort: true,
-    viewSwitcher: true,
+    viewSwitcher: false,
     pagination: true,
   });
 }
