@@ -9,7 +9,6 @@
   --playlist-card-radius: 16px;
   --playlist-card-inner-radius: calc(var(--playlist-card-radius) - 1px);
 
-  max-width: var(--default-max-width);
   margin: 0 auto;
 }
 

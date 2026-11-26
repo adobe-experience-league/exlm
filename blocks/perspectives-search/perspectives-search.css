@@ -8,7 +8,6 @@
  */
 
 main .perspectives-search {
-  max-width: var(--default-max-width);
   margin: 0 auto;
 }
 
