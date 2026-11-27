@@ -15,10 +15,10 @@ function trackMpcVideo(iframe, video) {
 
     if (event.data.state === 'play' && firstPlay) {
       firstPlay = false;
-      pushVideoEvent({ ...video, id: videoId, duration: event.data.duration || video.duration });
+      pushVideoEvent({ ...video, id: videoId, duration: event.data.duration ?? video.duration });
     } else if (event.data.state === 'complete' && !completed) {
       completed = true;
-      pushVideoEvent({ ...video, id: videoId, duration: event.data.duration || video.duration }, 'videoCompleted');
+      pushVideoEvent({ ...video, id: videoId, duration: event.data.duration ?? video.duration }, 'videoCompleted');
       window.removeEventListener('message', handleMessage);
     }
   };

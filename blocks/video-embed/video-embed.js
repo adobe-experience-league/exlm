@@ -28,7 +28,7 @@ const embedMpc = (url, block) => {
       title: getMetadata('og:title'),
       description: getMetadata('description'),
       url: url.href,
-      duration: duration || '',
+      duration,
       solution,
       fullSolution,
     };

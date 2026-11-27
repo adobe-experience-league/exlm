@@ -55,7 +55,7 @@ const embedMpc = (url, autoplay, block) => {
     title: getMetadata('og:title'),
     description: getMetadata('og:description'),
     url: url.href,
-    duration: duration || '',
+    duration,
   });
 
   const handleMessage = (event) => {

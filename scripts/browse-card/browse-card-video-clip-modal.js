@@ -305,7 +305,7 @@ export class BrowseCardVideoClipModal {
         title: this.model.title || '',
         description: this.model.description || '',
         url: this.model.videoURL || '',
-        duration: event.data.duration || this.model.duration || '',
+        duration: event.data.duration ?? this.model.duration,
         solution: this.model.product?.[0] || '',
         fullSolution: this.model.product?.join(', ') || '',
         // Derive the ID from the actual (post-localization) iframe src, not the original model URL
