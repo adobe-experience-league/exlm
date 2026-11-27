@@ -7,17 +7,31 @@
 }
 
 .browse-courses .custom-filter-dropdown {
-  margin-top: var(--spectrum-spacing-100);
+  margin: 0;
 }
 
-.browse-courses .custom-filter-dropdown button {
-  padding: var(--spectrum-spacing-100) var(--spectrum-spacing-300);
+.browse-courses .custom-filter-dropdown > button {
+  height: auto;
+  min-height: var(--spectrum-spacing-500, 32px);
+  padding: var(--spectrum-spacing-100, 8px) var(--spectrum-spacing-200, 12px);
   color: var(--non-spectrum-dark-gray);
   font-size: var(--spectrum-font-size-100);
   font-weight: var(--font-weight-normal);
-  line-height: normal;
+  line-height: var(--spectrum-line-height-s, 1.3);
   display: flex;
   align-items: center;
+  gap: var(--spectrum-spacing-75, 6px);
+}
+
+.browse-courses .custom-filter-dropdown > button > .icon-chevron {
+  position: static;
+  flex: none;
+  margin-inline-start: auto;
+  transform: none;
+}
+
+.browse-courses .custom-filter-dropdown.open > button > .icon-chevron {
+  transform: rotate(180deg);
 }
 
 main .browse-courses .browse-courses-results-grid {
@@ -43,7 +57,6 @@ main .browse-courses .browse-courses-status:empty {
   }
 
   .browse-courses .custom-filter-dropdown {
-    margin: 0;
     min-width: 180px;
     flex: 1;
   }
