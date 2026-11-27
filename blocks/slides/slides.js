@@ -19,6 +19,27 @@ import {
   state,
 } from './slider-utils.js';
 
+function allocateSlideIds(ids) {
+  const reserved = new Set(ids.filter((id) => id.trim()));
+  const used = new Set();
+  const suffixes = new Map();
+
+  return ids.map((id) => {
+    const base = id.trim() ? id : 'slide';
+    let uniqueId = base;
+    if (used.has(uniqueId) || (!id.trim() && reserved.has(uniqueId))) {
+      let suffix = suffixes.get(base) || 2;
+      do {
+        uniqueId = `${base}-${suffix}`;
+        suffix += 1;
+      } while (used.has(uniqueId) || reserved.has(uniqueId));
+      suffixes.set(base, suffix);
+    }
+    used.add(uniqueId);
+    return uniqueId;
+  });
+}
+
 function html(content, placeholders) {
   const isDesktopUI = isDesktopView();
   const initialView = isDesktopUI ? preferences.get('view') || 'as-slides' : 'as-docs';
@@ -325,7 +346,6 @@ async function renderSlideBlock(block) {
       section.steps.push({
         id: stepId,
         number: null, // Must be computed after all steps are collected
-        active: window.location.hash === `#${blockId}=${stepId}`,
         title: titleElement?.textContent,
         body: Array.from(rest)
           .filter((el) => !el.matches('h3, h4'))
@@ -342,8 +362,28 @@ async function renderSlideBlock(block) {
     sections.push(section);
   }
 
+  const steps = sections.flatMap((sec) => sec.steps);
+  const slideIds = allocateSlideIds(steps.map((step) => step.id));
+  steps.forEach((step, index) => {
+    step.id = slideIds[index];
+  });
+
+  const { hash } = window.location;
+  let activeStep = steps.find((step) => hash === `#${blockId}=${step.id}`);
+  if (!activeStep) {
+    try {
+      const decodedHash = decodeURIComponent(hash);
+      activeStep = steps.find((step) => decodedHash === `#${blockId}=${step.id}`);
+    } catch {
+      // Malformed percent escapes keep the existing first-slide fallback.
+    }
+  }
+  steps.forEach((step) => {
+    step.active = step === activeStep;
+  });
+
   // Handle the case where no step is active
-  if (!sections.flatMap((sec) => sec.steps).some((step) => step.active)) {
+  if (!activeStep) {
     sections[0].steps[0].active = true;
   }
 
