@@ -394,7 +394,7 @@ export function pushComponentClick(data) {
       linkTitle: data.linkTitle || '',
       linkType: data.linkType || '',
       solution: data.solution || '',
-      position: data.position || '',
+      position: String(data.position ?? ''),
     },
   });
 }
@@ -567,13 +567,17 @@ export function handleComponentClick(e) {
 
 /**
  * Pushes a video event straight to the data layer.
+ * Finite numeric durations retain their units and precision; unavailable durations are omitted.
  * @param {Video} video
  * @param {string} event
  */
 function pushVideoEventToDataLayer(video, event = 'videoPlay') {
   const { title, description, url, milestone } = video;
 
-  const videoDuration = video.duration || '';
+  const videoDuration =
+    typeof video.duration === 'number' || (typeof video.duration === 'string' && video.duration.trim() !== '')
+      ? Number(video.duration)
+      : undefined;
   const videoSolution = video.solution || solution || '';
   const videoFullSolution = video.fullSolution || fullSolution || '';
   const videoId = video.id || '';
@@ -586,7 +590,7 @@ function pushVideoEventToDataLayer(video, event = 'videoPlay') {
       title,
       description,
       url,
-      duration: videoDuration,
+      ...(Number.isFinite(videoDuration) && { duration: videoDuration }),
       solution: videoSolution,
       fullSolution: videoFullSolution,
       ...(milestone !== undefined && { milestone }),
@@ -1074,7 +1078,7 @@ export async function pushCourseCompletionEvent(courseId, currentCourses) {
       role: courseMeta?.role || '',
       level: courseMeta?.level || '',
       finishTime,
-      duration: courseDuration,
+      ...(Number.isFinite(courseDuration) && { duration: courseDuration }),
     },
   });
 }
@@ -1171,7 +1175,7 @@ export function pushCourseStartEvent(courseData) {
  * @param {string} [cardData.viewLink] - The destination URL or domain the card points to.
  * @param {string} [cardData.title] - The display title of the card.
  * @param {string} cardHeader - The header or category associated with the card (used as `linkType`).
- * @param {number} cardPosition - The index or position of the card within the list/grid.
+ * @param {number|string} [cardPosition] - The card position, emitted as a string or empty string when absent.
  * @param {string} [source] - The origin context of the event (e.g., `'docs'`, `'browse-card'`). Conditionally added to `link.source` when provided.
  */
 export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPosition, source) {
@@ -1181,6 +1185,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
     remove: 'browseCardRemoveBookmark',
   };
   const finalEventName = eventNameMap[eventName] || eventName;
+  const position = String(cardPosition ?? '');
   window.adobeDataLayer = window.adobeDataLayer || [];
   const product = cardData?.product;
   const cardFullSolution = Array.isArray(product) ? product.join(',') : product || '';
@@ -1207,7 +1212,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       linkTitle: cardData?.title || '',
       linkLocation: 'body',
       linkType: hasViewSwitcher && viewType ? `${viewType} | ${cardHeader}` : cardHeader,
-      position: cardPosition,
+      position,
     },
   };
 
@@ -1247,7 +1252,7 @@ export function pushBrowseCardClickEvent(eventName, cardData, cardHeader, cardPo
       contentType: cardData?.contentType?.toLowerCase().trim() || '',
       solution: cardSolution || '',
       fullSolution: cardFullSolution || '',
-      position: cardPosition,
+      position,
     };
 
     if (sectionID) {
